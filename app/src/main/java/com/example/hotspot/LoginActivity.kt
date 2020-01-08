@@ -30,12 +30,13 @@ class LoginActivity: AppCompatActivity() {
 
 
         // 카카오 제공 버튼일 경우
-        Session.getCurrentSession().addCallback(callback);
+        Session.getCurrentSession().addCallback(callback)
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Session.getCurrentSession().removeCallback(callback);
+        Session.getCurrentSession().removeCallback(callback)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -53,6 +54,7 @@ class LoginActivity: AppCompatActivity() {
         }
 
         override fun onSessionOpened() {
+            Session.getCurrentSession().tokenInfo.accessToken
             UserManagement.getInstance().me(object : MeV2ResponseCallback() {
 
                 override fun onFailure(errorResult: ErrorResult?) {
@@ -68,6 +70,7 @@ class LoginActivity: AppCompatActivity() {
                     checkNotNull(result) { "session response null" }
                     // register or login
                     Log.d("DEBUG","result : ${result}")
+
                 }
 
             })
