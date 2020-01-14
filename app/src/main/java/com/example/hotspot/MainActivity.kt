@@ -1,13 +1,13 @@
 package com.example.hotspot
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
-
 
 
 class MainActivity : AppCompatActivity(),MapView.MapViewEventListener {
