@@ -16,8 +16,6 @@ class MainActivity : AppCompatActivity(),MapView.MapViewEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        println("HELLOWORLD")
-
         val mapView = MapView(this)
 
         val mapViewContainer = map_view as ViewGroup
