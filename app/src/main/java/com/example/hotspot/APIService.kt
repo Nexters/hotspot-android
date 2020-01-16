@@ -5,6 +5,6 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface APIService {
-    @GET("/users")
-    fun fetchAllUsers(): Call<ResponseBody>
+    @GET("/auth/login/kakao")
+    fun getToken(): Call<Token>
 }
