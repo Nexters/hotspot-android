@@ -1,12 +1,14 @@
 package com.example.hotspot
 
+import com.google.gson.annotations.SerializedName
+
 // 임시 USER VOClass
 data class VOClass(
     val firstname: String,
-    val lastname: String
+    val age: Int
 )
 
 data class Token(
-    val user_name: String,
-    val token: String
+//    @SerializedName("kakao_access_token")
+    val kakao_access_token: String
 )
