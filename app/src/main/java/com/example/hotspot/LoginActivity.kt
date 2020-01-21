@@ -1,8 +1,11 @@
 package com.example.hotspot
 
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.util.Log.d
 import androidx.appcompat.app.AppCompatActivity
@@ -13,26 +16,23 @@ import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
 import com.kakao.usermgmt.callback.MeV2ResponseCallback
 import com.kakao.usermgmt.response.MeV2Response
-import com.kakao.usermgmt.response.model.User
 import com.kakao.util.exception.KakaoException
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.example.hotspot.SharedPreferencesActivity
 
 
 class LoginActivity: AppCompatActivity(){
     private var callback: SessionCallback = SessionCallback()
 
     private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
-//    private val URL: String = "http://13.124.166.248"
 
     //token 변수 전역으로 선언
     var token : String = ""
@@ -63,26 +63,41 @@ class LoginActivity: AppCompatActivity(){
         Session.getCurrentSession().addCallback(callback)
         Session.getCurrentSession().checkAndImplicitOpen()
 
+        //카카오 로그인 버튼 클릭
         btnKakaoLogin.setOnClickListener {
             Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, this)
         }
 
-        d("TAG", "onCreate() : token = ${this.token}")
 
+        // token post 동작
         try {
-            val paramObject =
-                JSONObject()
-                .put("kakao_access_token",this.token)
+            val jsonToken = Token(this.token)
 
+            api.postToken(jsonToken).enqueue(object : Callback<AccessToken> {
+                override fun onResponse(call: Call<AccessToken>,
+                                        response: Response<AccessToken>
+                ) {
+                    if(response.isSuccessful) {
+                        d("TAG", "onResponse()")
+                        d("TAG", "responseBody : ${response.body()}")
 
-            d("TAG", "paramObject : ${paramObject}")
+                        //access_token, sign_up value
+                        //new_sign_up이 true면 신규 token을 의미
+                        val prefrenceInfo = AccessToken(
+                            response.body()!!.access_token,
+                            response.body()!!.new_sign_up
+                        )
 
-            api.postToken(paramObject.toString()).enqueue(object : Callback<Token> {
-                override fun onResponse(call: Call<Token>, response: Response<Token>) {
-                    d("TAG", "onResponse() : ")
+                        if(prefrenceInfo.new_sign_up) {
+                            // SharedPreference 사용해서 앱 내부에 토큰 저장
+                            GlobalApplication.prefs.savePreferences(prefrenceInfo.access_token)
+                            d("TAG", "pref.getPreferences : ${GlobalApplication.prefs.getPreferences()}")
+                        }
+
+                    }
                 }
 
-                override fun onFailure(call: Call<Token>, t: Throwable) {
+                override fun onFailure(call: Call<AccessToken>, t: Throwable) {
                     d("TAG", "onFailure() : ")
                     t.printStackTrace()
                 }
@@ -91,8 +106,6 @@ class LoginActivity: AppCompatActivity(){
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -131,7 +144,6 @@ class LoginActivity: AppCompatActivity(){
 
                 override fun onSessionClosed(errorResult: ErrorResult?) {
                     Log.e("DEBUG","Session Call back :: onSessionClosed ${errorResult?.errorMessage}")
-
                 }
 
                 override fun onSuccess(result: MeV2Response?) {
@@ -140,7 +152,6 @@ class LoginActivity: AppCompatActivity(){
                     d("TAG token", "onSuccess() : token = ${Session.getCurrentSession().tokenInfo.accessToken}")
 
                     // register or login
-
 
                     //UserInfo
                     d("DEBUG","result : ${result}")

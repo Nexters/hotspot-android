@@ -7,5 +7,5 @@ import retrofit2.http.*
 
 interface APIService {
     @POST("/auth/login/kakao")
-    fun postToken(@Body token: String) : Call<Token>
+    fun postToken(@Body token: Token) : Call<AccessToken>
 }
