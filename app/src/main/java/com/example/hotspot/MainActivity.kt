@@ -2,14 +2,16 @@ package com.example.hotspot
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 
 
 class MainActivity : AppCompatActivity(){
-
+    private lateinit var btn1 : Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -19,27 +21,38 @@ class MainActivity : AppCompatActivity(){
 //        mapView.setMapViewEventListener(this)
 //        mapViewContainer.addView(mapView)
 
-        //fragment_kakaomap 시작
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_map, FragmentMap())
-            .commit()
 
+        btn1 = findViewById(R.id.btn_1)
 
-        btn_recycler.setOnClickListener {
+        
+
+        listBt.setOnClickListener {
             //fragment_recyclerview 시작
             val intent = Intent(this, RVActivity::class.java)
             startActivity(intent)
         }
 
-        btn_add.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
+        btn1.setOnClickListener{
+            var intent = Intent(this,SearchActivity::class.java)
             startActivity(intent)
         }
 
 
 
 
+    }
 
+    override fun onResume() {
+        super.onResume()
+        //fragment_kakaomap 시작
+        var transaction : FragmentTransaction = supportFragmentManager.beginTransaction()
+        var mapFragment = FragmentMap()
+        transaction.replace(R.id.frame,mapFragment)//fragment1로 교체해라
+        transaction.commit()//transaction 새로고침
 
+        var menutransaction = supportFragmentManager.beginTransaction()
+        var menuFragment = MenuMapFragment()
+        menutransaction.replace(R.id.categoryframe,menuFragment)
+        menutransaction.commit()
     }
 }
