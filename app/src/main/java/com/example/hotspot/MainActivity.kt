@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(){
 
         btn1 = findViewById(R.id.btn_1)
 
-        
+
 
         listBt.setOnClickListener {
             //fragment_recyclerview 시작
