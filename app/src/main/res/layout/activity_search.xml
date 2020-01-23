@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_search"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_esc2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="ESC"
+        android:textSize="13dp"
+        android:layout_margin="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edtTxt_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_esc2"
+        android:hint="검색어 입력점..."/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

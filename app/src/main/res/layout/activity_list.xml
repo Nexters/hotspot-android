@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_recycler"
+    android:id="@+id/activity_list"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <Button
         android:id="@+id/btn_esc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:text="ESC"
-        android:textSize="20dp"
+        android:textSize="13dp"
         android:layout_margin="10dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <androidx.recyclerview.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/recycler_view"
         android:orientation="vertical"
         android:layout_width="match_parent"
