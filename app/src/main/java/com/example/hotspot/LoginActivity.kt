@@ -1,11 +1,8 @@
 package com.example.hotspot
 
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.util.Log.d
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +23,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import com.example.hotspot.SharedPreferencesActivity
 
 
 class LoginActivity: AppCompatActivity(){
