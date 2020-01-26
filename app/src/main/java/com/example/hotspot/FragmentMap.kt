@@ -1,12 +1,10 @@
 package com.example.hotspot
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.map_view.*
 import net.daum.mf.map.api.MapPoint
@@ -30,6 +28,7 @@ class FragmentMap: Fragment(), MapView.MapViewEventListener{
         val mapViewContainer = map_view as ViewGroup
         mapView.setMapViewEventListener(this)
         mapViewContainer.addView(mapView)
+
 
     }
 

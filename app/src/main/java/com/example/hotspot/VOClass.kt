@@ -6,6 +6,11 @@ data class VOClass(
     val age: Int
 )
 
+data class Address(
+    val loca: String,
+    val address: String
+)
+
 
 // kakao account token Data
 data class Token(
