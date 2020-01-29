@@ -1,11 +1,12 @@
 package com.example.hotspot
 
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log.d
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_register.*
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,20 +38,25 @@ class RegisterActivity : AppCompatActivity() {
             "서울 성동구 아차산로11길 7","127.059040730967",
             "37.5445477220243"
         )
+
+        val accesstoken = GlobalApplication.prefs.getPreferences()
+
+
         var spotList = SpotListVO(place,true,"분위기가 멋진 곳!",3)
-        apiService.postPlace("Bearer " + "fiduvljyhquku09nyoux58px448rmox6hysn9d4btowg8keisl38ot7",
-            spotList).enqueue(object : Callback<Objects> {
-            override fun onResponse(call: Call<Objects>, response: Response<Objects>) {
+        apiService.postPlace("Bearer " + "${accesstoken}",
+            spotList).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    // Do your success stuff...
-                } else {
-                    try {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        Toast.makeText(this@RegisterActivity,
-                            jObjError.getJSONObject("error").getString("message"),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } catch (e: Exception) {
+                        d("TAG", "RegisterActivity onResponse() ")
+                        // Do your success stuff...
+                    } else {
+                        try {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            Toast.makeText(this@RegisterActivity,
+                                jObjError.getJSONObject("error").getString("message"),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } catch (e: Exception) {
                         Toast.makeText(this@RegisterActivity, e.message, Toast.LENGTH_LONG).show()
                     }
 
@@ -60,7 +66,8 @@ class RegisterActivity : AppCompatActivity() {
 
             }
 
-            override fun onFailure(call: Call<Objects>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                d("TAG", "RegisterActivity onFailure() ")
                 Toast.makeText(this@RegisterActivity,"post 실패 !!",Toast.LENGTH_LONG).show()
             }
         })

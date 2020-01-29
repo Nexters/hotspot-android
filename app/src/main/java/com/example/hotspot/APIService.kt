@@ -2,6 +2,7 @@ package com.example.hotspot
 
 
 
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 import java.util.*
@@ -15,5 +16,5 @@ interface APIService {
 
     @POST("/place/my_places")
     fun postPlace(@Header("Authorization") auth : String,
-                  @Body spotObject : SpotListVO) : Call<Objects>
+                  @Body spotObject : SpotListVO) : Call<ResponseBody>
 }

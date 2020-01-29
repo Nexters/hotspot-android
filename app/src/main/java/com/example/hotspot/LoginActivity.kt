@@ -84,11 +84,10 @@ class LoginActivity: AppCompatActivity(){
                             response.body()!!.new_sign_up
                         )
 
-                        if(prefrenceInfo.new_sign_up) {
-                            // SharedPreference 사용해서 앱 내부에 토큰 저장
-                            GlobalApplication.prefs.savePreferences(prefrenceInfo.access_token)
-                            d("TAG", "pref.getPreferences : ${GlobalApplication.prefs.getPreferences()}")
-                        }
+
+                        // SharedPreference 사용해서 앱 내부에 토큰 저장
+                        GlobalApplication.prefs.savePreferences(prefrenceInfo.access_token)
+                        d("TAG", "pref.getPreferences : ${GlobalApplication.prefs.getPreferences()}")
 
                     }
                 }
