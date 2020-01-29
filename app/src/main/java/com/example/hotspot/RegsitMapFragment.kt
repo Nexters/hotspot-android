@@ -18,7 +18,7 @@ class RegistMapFragment : Fragment, MapView.MapViewEventListener, MapView.POIIte
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.mapfragment,container,false)
+        val view = inflater.inflate(R.layout.map_view,container,false)
         val mapView = MapView(activity)
         mapView.setPOIItemEventListener(this)
         val mapViewContainer = view.findViewById<RelativeLayout>(R.id.map_view) as ViewGroup

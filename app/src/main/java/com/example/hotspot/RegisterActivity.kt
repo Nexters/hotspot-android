@@ -26,6 +26,9 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+        btn_esc3.setOnClickListener {
+            finish()
+        }
 
         setRetrofitInit()
         setApiServiceInit()

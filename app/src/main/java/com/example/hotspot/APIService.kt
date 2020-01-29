@@ -10,6 +10,9 @@ interface APIService {
     @POST("/auth/login/kakao")
     fun postToken(@Body token: Token) : Call<AccessToken>
 
+    @GET("/place/search")
+    fun getPlace(@Query("search_keyword") search_name : String) : Call<List<Place>>
+
     @POST("/place/my_places")
     fun postPlace(@Header("Authorization") auth : String,
                   @Body spotObject : SpotListVO) : Call<Objects>

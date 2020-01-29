@@ -26,7 +26,7 @@ class FragmentMap: Fragment(), MapView.MapViewEventListener,MapView.POIItemEvent
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.mapfragment,container,false)
+        val view = inflater.inflate(R.layout.map_view,container,false)
         val mapView = MapView(activity)
         var customMarker = MapPOIItem()
         customMarker.itemName = ""
@@ -46,7 +46,7 @@ class FragmentMap: Fragment(), MapView.MapViewEventListener,MapView.POIItemEvent
     }
 
     override fun onMapViewCenterPointMoved(p0: MapView?, mapCenterPoint: MapPoint?) {
-        val mapPointGeo = mapCenterPoint!!.getMapPointGeoCoord()
+        //val mapPointGeo = mapCenterPoint!!.getMapPointGeoCoord()
     }
 
     override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
