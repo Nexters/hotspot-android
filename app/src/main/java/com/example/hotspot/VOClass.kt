@@ -1,6 +1,7 @@
 package com.example.hotspot
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 // 임시 USER VOClass
 data class VOClass(
@@ -31,7 +32,7 @@ data class Place(
     val x: String,              // longitude
     @SerializedName("y")
     val y: String               // latitude
-)
+) : Serializable
 
 data class MyPlaces(
     @SerializedName("id")

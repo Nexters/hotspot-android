@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.Log.d
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -20,7 +21,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-    lateinit var searchList: MutableList<Place>
+    lateinit var searchList: List<Place>
 
     private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
 
@@ -54,7 +55,7 @@ class SearchActivity : AppCompatActivity() {
                     Log.d("TAG", "responsebody : ${response.body()!![0].x}")
                     Log.d("TAG", "responsebody : ${response.body()!![0].y}")
 
-                    searchList = response.body()!!.toMutableList()
+                    searchList = response.body()!!.toList()
                     search_recyclerview.setHasFixedSize(true)
                     search_recyclerview.layoutManager = LinearLayoutManager(MainActivity())
                     search_recyclerview.adapter = SearchRecyclerAdapter(searchList)
@@ -74,9 +75,22 @@ class SearchActivity : AppCompatActivity() {
                 search_recyclerview,
                 object : ClickListener {
                     override fun onClick(view: View?, position: Int) {
-                        Log.d("TAG", "startRegister() : ")
+                        d("TAG", "startRegister() : ")
 
+//                        val list = arrayListOf<String>(
+//                            searchList.get(position).kakaoId,
+//                            searchList.get(position).kakaoUrl,
+//                            searchList.get(position).placeName,
+//                            searchList.get(position).addressName,
+//                            searchList.get(position).roadAddressName,
+//                            searchList.get(position).x,
+//                            searchList.get(position).y
+//                        )
+
+
+//                        d("TAG", "list : ${list}")
                         val intent = Intent(this@SearchActivity, RegisterActivity::class.java)
+                        intent.putExtra("place", searchList.get(position))
                         startActivity(intent)
                     }
 

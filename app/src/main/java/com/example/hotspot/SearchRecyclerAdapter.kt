@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.search_list.view.*
 
-class SearchRecyclerAdapter (private val list:MutableList<Place>) :
+class SearchRecyclerAdapter (private val list:List<Place>) :
     RecyclerView.Adapter<SearchRecyclerAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
