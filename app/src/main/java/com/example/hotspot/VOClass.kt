@@ -18,3 +18,20 @@ data class AccessToken(
     val access_token: String,
     val new_sign_up: Boolean
 )
+
+data class SpotListVO(
+    val place : Place,
+    val visited : Boolean,
+    val memo : String,
+    val rating : Int
+)
+data class Place(
+    val kakaoId : String,
+    val kakaoUrl : String,
+    val placeName : String,
+    val addressName : String,
+    val roadAddressName : String,
+    val x : String,
+    val y : String
+
+)
