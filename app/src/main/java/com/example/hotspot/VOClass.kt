@@ -34,24 +34,31 @@ data class Place(
     val y: String               // latitude
 ) : Serializable
 
-data class MyPlaces(
+data class GetSpotList(
+    @SerializedName("myPlaces")
+    val myPlaces : List<MyPlace>,
+    @SerializedName("count")
+    val count : Int
+) : Serializable
+
+data class MyPlace(
     @SerializedName("id")
     val id: String,
     @SerializedName("userId")
     val userId: String,
-    @SerializedName("placeList")
-    val placeList: MutableList<Place>,
+    @SerializedName("place")
+    val place : Place,
     @SerializedName("visited")
     val visited: Boolean,
     @SerializedName("memo")
     val memo: String,
-    @SerializedName("userId")
+    @SerializedName("rating")
     val rating: Int,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("updateAt")
     val updateAt: String
-)
+) : Serializable
 
 // kakao account token Data
 data class Token(

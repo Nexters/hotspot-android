@@ -28,10 +28,12 @@ class FragmentMap: Fragment(), MapView.MapViewEventListener,MapView.POIItemEvent
     ): View? {
         val view = inflater.inflate(R.layout.map_view,container,false)
         val mapView = MapView(activity)
+        val bundle = arguments
+        val placeList = bundle!!.getSerializable("PlaceList") as List<MyPlace>
         var customMarker = MapPOIItem()
-        customMarker.itemName = ""
+        customMarker.itemName = placeList[0].place.placeName
         customMarker.tag = 1
-        customMarker.mapPoint = MapPoint.mapPointWithGeoCoord(37.532169, 126.928073)
+        customMarker.mapPoint = MapPoint.mapPointWithGeoCoord(placeList[0].place.y.toDouble(), placeList[0].place.x.toDouble())
         customMarker.markerType = MapPOIItem.MarkerType.CustomImage
         customMarker.customImageResourceId = R.drawable.star_marker
         customMarker.isCustomImageAutoscale = true // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
