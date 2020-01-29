@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "79729474791",
-    "firebase_url": "https://spotter-90993.firebaseio.com",
-    "project_id": "spotter-90993",
-    "storage_bucket": "spotter-90993.appspot.com"
+    "project_number": "362507937377",
+    "firebase_url": "https://spotter-13256.firebaseio.com",
+    "project_id": "spotter-13256",
+    "storage_bucket": "spotter-13256.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:79729474791:android:129c43f6eafd73e60d7642",
+        "mobilesdk_app_id": "1:362507937377:android:e569362fd6685fafc4ac20",
         "android_client_info": {
           "package_name": "com.example.hotspot"
         }
       },
       "oauth_client": [
         {
-          "client_id": "79729474791-3vh80e2pjdrgbublnhfacq6i3hu54d02.apps.googleusercontent.com",
+          "client_id": "362507937377-4lq2mtts7aln8qddp8r4032g004gp5up.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAUk1t67OgSnT7EHkCgEm_pF0JFCLXXMOc"
+          "current_key": "AIzaSyC3mQz1NQ67Yo_TRVFwNsUCcNEe0lyrkeU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "79729474791-3vh80e2pjdrgbublnhfacq6i3hu54d02.apps.googleusercontent.com",
+              "client_id": "362507937377-4lq2mtts7aln8qddp8r4032g004gp5up.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
