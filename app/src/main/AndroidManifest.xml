@@ -31,7 +31,7 @@
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize">
         </activity>
-        <activity android:name=".RVActivity"/>
+        <activity android:name=".FragmentMyPlace"/>
         <activity android:name=".SearchActivity"/>
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".StickerRegistActivity"/>
