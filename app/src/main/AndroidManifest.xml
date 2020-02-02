@@ -35,6 +35,7 @@
         <activity android:name=".SearchActivity"/>
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".StickerRegistActivity"/>
+        <activity android:name=".FragmentDetailView"/>
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/app_key" />
