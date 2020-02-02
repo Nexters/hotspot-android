@@ -48,12 +48,6 @@ class SearchActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<List<Place>>, response: Response<List<Place>>) {
                     Log.d("TAG", "FragmentSearch onResponse : ")
                     Log.d("TAG", "responsebody : ${response.body()!![0].addressName}")
-                    Log.d("TAG", "responsebody : ${response.body()!![0].kakaoId}")
-                    Log.d("TAG", "responsebody : ${response.body()!![0].kakaoUrl}")
-                    Log.d("TAG", "responsebody : ${response.body()!![0].placeName}")
-                    Log.d("TAG", "responsebody : ${response.body()!![0].roadAddressName}")
-                    Log.d("TAG", "responsebody : ${response.body()!![0].x}")
-                    Log.d("TAG", "responsebody : ${response.body()!![0].y}")
 
                     searchList = response.body()!!.toList()
                     search_recyclerview.setHasFixedSize(true)
@@ -77,18 +71,6 @@ class SearchActivity : AppCompatActivity() {
                     override fun onClick(view: View?, position: Int) {
                         d("TAG", "startRegister() : ")
 
-//                        val list = arrayListOf<String>(
-//                            searchList.get(position).kakaoId,
-//                            searchList.get(position).kakaoUrl,
-//                            searchList.get(position).placeName,
-//                            searchList.get(position).addressName,
-//                            searchList.get(position).roadAddressName,
-//                            searchList.get(position).x,
-//                            searchList.get(position).y
-//                        )
-
-
-//                        d("TAG", "list : ${list}")
                         val intent = Intent(this@SearchActivity, RegisterActivity::class.java)
                         intent.putExtra("place", searchList.get(position))
                         startActivity(intent)

@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.myplace_item.view.*
 
-class RecyclerAdapter (private val list:List<MyPlace>) :
+class MyPlaceRecyclerAdapter (private val list:List<MyPlace>) :
 
-    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MyPlaceRecyclerAdapter.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val v: View = LayoutInflater.from(parent.context).inflate(R.layout.myplace_item, parent,false)
 

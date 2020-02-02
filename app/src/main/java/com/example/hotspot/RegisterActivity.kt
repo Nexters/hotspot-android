@@ -32,12 +32,6 @@ class RegisterActivity : AppCompatActivity() {
         val intent = getIntent()
         val place = intent.getSerializableExtra("place") as Place
 
-//        var place = Place("247906074","http://place.map.kakao.com/247906074",
-//            "아모레성수","서울 성동구 성수동2가 277-52",
-//            "서울 성동구 아차산로11길 7","127.059040730967",
-//            "37.5445477220243"
-//        )
-
         val accesstoken = GlobalApplication.prefs.getPreferences()
 
 

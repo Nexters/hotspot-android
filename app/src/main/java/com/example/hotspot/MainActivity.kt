@@ -44,6 +44,12 @@ class MainActivity : AppCompatActivity(){
 //            .commit()
 
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         val fr_myPlace = FragmentMyPlace()
 
         //MyList Btn
@@ -55,12 +61,10 @@ class MainActivity : AppCompatActivity(){
             var bundle = Bundle()
             bundle.putSerializable("PlaceList", mMyPlaceList as Serializable)
 
-
             fr_myPlace.arguments = bundle
 
             supportFragmentManager.beginTransaction()
                 .add(R.id.fragment_map, fr_myPlace)
-                .addToBackStack(null)
                 .commit()
         }
 
@@ -73,10 +77,7 @@ class MainActivity : AppCompatActivity(){
                 .remove(fr_myPlace)
                 .commit()
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
         val accesstoken = GlobalApplication.prefs.getPreferences()
         apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
             Callback<GetSpotList> {
