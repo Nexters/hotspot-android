@@ -21,6 +21,18 @@
             android:layout_margin="10dp"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detail"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/detail_esc_btn"
+            app:layout_constraintRight_toLeftOf="@+id/detail_edit_btn"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/detail_edit_btn"
             android:layout_width="wrap_content"

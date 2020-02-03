@@ -1,10 +1,12 @@
 package com.example.hotspot
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,17 +28,11 @@ class FragmentMyPlace : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val bundle = arguments
-
-
-        val placeList = bundle!!.getSerializable("PlaceList") as List<MyPlace>
-
+        val placeList = arguments!!.getSerializable("PlaceList") as List<MyPlace>
 
         myplace_recyclerview.setHasFixedSize(true)
-        myplace_recyclerview.layoutManager = LinearLayoutManager(MainActivity())
+        myplace_recyclerview.layoutManager = LinearLayoutManager(context)
         myplace_recyclerview.adapter = MyPlaceRecyclerAdapter(placeList)
-
-
 
         myplace_recyclerview.addOnItemTouchListener(
             SearchActivity.RecyclerTouchListener(
@@ -56,7 +52,8 @@ class FragmentMyPlace : Fragment() {
 
                         fragmentManager!!.beginTransaction()
                             .addToBackStack(null)
-                            .replace(R.id.main, fr_detaliview)
+                            .detach(this@FragmentMyPlace)
+                            .add(R.id.main, fr_detaliview)
                             .commit()
                     }
 
@@ -67,4 +64,13 @@ class FragmentMyPlace : Fragment() {
         )
     }
 
+    override fun onStop() {
+        super.onStop()
+        d("TAG", "onStop() : ")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        d("TAG", "onDestroy() : ")
+    }
 }

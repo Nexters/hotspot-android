@@ -7,4 +7,6 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="transparency">#CC000000</color>"
+    <color name="colorMain">#774bff</color>
+    <color name="colorNeon">#c3f04e</color>
 </resources>

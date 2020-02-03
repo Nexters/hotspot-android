@@ -33,11 +33,9 @@ class FragmentDetailView : Fragment() {
         detail_memo_txt.text = myPlace.memo
 
         detail_esc_btn.setOnClickListener {
-            fragmentManager!!.popBackStack()
             fragmentManager!!.beginTransaction()
                 .remove(this)
                 .commit()
-
         }
 
         detail_edit_btn.setOnClickListener {
@@ -47,7 +45,6 @@ class FragmentDetailView : Fragment() {
 
             val fr_edit = FragmentEditMyPlace()
             fr_edit.arguments = bundle
-            onStop()
 
             fragmentManager!!.beginTransaction()
                 .addToBackStack(null)
