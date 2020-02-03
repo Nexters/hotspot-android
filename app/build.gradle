@@ -45,6 +45,8 @@ dependencies {
     //MAP
     implementation files('libs/libDaumMapAndroid.jar')
     implementation group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
+    // 네이버 지도 SDK
+    implementation 'com.naver.maps:map-sdk:3.6.2'
 
     //gson
     def gson_ver = "2.7"

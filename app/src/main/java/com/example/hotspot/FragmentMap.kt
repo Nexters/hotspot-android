@@ -3,34 +3,49 @@ package com.example.hotspot
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
+import android.widget.Toast
+
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.MapView
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.map_view.*
-import net.daum.mf.map.api.MapCircle
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapView
 
-class FragmentMap: Fragment(), MapView.MapViewEventListener,MapView.POIItemEventListener{
 
+class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEventListener*/
+    , OnMapReadyCallback
+    , NaverMap.OnMapClickListener {
+    private lateinit var mapView: MapView
+    private lateinit var placeList : List<MyPlace>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.map_view,container,false)
-        val mapView = MapView(activity)
+
+
         val bundle = arguments
-        val placeList = bundle!!.getSerializable("PlaceList") as List<MyPlace>
+        placeList = bundle!!.getSerializable("PlaceList") as List<MyPlace>
+
+
+        val view = inflater.inflate(R.layout.map_view,container,false)
+        /*
+        val mapView = MapView(activity)
         var customMarker = MapPOIItem()
         customMarker.itemName = placeList[0].place.placeName
         customMarker.tag = 1
@@ -44,13 +59,42 @@ class FragmentMap: Fragment(), MapView.MapViewEventListener,MapView.POIItemEvent
         val mapViewContainer = view.findViewById<RelativeLayout>(R.id.map_view) as ViewGroup
         mapView.setMapViewEventListener(this)
         mapViewContainer.addView(mapView)
+        */
 
         return view
     }
 
+
+    override fun onMapReady(p0: NaverMap) {
+        p0.mapType = NaverMap.MapType.Navi
+        p0.isNightModeEnabled = true
+        p0.setOnMapClickListener(this)
+        val marker = Marker()
+        marker.position = LatLng(placeList[0].place.y.toDouble(), placeList[0].place.x.toDouble())
+        marker.map = p0
+        var size = BitmapFactory.decodeResource(resources, R.drawable.star_marker)
+        size = Bitmap.createScaledBitmap(size, 250, 250, true)
+
+        marker.icon = OverlayImage.fromBitmap(size)
+        marker.captionText = placeList[0].place.placeName
+
+    }
+    override fun onMapClick(p0: PointF, p1: LatLng) {
+
+        var spotinfoLayout = activity!!.findViewById<ConstraintLayout>(R.id.spotinfolayout)
+        if(spotinfoLayout.isVisible){
+            spotinfoLayout.visibility = View.GONE
+        }
+        else{
+            spotinfoLayout.visibility = View.VISIBLE
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        mapView = view.findViewById(R.id.map_view)
+        mapView.getMapAsync(this)
+        mapView.onCreate(savedInstanceState)
         //FragmentSearch activity 호출
         btn_add.setOnClickListener {
             val intent2 = Intent(activity, SearchActivity::class.java)
@@ -58,6 +102,41 @@ class FragmentMap: Fragment(), MapView.MapViewEventListener,MapView.POIItemEvent
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+    /*
     override fun onMapViewCenterPointMoved(p0: MapView?, mapCenterPoint: MapPoint?) {
         //val mapPointGeo = mapCenterPoint!!.getMapPointGeoCoord()
     }
@@ -121,5 +200,5 @@ class FragmentMap: Fragment(), MapView.MapViewEventListener,MapView.POIItemEvent
     }
 
     override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
-    }
+    }*/
 }
