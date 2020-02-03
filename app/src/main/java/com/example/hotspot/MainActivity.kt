@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_sticker_regist.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,29 +27,13 @@ class MainActivity : AppCompatActivity(){
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
     private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setRetrofitInit()
         setApiServiceInit()
-
-//        val mapView = MapView(this)
-//        val mapViewContainer = map_view as ViewGroup
-//        mapView.setMapViewEventListener(this)
-//        mapViewContainer.addView(mapView)
-
-        //fragment_kakaomap 시작
-//        supportFragmentManager.beginTransaction()
-//            .add(R.id.fragment_map, FragmentMap())
-//            .addToBackStack(null)
-//            .commit()
-
-
-
-    }
-
-    override fun onResume() {
-        super.onResume()
 
         val fr_myPlace = FragmentMyPlace()
 
@@ -64,6 +49,7 @@ class MainActivity : AppCompatActivity(){
             fr_myPlace.arguments = bundle
 
             supportFragmentManager.beginTransaction()
+                .attach(fr_myPlace)
                 .add(R.id.fragment_map, fr_myPlace)
                 .commit()
         }
@@ -77,6 +63,10 @@ class MainActivity : AppCompatActivity(){
                 .remove(fr_myPlace)
                 .commit()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         val accesstoken = GlobalApplication.prefs.getPreferences()
         apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
@@ -97,8 +87,8 @@ class MainActivity : AppCompatActivity(){
                         val mapFragment = FragmentMap()
                         mapFragment.arguments = bundle
                         transaction
-                            .replace(R.id.fragment_map, mapFragment)//fragment1로 교체해라
-                            .addToBackStack(null)
+                            .attach(mapFragment)
+                            .add(R.id.fragment_map, mapFragment)//fragment1로 교체해라
                             .commit()//transaction 새로고침
                     }
                 }else {

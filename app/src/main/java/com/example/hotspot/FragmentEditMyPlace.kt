@@ -49,7 +49,6 @@ class FragmentEditMyPlace : Fragment() {
 
         //뒤로가기
         edit_esc_btn.setOnClickListener {
-            fragmentManager!!.popBackStack()
             fragmentManager!!.beginTransaction()
                 .remove(this)
                 .commit()
