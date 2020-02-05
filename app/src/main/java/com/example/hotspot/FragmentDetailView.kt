@@ -47,8 +47,7 @@ class FragmentDetailView : Fragment() {
             fr_edit.arguments = bundle
 
             fragmentManager!!.beginTransaction()
-                .addToBackStack(null)
-                .add(R.id.main, fr_edit)
+                .replace(R.id.main, fr_edit)
                 .commit()
         }
     }

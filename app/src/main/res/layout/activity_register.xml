@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_esc3"
+            android:id="@+id/reg_esc_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ESC"
@@ -33,7 +33,7 @@
             android:shadowDy="9"
             android:shadowRadius="30"
             android:text="+Sposts"
-            android:textColor="@color/mainColor"
+            android:textColor="@color/colorMain"
             android:textSize="35dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

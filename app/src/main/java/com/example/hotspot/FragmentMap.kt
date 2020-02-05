@@ -81,13 +81,13 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
     }
     override fun onMapClick(p0: PointF, p1: LatLng) {
 
-        var spotinfoLayout = activity!!.findViewById<ConstraintLayout>(R.id.spotinfolayout)
-        if(spotinfoLayout.isVisible){
-            spotinfoLayout.visibility = View.GONE
-        }
-        else{
-            spotinfoLayout.visibility = View.VISIBLE
-        }
+//        var spotinfoLayout = activity!!.findViewById<ConstraintLayout>(R.id.spotinfolayout)
+//        if(spotinfoLayout.isVisible){
+//            spotinfoLayout.visibility = View.GONE
+//        }
+//        else{
+//            spotinfoLayout.visibility = View.VISIBLE
+//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,9 +96,9 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         mapView.getMapAsync(this)
         mapView.onCreate(savedInstanceState)
         //FragmentSearch activity 호출
-        btn_add.setOnClickListener {
-            val intent2 = Intent(activity, SearchActivity::class.java)
-            startActivity(intent2)
+        map_btn_add.setOnClickListener {
+            val intent = Intent(activity, RegisterActivity::class.java)
+            startActivity(intent)
         }
     }
 

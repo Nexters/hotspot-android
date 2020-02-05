@@ -5,10 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_search.*
@@ -19,15 +18,24 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.Serializable
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : Fragment() {
     lateinit var searchList: List<Place>
 
     private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val v = inflater.inflate(R.layout.activity_search, container, false)
+        return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         //interceptor 선언
         val interceptor = HttpLoggingInterceptor()
@@ -62,16 +70,28 @@ class SearchActivity : AppCompatActivity() {
             })
         }
 
+        //뒤로가기 버튼
+        search_esc_btn.setOnClickListener {
+            fragmentManager!!.beginTransaction()
+                .remove(this)
+                .commit()
+        }
+
+
+
 
         search_recyclerview.addOnItemTouchListener(
             RecyclerTouchListener(
-                applicationContext,
+                activity,
                 search_recyclerview,
                 object : ClickListener {
                     override fun onClick(view: View?, position: Int) {
                         d("TAG", "startRegister() : ")
+//                        val fr_reg = RegisterActivity()
+//                        val bundle = Bundle()
+//                        bundle.putSerializable("place", searchList.get(position) as Serializable)
 
-                        val intent = Intent(this@SearchActivity, RegisterActivity::class.java)
+                        val intent = Intent(activity, RegisterActivity::class.java)
                         intent.putExtra("place", searchList.get(position))
                         startActivity(intent)
                     }
@@ -80,10 +100,7 @@ class SearchActivity : AppCompatActivity() {
                 })
         )
 
-        //뒤로가기 버튼
-        btn_esc2.setOnClickListener {
-            finish()
-        }
+
     }
     interface ClickListener {
         fun onClick(view: View?, position: Int)
