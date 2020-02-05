@@ -3,14 +3,22 @@ package com.example.hotspot
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.util.Log.d
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.register_view.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -19,10 +27,11 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
+import kotlin.coroutines.coroutineContext
 
-class SearchActivity : Fragment() {
+class FragmentSearch : Fragment() {
     lateinit var searchList: List<Place>
-
+    private lateinit var job: GlobalScope
     private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
 
     override fun onCreateView(
@@ -36,6 +45,8 @@ class SearchActivity : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        var search_OK = false
 
         //interceptor 선언
         val interceptor = HttpLoggingInterceptor()
@@ -51,33 +62,44 @@ class SearchActivity : Fragment() {
 
         val api = retrofit.create(APIService::class.java)
 
-        btn_search.setOnClickListener {
-            api.getPlace(edtTxt_search.text.toString()).enqueue(object : Callback<List<Place>> {
-                override fun onResponse(call: Call<List<Place>>, response: Response<List<Place>>) {
-                    Log.d("TAG", "FragmentSearch onResponse : ")
-                    Log.d("TAG", "responsebody : ${response.body()!![0].addressName}")
-
-                    searchList = response.body()!!.toList()
-                    search_recyclerview.setHasFixedSize(true)
-                    search_recyclerview.layoutManager = LinearLayoutManager(MainActivity())
-                    search_recyclerview.adapter = SearchRecyclerAdapter(searchList)
-                }
-
-                override fun onFailure(call: Call<List<Place>>, t: Throwable) {
-                    Log.d("TAG", "FragmentSearch onFailure : ")
-
-                }
-            })
+        search_delete_btn.setOnClickListener {
+            search_edtTxt.setText("")
         }
 
-        //뒤로가기 버튼
-        search_esc_btn.setOnClickListener {
-            fragmentManager!!.beginTransaction()
-                .remove(this)
-                .commit()
+        search_edtTxt.doOnTextChanged {text, start, count, after ->
+            d("TAG", "doOnTextChanged : ${text.toString()}, ${start}, $count, $after")
+
+            GlobalScope.launch {
+                delay(500)
+                d("TAG", "doOnTextChanged : text : ${text.toString()}, length : ${text.toString().length}")
+
+                if(text.toString().length >= 2) {
+                    api.getPlace(text.toString()).enqueue(object : Callback<List<Place>> {
+                        override fun onResponse(
+                            call: Call<List<Place>>,
+                            response: Response<List<Place>>
+                        ) {
+                            d("TAG", "FragmentSearch onResponse : ")
+//                        d("TAG", "responsebody : ${response.body()!![0].addressName}")
+
+                            if (response != null) {
+                                searchList = response.body()!!.toList()
+                                search_recyclerview.setHasFixedSize(true)
+                                search_recyclerview.layoutManager =
+                                    LinearLayoutManager(MainActivity())
+                                search_recyclerview.adapter = SearchRecyclerAdapter(searchList)
+                            }
+
+                        }
+
+                        override fun onFailure(call: Call<List<Place>>, t: Throwable) {
+                            d("TAG", "FragmentSearch onFailure : ")
+
+                        }
+                    })
+                }
+            }
         }
-
-
 
 
         search_recyclerview.addOnItemTouchListener(
@@ -86,14 +108,21 @@ class SearchActivity : Fragment() {
                 search_recyclerview,
                 object : ClickListener {
                     override fun onClick(view: View?, position: Int) {
-                        d("TAG", "startRegister() : ")
-//                        val fr_reg = RegisterActivity()
-//                        val bundle = Bundle()
-//                        bundle.putSerializable("place", searchList.get(position) as Serializable)
+                        d("TAG", "Recycler onClick() : ")
+                        d("TAG", "searchList : ${searchList.get(position)}")
 
-                        val intent = Intent(activity, RegisterActivity::class.java)
-                        intent.putExtra("place", searchList.get(position))
-                        startActivity(intent)
+                        search_OK= true // 서치 완료됫다는 신호
+                        val fr_reg = FragmentRegister()
+                        val bundle = Bundle()
+                        bundle.putSerializable("searchPlace", searchList.get(position) as Serializable)
+                        bundle.putBoolean("search_OK", search_OK)
+                        bundle.putBoolean("isAdd", true)
+                        fr_reg.arguments = bundle
+
+
+                        fragmentManager!!.beginTransaction()
+                            .replace(R.id.register_activity, fr_reg)
+                            .commit()
                     }
 
                     override fun onLongClick(view: View?, position: Int) {}
@@ -101,6 +130,11 @@ class SearchActivity : Fragment() {
         )
 
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job
     }
     interface ClickListener {
         fun onClick(view: View?, position: Int)

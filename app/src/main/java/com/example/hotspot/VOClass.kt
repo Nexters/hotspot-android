@@ -31,7 +31,9 @@ data class Place(
     @SerializedName("x")
     val x: String,              // longitude
     @SerializedName("y")
-    val y: String               // latitude
+    val y: String,               // latitude
+    @SerializedName("categoryName")
+    val categoryName: String
 ) : Serializable
 
 data class GetSpotList(

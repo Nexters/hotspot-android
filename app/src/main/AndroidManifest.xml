@@ -32,7 +32,7 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity android:name=".FragmentMyPlace"/>
-        <activity android:name=".SearchActivity"/>
+        <activity android:name=".FragmentSearch"/>
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".StickerRegistActivity"/>
         <activity android:name=".FragmentDetailView"/>

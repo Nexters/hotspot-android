@@ -1,17 +1,12 @@
 package com.example.hotspot
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.mylist_view.*
 import java.io.Serializable
 
@@ -37,10 +32,10 @@ class FragmentMyPlace : Fragment() {
         myplace_recyclerview.adapter = MyPlaceRecyclerAdapter(placeList)
 
         myplace_recyclerview.addOnItemTouchListener(
-            SearchActivity.RecyclerTouchListener(
+            FragmentSearch.RecyclerTouchListener(
                 activity,
                 myplace_recyclerview,
-                object : SearchActivity.ClickListener {
+                object : FragmentSearch.ClickListener {
                     override fun onClick(view: View?, position: Int) {
                         d("TAG", "No.${position} DetailView : ")
 
