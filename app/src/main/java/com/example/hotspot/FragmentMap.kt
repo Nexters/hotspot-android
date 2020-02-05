@@ -98,6 +98,8 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         //FragmentSearch activity 호출
         map_btn_add.setOnClickListener {
             val intent = Intent(activity, RegisterActivity::class.java)
+            val isAdd = true
+            intent.putExtra("IsAdd",isAdd)
             startActivity(intent)
         }
     }

@@ -1,107 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/register_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBlack">
+    android:background="@color/colorBlack"
+    >
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_esc3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/image_back"
+        android:backgroundTint="@color/colorWhite"
+        android:textSize="35sp"
+        app:layout_constraintEnd_toStartOf="@+id/txt_spot"
+        app:layout_constraintHorizontal_bias="0.601"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_spot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:text="+Spots"
+        android:shadowColor="#2e000000"
+        android:shadowDy="9"
+        android:shadowRadius="20"
+        android:textSize="35sp"
+        android:textColor="#774bff"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edtTxt_memo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
+        android:backgroundTint="#FFFFFF"
+        android:hint="한줄 메모"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textColorHint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_address" />
+
+    <TextView
+        android:id="@+id/txt_place_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:text="장소 이름 "
+        android:textSize="26sp"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/txt_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_spot" />
+
+    <TextView
+        android:id="@+id/txt_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="15sp"
+        android:text="주소 "
+        android:textColor="#FFFFFF"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_place_name" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linear3"
+        android:id="@+id/layout_visited"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edtTxt_memo">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/reg_esc_btn"
+        <TextView
+            android:id="@+id/txt_visited"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ESC"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="방문함 "
+            android:textSize="26sp"
+            android:textColor="@color/colorMyGrayDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/t1"
+            android:id="@+id/txt_rating_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:shadowColor="#2e000000"
-            android:shadowDy="9"
-            android:shadowRadius="30"
-            android:text="+Sposts"
-            android:textColor="@color/colorMain"
-            android:textSize="35dp"
-            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:text="나쁘지 않은 곳"
+            android:textColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
 
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="10dp"
+            android:isIndicator="false"
+            android:max="3"
+            android:numStars="3"
+            android:stepSize="0.5"
+
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_visited" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <Button
+        android:id="@+id/stickerBt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+
+
+        android:text="스티커 추가"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_visited" />
 
     <Button
-        android:id="@+id/reg_place_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="장소 추가"
-        android:textSize="26dp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="61dp"
-        android:background="#000000"
-        app:layout_constraintTop_toBottomOf="@+id/linear3"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <EditText
-        android:id="@+id/reg_memo_etxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="62dp"
-        android:background="#000000"
-        android:hint="메모 입력 (0/50)"
-        android:textColorHint="#4DFFFFFF"
-        android:textColor="#FFFFFF"
-        android:textSize="26sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reg_place_btn" />
-
-    <TextView
-        android:id="@+id/reg_visited_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="방문함"
-        android:textSize="26dp"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="61dp"
-        android:background="#000000"
-        app:layout_constraintTop_toBottomOf="@+id/reg_memo_etxt"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <Button
-        android:id="@+id/reg_spec_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="장소 추가"
-        android:textSize="26dp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="61dp"
-        android:background="#000000"
-        app:layout_constraintTop_toBottomOf="@+id/linear3"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <Button
-        android:id="@+id/registBt"
+        android:id="@+id/btn_regist"
         android:layout_width="317dp"
         android:layout_height="56dp"
-        android:text="등록하기"
-        android:textSize="20dp"
-        android:letterSpacing="-0.01"
+        android:text="등록하기 "
         android:textColor="#FFFFFF"
         android:layout_marginBottom="40dp"
         android:background="@drawable/radius_btn"
@@ -110,4 +154,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
