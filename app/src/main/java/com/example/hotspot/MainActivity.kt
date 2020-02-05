@@ -1,17 +1,11 @@
 package com.example.hotspot
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_sticker_regist.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,12 +16,13 @@ import java.io.Serializable
 
 
 class MainActivity : AppCompatActivity(){
-    private lateinit var btn1 : Button
+
     private lateinit var mMyPlaceList : List<MyPlace>
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
     private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
 
+    val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,23 +30,13 @@ class MainActivity : AppCompatActivity(){
         setRetrofitInit()
         setApiServiceInit()
 
-        val fr_myPlace = FragmentMyPlace()
-
         //MyList Btn
         listBt.setOnClickListener {
             //fragment operation
             listBt.visibility = View.INVISIBLE
             mapBt.visibility = View.VISIBLE
 
-            var bundle = Bundle()
-            bundle.putSerializable("PlaceList", mMyPlaceList as Serializable)
-
-            fr_myPlace.arguments = bundle
-
-            supportFragmentManager.beginTransaction()
-                .attach(fr_myPlace)
-                .add(R.id.fragment_map, fr_myPlace)
-                .commit()
+            getMyPlace()
         }
 
         //remove MyPlace Fragment
@@ -59,16 +44,30 @@ class MainActivity : AppCompatActivity(){
             mapBt.visibility = View.INVISIBLE
             listBt.visibility = View.VISIBLE
 
-            supportFragmentManager.beginTransaction()
-                .remove(fr_myPlace)
-                .commit()
+            getMapAPI()
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        val accesstoken = GlobalApplication.prefs.getPreferences()
+        getMapAPI()
+    }
+
+    fun getMyPlace() {
+        val fr_myPlace = FragmentMyPlace()
+
+        var bundle = Bundle()
+        bundle.putSerializable("PlaceList", mMyPlaceList as Serializable)
+
+        fr_myPlace.arguments = bundle
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_map, fr_myPlace)
+            .commit()
+    }
+
+    fun getMapAPI() {
         apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
             Callback<GetSpotList> {
             override fun onResponse(call: Call<GetSpotList>, response : Response<GetSpotList>){
@@ -82,13 +81,13 @@ class MainActivity : AppCompatActivity(){
                         mMyPlaceList = response.body()!!.myPlaces
                         var bundle = Bundle()
                         bundle.putSerializable("PlaceList",mMyPlaceList as Serializable)
-                        //fragment_kakaomap 시작
-                        var transaction : FragmentTransaction = supportFragmentManager.beginTransaction()
+
+                        //fragment_naver map 시작
                         val mapFragment = FragmentMap()
                         mapFragment.arguments = bundle
-                        transaction
-                            .attach(mapFragment)
-                            .add(R.id.fragment_map, mapFragment)//fragment1로 교체해라
+                        supportFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.fragment_map, mapFragment)//fragment1로 교체해라
                             .commit()//transaction 새로고침
                     }
                 }else {
@@ -111,13 +110,14 @@ class MainActivity : AppCompatActivity(){
             }
         })
     }
-    private fun setRetrofitInit(){
+
+    fun setRetrofitInit(){
         mRetrofit = Retrofit.Builder()
             .baseUrl(URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    private fun setApiServiceInit(){
+    fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
     }
 }

@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.mylist_view.*
 import java.io.Serializable
 
@@ -50,10 +52,18 @@ class FragmentMyPlace : Fragment() {
                         val fr_detaliview = FragmentDetailView()
                         fr_detaliview.arguments = bundle
 
+                        val fr_myPlace = fragmentManager!!.findFragmentById(R.id.fragment_map)
+
+                        if(fr_myPlace != null) {
+                            fragmentManager!!.beginTransaction()
+                                .addToBackStack(null)
+                                .remove(fr_myPlace)
+                                .commit()
+                        }
+
                         fragmentManager!!.beginTransaction()
                             .addToBackStack(null)
-                            .detach(this@FragmentMyPlace)
-                            .add(R.id.main, fr_detaliview)
+                            .replace(R.id.main, fr_detaliview)
                             .commit()
                     }
 
@@ -64,13 +74,4 @@ class FragmentMyPlace : Fragment() {
         )
     }
 
-    override fun onStop() {
-        super.onStop()
-        d("TAG", "onStop() : ")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        d("TAG", "onDestroy() : ")
-    }
 }

@@ -49,6 +49,16 @@ class FragmentEditMyPlace : Fragment() {
 
         //뒤로가기
         edit_esc_btn.setOnClickListener {
+
+            val fr_myPlace = fragmentManager!!.findFragmentById(R.id.fragment_map)
+
+            if(fr_myPlace != null) {
+                fragmentManager!!.beginTransaction()
+                    .replace(R.id.fragment_map, fr_myPlace)
+                    .commit()
+            }
+
+
             fragmentManager!!.beginTransaction()
                 .remove(this)
                 .commit()

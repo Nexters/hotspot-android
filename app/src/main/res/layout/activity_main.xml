@@ -117,9 +117,8 @@
         app:layout_constraintTop_toBottomOf="@id/constraintLayout"
         app:layout_constraintVertical_chainStyle="packed"
         >
-
-
     </FrameLayout>
+
     <FrameLayout
         android:id="@+id/fragment_map"
         android:layout_width="match_parent"
@@ -132,39 +131,26 @@
     </FrameLayout>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/spotinfolayout"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:layout_marginBottom="24dp"
-        android:background="@color/colorMyGrayDark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/spotinfolayout"-->
+<!--        android:layout_width="300dp"-->
+<!--        android:layout_height="150dp"-->
+<!--        android:layout_marginBottom="24dp"-->
+<!--        android:background="@color/colorMyGrayDark"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent">-->
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="스팟 정보 창"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-<!--    <androidx.appcompat.widget.AppCompatButton-->
-<!--        android:id="@+id/btn_add"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_weight="1"-->
-<!--        android:text="+HOTSPOT"-->
-<!--        android:layout_marginBottom="170dp"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
-
+<!--        <Button-->
+<!--            android:id="@+id/button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="스팟 정보 창"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
