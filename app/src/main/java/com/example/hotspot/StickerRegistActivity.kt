@@ -1,25 +1,24 @@
 package com.example.hotspot
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.fragment.app.FragmentTransaction
+import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.NaverMapOptions
 import com.naver.maps.map.OnMapReadyCallback
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
+import gun0912.tedbottompicker.TedBottomPicker
 import kotlinx.android.synthetic.main.activity_sticker_regist.*
 
 class StickerRegistActivity : AppCompatActivity() {
-
+    private lateinit var photoUriList : ArrayList<Uri>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sticker_regist)
@@ -44,6 +43,44 @@ class StickerRegistActivity : AppCompatActivity() {
             }
 
 
+        setGridImgListener()
 
     }
+    //Grid panel의 이미지뷰들의 리스너 정의
+    private fun setGridImgListener(){
+        gallery_img.setOnClickListener{
+            selectAlbum()
+        }
+    }
+    private fun selectAlbum(){
+        //앨범 열기
+        TedPermission.with(this)
+            .setPermissionListener(object : PermissionListener {
+                override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                    Toast.makeText(this@StickerRegistActivity,"Permission Denied", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onPermissionGranted() {
+                    var photoPicker = TedBottomPicker.Builder(this@StickerRegistActivity)
+                        .setOnMultiImageSelectedListener {
+
+                            // it 에 선택한 사진 uri 담김
+                        }
+                        .setCompleteButtonText("Done")
+                        .setEmptySelectionText("최대 5장까지 추가 가능합니다")
+                        .setSelectMaxCount(5)
+                        .setPreviewMaxCount(25)//최근 사진 몇개까지 불러올거냐
+                        .setSpacing(5)
+                        .create()
+                    photoPicker.show(supportFragmentManager)
+                }
+            })
+            .setPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+            .check()
+
+
+
+    }
+
+
 }

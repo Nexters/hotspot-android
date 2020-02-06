@@ -8,7 +8,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:umanoDragView = "@id/dragView"
-    app:umanoPanelHeight="70dp"
+    app:umanoPanelHeight="50sp"
     app:umanoParallaxOffset="150dp"
     app:umanoScrollableView="@id/gridLayout"
     app:umanoShadowHeight="10dp"
@@ -29,6 +29,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/imgView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="fitXY"
+                />
 
 
 
