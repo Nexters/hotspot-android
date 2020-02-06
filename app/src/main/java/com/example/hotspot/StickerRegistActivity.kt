@@ -2,6 +2,11 @@ package com.example.hotspot
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.FragmentTransaction
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -9,6 +14,9 @@ import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.NaverMapOptions
 import com.naver.maps.map.OnMapReadyCallback
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.activity_sticker_regist.*
 
 class StickerRegistActivity : AppCompatActivity() {
 
@@ -34,6 +42,8 @@ class StickerRegistActivity : AppCompatActivity() {
                 })
                 fm.beginTransaction().add(R.id.mapframe, it).commit()
             }
+
+
 
     }
 }

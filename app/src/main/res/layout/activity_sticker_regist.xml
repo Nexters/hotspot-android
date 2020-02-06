@@ -8,7 +8,6 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:umanoDragView = "@id/dragView"
-    app:umanoOverlay="false"
     app:umanoPanelHeight="70dp"
     app:umanoParallaxOffset="150dp"
     app:umanoScrollableView="@id/gridLayout"
@@ -30,6 +29,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
+
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -45,14 +48,17 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="wrap_content"
+            android:background="#1c2226"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="#1c2226"
                 android:paddingLeft="16sp"
                 android:text="Action"
+                android:textColor="#f1f4ff"
                 android:textSize="24sp" />
 
         </LinearLayout>
@@ -63,30 +69,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="#1c2226"
             android:columnCount="3"
             android:rowCount="3"
             android:orientation="horizontal">
             <ImageView
-                android:id="@+id/img1"
+                android:id="@+id/gallery_img"
                 android:layout_height = "50dp"
                 android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
+                android:src = "@drawable/gallery"
                 android:layout_margin="5dp"
                 >
             </ImageView>
             <ImageView
-                android:id="@+id/img2"
+                android:id="@+id/best_menu_img"
                 android:layout_height = "50dp"
                 android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
+                android:src = "@drawable/best_menu"
                 android:layout_margin="5dp"
                 >
             </ImageView>
             <ImageView
-                android:id="@+id/img3"
+                android:id="@+id/open_time_img"
                 android:layout_height = "50dp"
                 android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
+                android:src = "@drawable/open_time"
                 android:layout_margin="5dp"
                 >
             </ImageView>
