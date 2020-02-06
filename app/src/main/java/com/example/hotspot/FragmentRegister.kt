@@ -54,8 +54,16 @@ class FragmentRegister : Fragment() {
             activity!!.finish()
         }
 
+        reg_category_txt.setOnClickListener {
+            fragmentManager!!.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.register_activity, FragmentCategory())
+                .commit()
+        }
+
         txt_place_name.setOnClickListener {
             fragmentManager!!.beginTransaction()
+                .addToBackStack(null)
                 .replace(R.id.register_activity, FragmentSearch())
                 .commit()
         }
@@ -93,21 +101,33 @@ class FragmentRegister : Fragment() {
     }
 
     private fun setLayout(){
-        val isAdd = arguments!!.getBoolean("isAdd")
-        val search_OK = arguments!!.getBoolean("search_OK")
-        d("TAG", "setLayout() isAdd : ${isAdd}")
+        //isAdd : true 등록, false 수정
+        val isAdd = arguments!!.getBoolean("isAdd", true)
+        val search_OK = arguments!!.getBoolean("search_OK", false)
+        val category_OK = arguments!!.getBoolean("categoty_OK", false)
+
+        d("TAG", "setLayout() isAdd : ${isAdd}, search_OK : $search_OK, category_OK : $category_OK")
 
         if(isAdd == false) {//수정 이기때문에 장소에 대한 정보 뿌리기
-            val place = arguments!!.getSerializable("place") as Place
+            val myplace = arguments!!.getSerializable("myPlace") as MyPlace
 
-            txt_place_name.text = place.placeName
-            txt_address.text = place.roadAddressName
+            txt_place_name.text = myplace.place.placeName
+            txt_address.text = myplace.place.roadAddressName
+            reg_category_txt.text = myplace.place.categoryName
         }
         if(search_OK) {
             val place = arguments!!.getSerializable("searchPlace") as Place
 
             txt_place_name.text = place.placeName
             txt_address.text = place.roadAddressName
+            reg_category_txt.text = place.categoryName
+        }
+        if(category_OK) {
+            val category_txt = arguments!!.getString("categoryName")
+            reg_category_txt.text = category_txt
+        }
+        else {
+
         }
     }
 
@@ -124,7 +144,7 @@ class FragmentRegister : Fragment() {
             spotList).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Log.d("TAG", "RegisterActivity onResponse() ")
+                    d("TAG", "RegisterActivity onResponse() ")
 
                 } else {
                     try {
@@ -143,7 +163,7 @@ class FragmentRegister : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("TAG", "RegisterActivity onFailure() ")
+                d("TAG", "RegisterActivity onFailure() ")
                 Toast.makeText(activity,"post 실패 !!", Toast.LENGTH_LONG).show()
             }
         })

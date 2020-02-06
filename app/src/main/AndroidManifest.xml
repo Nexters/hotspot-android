@@ -31,11 +31,9 @@
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize">
         </activity>
-        <activity android:name=".FragmentMyPlace"/>
-        <activity android:name=".FragmentSearch"/>
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".StickerRegistActivity"/>
-        <activity android:name=".FragmentDetailView"/>
+        <activity android:name=".DetailActivity"/>
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/app_key" />

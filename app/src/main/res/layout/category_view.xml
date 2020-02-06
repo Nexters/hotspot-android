@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/category_constlayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="264dp"
+        android:layout_height="384dp"
+        android:background="@drawable/category_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/category_title_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorMain"
+            tools:text="+ Category"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+
+        <GridLayout
+            android:layout_width="216dp"
+            android:layout_height="228dp"
+            android:layout_marginTop="29dp"
+            android:orientation="horizontal"
+            android:rowCount="2"
+            android:columnCount="2"
+            app:layout_constraintTop_toBottomOf="@+id/category_title_txt"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+
+            <FrameLayout
+                android:id="@+id/category_view1"
+                android:layout_width="106dp"
+                android:layout_height="112dp"
+                android:background="@drawable/category_layout2">
+
+                <ImageView
+                    android:id="@+id/category_imgv1"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_gravity="center|top"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/category_txt1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="카페"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center|bottom"
+                    android:layout_marginBottom="19dp"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/category_view2"
+                android:layout_width="106dp"
+                android:layout_height="112dp"
+                android:background="@drawable/category_layout3">
+
+                <ImageView
+                    android:id="@+id/category_imgv2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_gravity="center|top"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/category_txt2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="술집"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center|bottom"
+                    android:layout_marginBottom="19dp"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/category_view3"
+                android:layout_width="106dp"
+                android:layout_height="112dp"
+                android:background="@drawable/category_layout3">
+
+                <ImageView
+                    android:id="@+id/category_imgv3"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_gravity="center|top"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/category_txt3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="맛집"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center|bottom"
+                    android:layout_marginBottom="19dp"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/category_view4"
+                android:layout_width="106dp"
+                android:layout_height="112dp"
+                android:background="@drawable/category_layout3">
+
+                <ImageView
+                    android:id="@+id/category_imgv4"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_gravity="center|top"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/category_txt4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="문화"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center|bottom"
+                    android:layout_marginBottom="19dp"/>
+            </FrameLayout>
+        </GridLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_add_btn"
+            android:layout_width="227dp"
+            android:layout_height="56dp"
+            android:background="@drawable/category_add_btn"
+            android:text="추가하기"
+            android:textSize="20sp"
+            android:textColor="@color/colorMain"
+            android:layout_marginBottom="17dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,9 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.register_view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,8 +29,8 @@ import kotlin.coroutines.coroutineContext
 
 class FragmentSearch : Fragment() {
     lateinit var searchList: List<Place>
-    private lateinit var job: GlobalScope
     private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
+    private var mainScope = MainScope()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,12 +64,16 @@ class FragmentSearch : Fragment() {
             search_edtTxt.setText("")
         }
 
+
         search_edtTxt.doOnTextChanged {text, start, count, after ->
             d("TAG", "doOnTextChanged : ${text.toString()}, ${start}, $count, $after")
 
-            GlobalScope.launch {
+
+            // 코루틴 동작
+            mainScope.launch {
                 delay(500)
                 d("TAG", "doOnTextChanged : text : ${text.toString()}, length : ${text.toString().length}")
+
 
                 if(text.toString().length >= 2) {
                     api.getPlace(text.toString()).enqueue(object : Callback<List<Place>> {
@@ -80,7 +82,6 @@ class FragmentSearch : Fragment() {
                             response: Response<List<Place>>
                         ) {
                             d("TAG", "FragmentSearch onResponse : ")
-//                        d("TAG", "responsebody : ${response.body()!![0].addressName}")
 
                             if (response != null) {
                                 searchList = response.body()!!.toList()
@@ -119,6 +120,7 @@ class FragmentSearch : Fragment() {
                         bundle.putBoolean("isAdd", true)
                         fr_reg.arguments = bundle
 
+                        fragmentManager!!.popBackStack()
 
                         fragmentManager!!.beginTransaction()
                             .replace(R.id.register_activity, fr_reg)
@@ -129,13 +131,15 @@ class FragmentSearch : Fragment() {
                 })
         )
 
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        job
+        d("TAG", "Coroutine cancel() ")
+        // 코루틴 종료
+        mainScope.cancel()
     }
+
     interface ClickListener {
         fun onClick(view: View?, position: Int)
         fun onLongClick(view: View?, position: Int)

@@ -10,14 +10,10 @@
         android:id="@+id/btn_esc3"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="45dp"
-        android:background="@drawable/image_back"
-        android:backgroundTint="@color/colorWhite"
-        android:textSize="35sp"
-        app:layout_constraintEnd_toStartOf="@+id/txt_spot"
-        app:layout_constraintHorizontal_bias="0.601"
+        android:text="E"
+        android:background="@color/colorWhite"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/txt_spot" />
 
     <TextView
         android:id="@+id/txt_spot"
@@ -50,16 +46,26 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_address" />
 
     <TextView
+        android:id="@+id/reg_category_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="카페"
+        android:textSize="26sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/txt_place_name"/>
+
+    <TextView
         android:id="@+id/txt_place_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
+        android:layout_marginLeft="20dp"
         android:text="장소 이름"
         android:textSize="26sp"
         android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@id/txt_address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/reg_category_txt"
         app:layout_constraintTop_toBottomOf="@id/txt_spot" />
 
     <TextView
@@ -70,10 +76,8 @@
         android:textSize="15sp"
         android:text="주소 "
         android:textColor="#FFFFFF"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_place_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_place_name"
+        app:layout_constraintLeft_toLeftOf="@id/txt_place_name"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_visited"

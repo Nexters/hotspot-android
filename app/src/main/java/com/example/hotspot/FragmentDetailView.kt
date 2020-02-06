@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.activity_detailview.*
+import kotlinx.android.synthetic.main.detail_view.*
 import java.io.Serializable
 
 class FragmentDetailView : Fragment() {
@@ -17,7 +17,7 @@ class FragmentDetailView : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.activity_detailview, container, false)
+        val v = inflater.inflate(R.layout.detail_view, container, false)
         return v
     }
 
@@ -36,18 +36,21 @@ class FragmentDetailView : Fragment() {
             fragmentManager!!.beginTransaction()
                 .remove(this)
                 .commit()
+            activity!!.finish()
         }
 
         detail_edit_btn.setOnClickListener {
 
             val bundle = Bundle()
             bundle.putSerializable("myPlace", myPlace as Serializable)
+            bundle.putBoolean("isAdd", false)
 
-            val fr_edit = FragmentEditMyPlace()
-            fr_edit.arguments = bundle
+            val fr_reg = FragmentRegister()
+            fr_reg.arguments = bundle
 
             fragmentManager!!.beginTransaction()
-                .replace(R.id.main, fr_edit)
+                .addToBackStack(null)
+                .replace(R.id.detail_activity, fr_reg)
                 .commit()
         }
     }
