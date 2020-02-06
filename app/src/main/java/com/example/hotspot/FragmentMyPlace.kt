@@ -1,5 +1,6 @@
 package com.example.hotspot
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log.d
 import android.view.LayoutInflater
@@ -39,27 +40,30 @@ class FragmentMyPlace : Fragment() {
                     override fun onClick(view: View?, position: Int) {
                         d("TAG", "No.${position} DetailView : ")
 
-                        val bundle = Bundle()
                         val myPlace = placeList.get(position)
 
-                        bundle.putSerializable("myPlace", myPlace as Serializable )
+//                        val bundle = Bundle()
+//                        bundle.putSerializable("myPlace", myPlace as Serializable )
+//
+//                        val fr_detaliview = FragmentDetailView()
+//                        fr_detaliview.arguments = bundle
+//
+//                        val fr_myPlace = fragmentManager!!.findFragmentById(R.id.fragment_map)
 
-                        val fr_detaliview = FragmentDetailView()
-                        fr_detaliview.arguments = bundle
+//                        if(fr_myPlace != null) {
+//                            fragmentManager!!.beginTransaction()
+//                                .remove(fr_myPlace)
+//                                .commit()
+//                        }
 
-                        val fr_myPlace = fragmentManager!!.findFragmentById(R.id.fragment_map)
+                        val intent = Intent(activity, DetailActivity::class.java)
+                        intent.putExtra("myPlace", myPlace as Serializable )
+                        startActivity(intent)
 
-                        if(fr_myPlace != null) {
-                            fragmentManager!!.beginTransaction()
-                                .addToBackStack(null)
-                                .remove(fr_myPlace)
-                                .commit()
-                        }
-
-                        fragmentManager!!.beginTransaction()
-                            .addToBackStack(null)
-                            .replace(R.id.main, fr_detaliview)
-                            .commit()
+//                        fragmentManager!!.beginTransaction()
+//                            .addToBackStack(null)
+//                            .replace(R.id.main, fr_detaliview)
+//                            .commit()
                     }
 
                     override fun onLongClick(view: View?, position: Int) {

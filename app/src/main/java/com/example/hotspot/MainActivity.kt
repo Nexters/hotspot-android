@@ -27,8 +27,11 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         setRetrofitInit()
         setApiServiceInit()
+
+        getMapAPI()
 
         //MyList Btn
         listBt.setOnClickListener {
@@ -46,12 +49,6 @@ class MainActivity : AppCompatActivity(){
 
             getMapAPI()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        getMapAPI()
     }
 
     fun getMyPlace() {
