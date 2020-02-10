@@ -2,6 +2,7 @@
 <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/slidingpannel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
@@ -29,16 +30,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/imgView"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:scaleType="fitXY"
-                />
+
 
 
 
@@ -63,6 +55,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/sliding_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#1c2226"
@@ -131,30 +124,7 @@
                 android:layout_margin="5dp"
                 >
             </ImageView>
-            <ImageView
-                android:id="@+id/img7"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
-            <ImageView
-                android:id="@+id/img8"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
-            <ImageView
-                android:id="@+id/img9"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
+
 
 
         </GridLayout>

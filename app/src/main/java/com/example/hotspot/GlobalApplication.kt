@@ -19,14 +19,6 @@ class GlobalApplication : Application() {
         instance = this
         KakaoSDK.init(KakaoSDKAdapter())
 
-        if(prefs.getPreferences() == "") {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
-        else {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     override fun onTerminate() {

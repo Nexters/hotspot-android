@@ -2,9 +2,14 @@ package com.example.hotspot
 
 import android.Manifest
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.SystemClock
+import android.provider.MediaStore
+import android.view.ActionMode
+import android.view.MotionEvent
 import android.widget.Toast
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -45,6 +50,7 @@ class StickerRegistActivity : AppCompatActivity() {
 
         setGridImgListener()
 
+
     }
     //Grid panel의 이미지뷰들의 리스너 정의
     private fun setGridImgListener(){
@@ -54,6 +60,8 @@ class StickerRegistActivity : AppCompatActivity() {
     }
     private fun selectAlbum(){
         //앨범 열기
+
+
         TedPermission.with(this)
             .setPermissionListener(object : PermissionListener {
                 override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
@@ -65,7 +73,19 @@ class StickerRegistActivity : AppCompatActivity() {
                         .setOnMultiImageSelectedListener {
 
                             // it 에 선택한 사진 uri 담김
+                            if(it.size == 0){//사진을 선택 안했다면
+
+                            }
+                            else{
+                                /*
+                                var bitmap = MediaStore.Images.Media.getBitmap(contentResolver,it.get(0))
+                                imgView.setImageBitmap(bitmap)*/
+                                dragView.performClick()
+                            }
                         }
+                        .showCameraTile(false)
+                        .showGalleryTile(false)
+                        .setGalleryTile(R.drawable.star_marker)
                         .setCompleteButtonText("Done")
                         .setEmptySelectionText("최대 5장까지 추가 가능합니다")
                         .setSelectMaxCount(5)
@@ -78,9 +98,6 @@ class StickerRegistActivity : AppCompatActivity() {
             .setPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
             .check()
 
-
-
     }
-
 
 }

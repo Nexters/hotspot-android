@@ -38,19 +38,6 @@ class LoginActivity: AppCompatActivity(){
         setContentView(R.layout.activity_login)
 
 
-        //interceptor 선언
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
-
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-
-        val api = retrofit.create(APIService::class.java)
 
         // Get hash key and print
 
@@ -65,42 +52,7 @@ class LoginActivity: AppCompatActivity(){
         }
 
 
-        // token post 동작
-        try {
-            val jsonToken = Token(this.token)
 
-            api.postToken(jsonToken).enqueue(object : Callback<AccessToken> {
-                override fun onResponse(call: Call<AccessToken>,
-                                        response: Response<AccessToken>
-                ) {
-                    if(response.isSuccessful) {
-                        d("TAG", "onResponse()")
-                        d("TAG", "responseBody : ${response.body()}")
-
-                        //access_token, sign_up value
-                        //new_sign_up이 true면 신규 token을 의미
-                        val prefrenceInfo = AccessToken(
-                            response.body()!!.access_token,
-                            response.body()!!.new_sign_up
-                        )
-
-
-                        // SharedPreference 사용해서 앱 내부에 토큰 저장
-                        GlobalApplication.prefs.savePreferences(prefrenceInfo.access_token)
-                        d("TAG", "pref.getPreferences : ${GlobalApplication.prefs.getPreferences()}")
-
-                    }
-                }
-
-                override fun onFailure(call: Call<AccessToken>, t: Throwable) {
-                    d("TAG", "onFailure() : ")
-                    t.printStackTrace()
-                }
-            })
-
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -131,30 +83,57 @@ class LoginActivity: AppCompatActivity(){
             //token 받아오기
             token = Session.getCurrentSession().tokenInfo.accessToken
 
-            UserManagement.getInstance().me(object : MeV2ResponseCallback() {
+            //interceptor 선언
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
-                override fun onFailure(errorResult: ErrorResult?) {
-                    d("DEBUG","Session Call back :: on failed ${errorResult?.errorMessage}")
-                }
 
-                override fun onSessionClosed(errorResult: ErrorResult?) {
-                    Log.e("DEBUG","Session Call back :: onSessionClosed ${errorResult?.errorMessage}")
-                }
+            val retrofit = Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build()
 
-                override fun onSuccess(result: MeV2Response?) {
-                    checkNotNull(result) { "session response null" }
+            val api = retrofit.create(APIService::class.java)
+            // token post 동작
+            try {
+                val jsonToken = Token(token)
 
-                    d("TAG token", "onSuccess() : token = ${Session.getCurrentSession().tokenInfo.accessToken}")
+                api.postToken(jsonToken).enqueue(object : Callback<AccessToken> {
+                    override fun onResponse(call: Call<AccessToken>,
+                                            response: Response<AccessToken>
+                    ) {
+                        if(response.isSuccessful) {
+                            d("TAG", "onResponse()")
+                            d("TAG", "responseBody : ${response.body()}")
 
-                    // register or login
+                            //access_token, sign_up value
+                            //new_sign_up이 true면 신규 token을 의미
+                            val prefrenceInfo = AccessToken(
+                                response.body()!!.access_token,
+                                response.body()!!.new_sign_up
+                            )
 
-                    //UserInfo
-                    d("DEBUG","result : ${result}")
 
-                    redirectSignupActivity()
-                }
+                            // SharedPreference 사용해서 앱 내부에 토큰 저장
+                            GlobalApplication.prefs.savePreferences(prefrenceInfo.access_token)
+                            d("TAG", "pref.getPreferences : ${GlobalApplication.prefs.getPreferences()}")
 
-            })
+                            redirectSignupActivity()
+
+                        }
+                    }
+
+                    override fun onFailure(call: Call<AccessToken>, t: Throwable) {
+                        d("TAG", "onFailure() : ")
+                        t.printStackTrace()
+                    }
+                })
+
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
         }
 
     }
