@@ -1,11 +1,22 @@
 package com.example.hotspot
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.Log.d
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.categoty_items.*
+import kotlinx.android.synthetic.main.myplace_item.*
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,72 +31,77 @@ class MainActivity : AppCompatActivity(){
     private lateinit var mMyPlaceList : List<MyPlace>
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
-    private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
+    lateinit var myPlace: List<MyPlace>
+    private val URL : String = "https://api.dev.hotspot-team.com"
+    val mainScope = MainScope()
 
-    val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
+    val categoryList = listOf("ALL", "카페", "맛집", "술집", "문화", "기타") // Category List
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setRetrofitInit()
-        setApiServiceInit()
+        mainScope.launch {
 
-        getMapAPI()
+            //delay 수정해야함
+            delay(1500L)
+            getMap(mMyPlaceList)
 
-        //MyList Btn
-        listBt.setOnClickListener {
-            //fragment operation
-            listBt.visibility = View.INVISIBLE
-            mapBt.visibility = View.VISIBLE
+            //category Recyclerview init
+            category_recyclerview.setHasFixedSize(true)
+            category_recyclerview.layoutManager = LinearLayoutManager(
+                applicationContext,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            category_recyclerview.adapter = CategoryRecyclerAdapter(categoryList, mMyPlaceList)
 
-            getMyPlace()
+            //MyList Btn
+            listBt.setOnClickListener {
+                //fragment operation
+                listBt.visibility = View.GONE
+                mapBt.visibility = View.VISIBLE
+
+                getMyPlace()
+            }
+
+            //remove MyPlace Fragment
+            mapBt.setOnClickListener {
+                mapBt.visibility = View.GONE
+                listBt.visibility = View.VISIBLE
+
+                getMap(mMyPlaceList)
+            }
+        }
+        runBlocking {
+            setRetrofitInit()
+            setApiServiceInit()
+            getMyPlaceApi()
         }
 
-        //remove MyPlace Fragment
-        mapBt.setOnClickListener {
-            mapBt.visibility = View.INVISIBLE
-            listBt.visibility = View.VISIBLE
 
-            getMapAPI()
-        }
     }
 
-    fun getMyPlace() {
-        val fr_myPlace = FragmentMyPlace()
+    override fun onDestroy() {
+        super.onDestroy()
 
-        var bundle = Bundle()
-        bundle.putSerializable("PlaceList", mMyPlaceList as Serializable)
-
-        fr_myPlace.arguments = bundle
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_map, fr_myPlace)
-            .commit()
+        mainScope.cancel()
     }
 
-    fun getMapAPI() {
+    fun getMyPlaceApi() {
+        val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
         apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
             Callback<GetSpotList> {
             override fun onResponse(call: Call<GetSpotList>, response : Response<GetSpotList>){
                 if(response.isSuccessful){
-                    Log.d("TAG", "responsebody : ${response.body()!!}")
+                    d("TAG", "responsebody : ${response.body()!!}")
                     if(response.body() == null){
                         //등록된 장소가 없는 경우 (마커띄울 필요없음)
-                        mMyPlaceList = arrayListOf()
+                        mMyPlaceList = mutableListOf()
                     }
                     else{
                         mMyPlaceList = response.body()!!.myPlaces
-                        var bundle = Bundle()
-                        bundle.putSerializable("PlaceList",mMyPlaceList as Serializable)
-
-                        //fragment_naver map 시작
-                        val mapFragment = FragmentMap()
-                        mapFragment.arguments = bundle
-                        supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_map, mapFragment)//fragment1로 교체해라
-                            .commit()//transaction 새로고침
                     }
                 }else {
                     try {
@@ -108,10 +124,46 @@ class MainActivity : AppCompatActivity(){
         })
     }
 
+
+    fun getMyPlace() {
+
+            if (::mMyPlaceList.isInitialized) {
+
+                val fr_myPlace = FragmentMyPlace()
+
+                var bundle = Bundle()
+                bundle.putSerializable("PlaceList", mMyPlaceList as Serializable)
+
+                fr_myPlace.arguments = bundle
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_map, fr_myPlace)
+                .commitAllowingStateLoss()
+        }
+    }
+
+    fun getMap(myPlaceList : List<MyPlace>) {
+        val mapFragment = FragmentMap()
+
+        var bundle = Bundle()
+
+        bundle.putSerializable("PlaceList",myPlaceList as Serializable)
+        mapFragment.arguments = bundle
+        //fragment_naver map 시작
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_map, mapFragment)//mapFragment로 교체
+            .commitAllowingStateLoss()//  onSaveInstanceState 이후에 이런 액션(본인의 경우 다른 플래그먼트 호출)을 할수 없어 추가
+    }
+
     fun setRetrofitInit(){
+        //interceptor 선언
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
         mRetrofit = Retrofit.Builder()
             .baseUrl(URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
             .build()
     }
     fun setApiServiceInit(){
