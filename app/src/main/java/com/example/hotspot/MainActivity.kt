@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(){
 
     private lateinit var mMyPlaceList : List<MyPlace>
     private lateinit var tmpMyPlaceList : List<MyPlace>
-
+    private var myPlaceSize: Int = 0
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
 //    val mainScope = MainScope()
@@ -56,6 +56,8 @@ class MainActivity : AppCompatActivity(){
             category_item6_txt.setTextColor(Color.parseColor("#393D46"))
 
             d("TAG 전체", "$mMyPlaceList")
+            myPlaceSize = mMyPlaceList.size
+            hpCount.text = mMyPlaceList.toString()
             if(fragmentState)
                 getMap(mMyPlaceList)
             else
@@ -79,6 +81,8 @@ class MainActivity : AppCompatActivity(){
                 }
             }
             d("TAG 맛집", "$myPlace")
+            myPlaceSize = myPlace.size
+            hpCount.text = myPlace.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -102,6 +106,8 @@ class MainActivity : AppCompatActivity(){
                 }
             }
             d("TAG 카페", "$myPlace")
+            myPlaceSize = myPlace.size
+            hpCount.text = myPlace.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -125,6 +131,8 @@ class MainActivity : AppCompatActivity(){
                 }
             }
             d("TAG 술집", "$myPlace")
+            myPlaceSize = myPlace.size
+            hpCount.text = myPlace.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -148,6 +156,8 @@ class MainActivity : AppCompatActivity(){
                 }
             }
             d("TAG 문화", "$myPlace")
+            myPlaceSize = myPlace.size
+            hpCount.text = myPlace.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -171,6 +181,8 @@ class MainActivity : AppCompatActivity(){
                 }
             }
             d("TAG 기타", "$myPlace")
+            myPlaceSize = myPlace.size
+            hpCount.text = myPlace.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -190,6 +202,8 @@ class MainActivity : AppCompatActivity(){
             category_item5_txt.setTextColor(Color.parseColor("#393D46"))
             category_item6_txt.setTextColor(Color.parseColor("#393D46"))
 
+            myPlaceSize = mMyPlaceList.size
+            hpCount.text = myPlaceSize.toString()
             getMyPlace(mMyPlaceList)
         }
 
@@ -205,6 +219,8 @@ class MainActivity : AppCompatActivity(){
             category_item5_txt.setTextColor(Color.parseColor("#393D46"))
             category_item6_txt.setTextColor(Color.parseColor("#393D46"))
 
+            myPlaceSize = mMyPlaceList.size
+            hpCount.text = myPlaceSize.toString()
             getMap(mMyPlaceList)
         }
 
@@ -247,6 +263,8 @@ class MainActivity : AppCompatActivity(){
                         mMyPlaceList = response.body()!!.myPlaces
 
                         tmpMyPlaceList = mMyPlaceList
+                        myPlaceSize = mMyPlaceList.size
+                        hpCount.text = myPlaceSize.toString()
                         getMap(mMyPlaceList)
                     }
                 }else {

@@ -31,6 +31,8 @@ class FragmentSearch : Fragment() {
     lateinit var searchList: List<Place>
     private var mainScope = MainScope()
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,7 +61,21 @@ class FragmentSearch : Fragment() {
 
         val api = retrofit.create(APIService::class.java)
 
-        search_delete_btn.setOnClickListener {
+        val fr_reg = FragmentRegister()
+        val bundle = Bundle()
+        bundle.putBoolean("isAdd", true)
+
+
+        search_esc_imgbtn.setOnClickListener {
+            fr_reg.arguments = bundle
+
+            fragmentManager!!.popBackStack()
+            fragmentManager!!.beginTransaction()
+                .replace(R.id.register_activity, fr_reg)
+                .commit()
+        }
+
+        search_delete_imgbtn.setOnClickListener {
             search_edtTxt.setText("")
         }
 
@@ -112,11 +128,9 @@ class FragmentSearch : Fragment() {
                         d("TAG", "searchList : ${searchList.get(position)}")
 
                         search_OK= true // 서치 완료됫다는 신호
-                        val fr_reg = FragmentRegister()
-                        val bundle = Bundle()
+
                         bundle.putSerializable("searchPlace", searchList.get(position) as Serializable)
                         bundle.putBoolean("search_OK", search_OK)
-                        bundle.putBoolean("isAdd", true)
                         fr_reg.arguments = bundle
 
                         fragmentManager!!.popBackStack()
