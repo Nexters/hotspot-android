@@ -22,13 +22,11 @@ class MyPlaceRecyclerAdapter (private val list:List<MyPlace>) :
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val placeName_text = list.get(position).place.placeName
             val roadAddressName_text = list.get(position).place.roadAddressName
-            val memo_text = list.get(position).memo
 //            val rating_num = list.get(position).rating
 
 
             holder.placeName_txtV.text = placeName_text
             holder.roadAddressName_txtV.text =roadAddressName_text
-            holder.memo_txtV.text = memo_text
 //            holder.rating_rbV.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
 //                ratingBar.rating = rating_num.toFloat()
 //            }
@@ -39,7 +37,6 @@ class MyPlaceRecyclerAdapter (private val list:List<MyPlace>) :
         RecyclerView.ViewHolder(itemView){
         val placeName_txtV = itemView.placeName_txt
         val roadAddressName_txtV = itemView.roadAddressName_txt
-        val memo_txtV = itemView.memo_txt
 //        val rating_rbV = itemView.rating_rb
     }
 }

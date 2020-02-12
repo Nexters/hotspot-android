@@ -10,4 +10,10 @@
     <color name="colorMain">#774bff</color>
     <color name="colorNeon">#c3f04e</color>
     <color name="colorEditTextGray">#3a3d45</color>
+    <color name="colorGroup1">#ff987e</color>
+    <color name="colorGroup2">#fff689</color>
+    <color name="colorGroup3">#bac2fe</color>
+    <color name="colorGroup4">#a1e6a8</color>
+    <color name="colorGroup5">#fccbe0</color>
+    <color name="colorGroup6">#d8d8d6</color>
 </resources>

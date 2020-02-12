@@ -28,8 +28,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class LoginActivity: AppCompatActivity(){
     private var callback: SessionCallback = SessionCallback()
 
-    private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
-
     //token 변수 전역으로 선언
     var token : String = ""
 
@@ -90,7 +88,7 @@ class LoginActivity: AppCompatActivity(){
 
 
             val retrofit = Retrofit.Builder()
-                .baseUrl(URL)
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()

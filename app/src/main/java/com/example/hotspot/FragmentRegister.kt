@@ -21,9 +21,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class FragmentRegister : Fragment() {
+    companion object{
+        lateinit var place: Place
+        lateinit var myPlace: MyPlace
+    }
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
-    lateinit var place: Place
     private lateinit var spotList : SpotListVO
 
     private var accessToken = GlobalApplication.prefs.getPreferences()
@@ -195,11 +198,11 @@ class FragmentRegister : Fragment() {
 
         d("TAG", "setLayout() isAdd : ${isAdd}, search_OK : $search_OK, category_OK : $category_OK")
 
-        if(isAdd == false) {//수정 이기때문에 장소에 대한 정보 뿌리기
-            val myplace = arguments!!.getSerializable("myPlace") as MyPlace
+        if(!isAdd) {//수정 이기때문에 장소에 대한 정보 뿌리기
+            myPlace = arguments!!.getSerializable("myPlace") as MyPlace
 
-            txt_place_name.text = myplace.place.placeName
-            txt_address.text = myplace.place.roadAddressName
+            txt_place_name.text = myPlace.place.placeName
+            txt_address.text = myPlace.place.roadAddressName
             reg_category_txt.visibility = View.VISIBLE
             //reg_category_txt 에 svg 이미지 띄우기  myplace에서 category가 카페면 카페이미지  이런식으로
         }
@@ -252,28 +255,28 @@ class FragmentRegister : Fragment() {
             isVisited = true
         }
         else isVisited = false
-        val registPlace = Place(place.kakaoId,place.kakaoUrl,place.placeName,place.addressName,place.roadAddressName,place.x,place.y,this.choicedCategory)
-        spotList = SpotListVO(registPlace,isVisited,edtTxt_memo.text.toString(),rating)
+        val registPlace = Place(
+            place.kakaoId,place.kakaoUrl,
+            place.placeName,
+            place.addressName,
+            place.roadAddressName,
+            place.x,
+            place.y,
+            this.choicedCategory
+        )
+        spotList = SpotListVO(
+            registPlace,
+            isVisited,
+            edtTxt_memo.text.toString(),
+            rating
+        )
 
         apiService.postPlace("Bearer " + "${accessToken}",
             spotList).enqueue(object : Callback<SpotListVO> {
             override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
                 if (response.isSuccessful) {
                     d("TAG", "RegisterActivity onResponse() ")
-
-                } else {
-                    try {
-                        /*val jObjError = JSONObject(response.errorBody()!!.string())
-
-                        Toast.makeText(this@RegisterActivity,
-                            jObjError.getJSONObject("error").getString("message"),
-                            Toast.LENGTH_LONG
-                        ).show()*/
-
-
-                    } catch (e: Exception) {
-                        Toast.makeText(activity, e.message, Toast.LENGTH_LONG).show()
-                    }
+                    activity!!.finish()
                 }
             }
 

@@ -1,13 +1,9 @@
 package com.example.hotspot
 
-
-
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
-import java.util.*
 
-val baseUrl = "https://api.dev.hotspot-team.com"
+const val baseUrl = "https://api.dev.hotspot-team.com"
 interface APIService {
     @POST("/auth/login/kakao")
     fun postToken(@Body token: Token) : Call<AccessToken>

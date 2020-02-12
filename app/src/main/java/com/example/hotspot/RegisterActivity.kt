@@ -20,24 +20,23 @@ import java.io.Serializable
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var place : Place
+    private lateinit var myplace : MyPlace
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        val isAdd = intent.getBooleanExtra("IsAdd",true) // true면 등록 , false면 수정
+        val isAdd = intent.getBooleanExtra("isAdd",true) // true면 등록 , false면 수정
 
         val fr_reg = FragmentRegister()
         val bundle = Bundle()
         bundle.putBoolean("isAdd", isAdd)
 
+        if(!isAdd) {
+            myplace = intent.getSerializableExtra("myPlace") as MyPlace
+            d("TAG RegisterActivity", "isAdd : $isAdd")
 
-        if(isAdd == false) {
-            place = intent.getSerializableExtra("place") as Place
-
-            bundle.putSerializable("place", place as Serializable)
-
+            bundle.putSerializable("myPlace", myplace as Serializable)
             fr_reg.arguments = bundle
 
             supportFragmentManager!!.beginTransaction()

@@ -29,64 +29,207 @@ import java.io.Serializable
 class MainActivity : AppCompatActivity(){
 
     private lateinit var mMyPlaceList : List<MyPlace>
+    private lateinit var tmpMyPlaceList : List<MyPlace>
+
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
-    lateinit var myPlace: List<MyPlace>
-    private val URL : String = "https://api.dev.hotspot-team.com"
-    val mainScope = MainScope()
+//    val mainScope = MainScope()
 
     val categoryList = listOf("ALL", "카페", "맛집", "술집", "문화", "기타") // Category List
-
+    var fragmentState : Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mainScope.launch {
 
-            //delay 수정해야함
-            delay(1500L)
-            getMap(mMyPlaceList)
+        setRetrofitInit()
+        setApiServiceInit()
+//        getMyPlaceApi()
 
-            //category Recyclerview init
-            category_recyclerview.setHasFixedSize(true)
-            category_recyclerview.layoutManager = LinearLayoutManager(
-                applicationContext,
-                LinearLayoutManager.HORIZONTAL,
-                false
-            )
-            category_recyclerview.adapter = CategoryRecyclerAdapter(categoryList, mMyPlaceList)
+        category_item1_txt.setOnClickListener {
+            category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
 
-            //MyList Btn
-            listBt.setOnClickListener {
-                //fragment operation
-                listBt.visibility = View.GONE
-                mapBt.visibility = View.VISIBLE
-
-                getMyPlace()
-            }
-
-            //remove MyPlace Fragment
-            mapBt.setOnClickListener {
-                mapBt.visibility = View.GONE
-                listBt.visibility = View.VISIBLE
-
+            d("TAG 전체", "$mMyPlaceList")
+            if(fragmentState)
                 getMap(mMyPlaceList)
+            else
+                getMyPlace(mMyPlaceList)
+        }
+
+        category_item2_txt.setOnClickListener {
+            var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
+
+            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+
+            val iter = myPlace.iterator()
+            while(iter.hasNext()){
+                if(!categoryList[1].equals(iter.next())){
+                    iter.remove()
+                }
             }
-        }
-        runBlocking {
-            setRetrofitInit()
-            setApiServiceInit()
-            getMyPlaceApi()
+            d("TAG 맛집", "$myPlace")
+            if(fragmentState)
+                getMap(myPlace)
+            else
+                getMyPlace(myPlace)
         }
 
+        category_item3_txt.setOnClickListener {
+            var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
 
+            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+
+            val iter = myPlace.iterator()
+            while(iter.hasNext()){
+                if(!categoryList[2].equals(iter.next())){
+                    iter.remove()
+                }
+            }
+            d("TAG 카페", "$myPlace")
+            if(fragmentState)
+                getMap(myPlace)
+            else
+                getMyPlace(myPlace)
+        }
+
+        category_item4_txt.setOnClickListener {
+            var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
+
+            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+
+            val iter = myPlace.iterator()
+            while(iter.hasNext()){
+                if(!categoryList[3].equals(iter.next())){
+                    iter.remove()
+                }
+            }
+            d("TAG 술집", "$myPlace")
+            if(fragmentState)
+                getMap(myPlace)
+            else
+                getMyPlace(myPlace)
+        }
+
+        category_item5_txt.setOnClickListener {
+            var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
+
+            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+
+            val iter = myPlace.iterator()
+            while(iter.hasNext()){
+                if(!categoryList[4].equals(iter.next())){
+                    iter.remove()
+                }
+            }
+            d("TAG 문화", "$myPlace")
+            if(fragmentState)
+                getMap(myPlace)
+            else
+                getMyPlace(myPlace)
+        }
+
+        category_item6_txt.setOnClickListener {
+            var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
+
+            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#FFFFFF"))
+
+            val iter = myPlace.iterator()
+            while(iter.hasNext()){
+                if(!categoryList[5].equals(iter.next())){
+                    iter.remove()
+                }
+            }
+            d("TAG 기타", "$myPlace")
+            if(fragmentState)
+                getMap(myPlace)
+            else
+                getMyPlace(myPlace)
+        }
+
+        //MyList Btn
+        listBt.setOnClickListener {
+            //fragment operation
+            listBt.visibility = View.GONE
+            mapBt.visibility = View.VISIBLE
+
+            category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+
+            getMyPlace(mMyPlaceList)
+        }
+
+        //remove MyPlace Fragment
+        mapBt.setOnClickListener {
+            mapBt.visibility = View.GONE
+            listBt.visibility = View.VISIBLE
+
+            category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+
+            getMap(mMyPlaceList)
+        }
+
+//            //category Recyclerview init
+//            category_recyclerview.setHasFixedSize(true)
+//            category_recyclerview.layoutManager = LinearLayoutManager(
+//                applicationContext,
+//                LinearLayoutManager.HORIZONTAL,
+//                false
+//            )
+//            category_recyclerview.adapter = CategoryRecyclerAdapter(categoryList, mMyPlaceList)
+
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getMyPlaceApi()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        mainScope.cancel()
+//        mainScope.cancel()
     }
 
     fun getMyPlaceApi() {
@@ -102,6 +245,9 @@ class MainActivity : AppCompatActivity(){
                     }
                     else{
                         mMyPlaceList = response.body()!!.myPlaces
+
+                        tmpMyPlaceList = mMyPlaceList
+                        getMap(mMyPlaceList)
                     }
                 }else {
                     try {
@@ -125,16 +271,24 @@ class MainActivity : AppCompatActivity(){
     }
 
 
-    fun getMyPlace() {
+    fun getMyPlace(myPlaceList : List<MyPlace>) {
+        d("TAG getMyPlace","myPlaceList : $myPlaceList")
+        fragmentState = false
 
-            if (::mMyPlaceList.isInitialized) {
+        var bundle = Bundle()
 
-                val fr_myPlace = FragmentMyPlace()
+        if(myPlaceList.isNullOrEmpty()) {
+            d("TAG getMap", "myPlaceList is null")
 
-                var bundle = Bundle()
-                bundle.putSerializable("PlaceList", mMyPlaceList as Serializable)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_map, FragmentMyPlaceEmpty())
+                .commit()
+        } else {
+            d("TAG getMap", "myPlaceList is not null")
 
-                fr_myPlace.arguments = bundle
+            val fr_myPlace = FragmentMyPlace()
+            bundle.putSerializable("PlaceList", myPlaceList as Serializable)
+            fr_myPlace.arguments = bundle
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_map, fr_myPlace)
                 .commitAllowingStateLoss()
@@ -142,12 +296,17 @@ class MainActivity : AppCompatActivity(){
     }
 
     fun getMap(myPlaceList : List<MyPlace>) {
-        val mapFragment = FragmentMap()
+        d("TAG getMap","myPlaceList : $myPlaceList")
+        fragmentState = true
 
+        val mapFragment = FragmentMap()
         var bundle = Bundle()
+
+        d("TAG getMap", "myPlaceList is not null")
 
         bundle.putSerializable("PlaceList",myPlaceList as Serializable)
         mapFragment.arguments = bundle
+
         //fragment_naver map 시작
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_map, mapFragment)//mapFragment로 교체
@@ -161,7 +320,7 @@ class MainActivity : AppCompatActivity(){
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
         mRetrofit = Retrofit.Builder()
-            .baseUrl(URL)
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
