@@ -2,6 +2,7 @@ package com.example.hotspot
 
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
@@ -12,6 +13,7 @@ import android.widget.RatingBar
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.register_view.*
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -20,7 +22,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FragmentRegister : Fragment() {
+class FragmentRegister : BaseFragment() {
     companion object{
         lateinit var place: Place
         lateinit var myPlace: MyPlace
@@ -34,6 +36,8 @@ class FragmentRegister : Fragment() {
     var choicedCategory = ""
     var isEdtChecked = false
 
+    private lateinit var stickerData: StickerData
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,8 +47,31 @@ class FragmentRegister : Fragment() {
         return v
     }
 
+
+    @Subscribe
+    fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
+        onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())
+
+    }
+    // resultCode 2 : 사진 없음 , resultCode 3 : 스티커 없음 (data null), resultCode : 1 스티커 잇음
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(resultCode){
+            1 -> {
+                stickerData = data!!.getSerializableExtra("StickerData") as StickerData
+            }
+            2 -> {
+
+            }
+            3 -> {
+
+            }
+        }
+
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
 
         setRetrofitInit()
@@ -175,7 +202,8 @@ class FragmentRegister : Fragment() {
             img_uncheck4.setImageResource(R.drawable.ic_img_check)
             stickerBt.setTextColor(resources.getColor(R.color.colorWhite))
             var intent = Intent(activity, StickerRegistActivity::class.java)
-            startActivity(intent)
+            activity!!.startActivityForResult(intent, 1)
+
 
         }
 
@@ -189,6 +217,8 @@ class FragmentRegister : Fragment() {
             else registSpot()
         }
     }
+
+
 
     private fun setLayout(){
         //isAdd : true 등록, false 수정

@@ -19,16 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_img_back" />
 
-    <Space
-        android:id="@+id/space_regist_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@id/txt_place_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageView
         android:id="@+id/img_uncheck"
@@ -48,7 +39,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/txt_place_name"
         app:layout_constraintLeft_toLeftOf="@id/txt_place_name"
-         />
+        />
     <TextView
         android:id="@+id/txt_place_name"
         android:layout_width="wrap_content"
@@ -59,8 +50,8 @@
         android:textSize="26sp"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/img_uncheck"
-        app:layout_constraintBottom_toTopOf="@id/space_regist_2"
-        app:layout_constraintTop_toBottomOf="@id/space_regist_1" />
+        app:layout_constraintBottom_toTopOf="@id/edtTxt_memo"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txt_address"
@@ -75,21 +66,13 @@
         app:layout_constraintStart_toStartOf="@id/txt_place_name"
         app:layout_constraintTop_toBottomOf="@+id/txt_place_name" />
 
-    <Space
-        android:id="@+id/space_regist_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/edtTxt_memo"
-        app:layout_constraintTop_toBottomOf="@+id/txt_place_name"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteX="191dp" />
+
 
     <ImageView
         android:id="@+id/img_uncheck2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_img_uncheck"
-        app:layout_constraintBottom_toBottomOf="@id/edtTxt_memo"
         app:layout_constraintEnd_toEndOf="@id/img_uncheck"
         app:layout_constraintStart_toStartOf="@id/img_uncheck"
         app:layout_constraintTop_toTopOf="@id/edtTxt_memo"
@@ -101,7 +84,7 @@
         class="com.example.hotspot.views.CustomEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="11dp"
+        android:layout_marginStart="20dp"
         android:layout_marginEnd="79dp"
         android:background="@android:color/transparent"
         android:clickable="false"
@@ -109,25 +92,19 @@
         android:gravity="top"
         android:hint="메모 입력 (0/50)"
         android:imeOptions="actionNext"
-        android:padding="10dp"
+        android:lineSpacingExtra="7dp"
+        android:maxLength="50"
         android:textColor="#FFFFFF"
         android:textColorHint="#3a3d45"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/space_regist_3"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/txt_visited"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/img_uncheck2"
-        app:layout_constraintTop_toBottomOf="@+id/space_regist_2" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_address" />
 
 
 
-    <Space
-        android:id="@+id/space_regist_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/layout_visited"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edtTxt_memo" />
+
 
     <ImageView
         android:id="@+id/img_uncheck3"
@@ -148,19 +125,19 @@
         android:text="방문함 "
         android:textColor="@color/colorMyGrayDark"
         android:textSize="26sp"
-        app:layout_constraintBottom_toTopOf="@id/layout_visited"
+        app:layout_constraintBottom_toTopOf="@id/stickerBt"
         app:layout_constraintStart_toEndOf="@id/img_uncheck3"
-        app:layout_constraintTop_toBottomOf="@id/space_regist_3" />
+        app:layout_constraintTop_toBottomOf="@id/edtTxt_memo" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_visited"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/space_regist_4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_visited">
+        app:layout_constraintTop_toBottomOf="@id/txt_visited"
+        app:layout_constraintBottom_toTopOf="@id/stickerBt">
 
         <ImageView
             android:id="@+id/ratingbar1"
@@ -250,7 +227,7 @@
 
     <Button
         android:id="@+id/btn_regist"
-        android:layout_width="317dp"
+        android:layout_width="235dp"
         android:layout_height="56dp"
         android:background="@drawable/category_add_btn"
         android:text="등록하기 "

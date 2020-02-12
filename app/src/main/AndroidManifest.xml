@@ -41,6 +41,9 @@
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="qyyawc4isk" />
+        <meta-data
+            android:name="CLOUDINARY_URL"
+            android:value="cloudinary:hotspot-team"/>
     </application>
 
 </manifest>

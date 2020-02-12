@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.view.ActionMode
 import android.view.MotionEvent
 import android.widget.Toast
+import com.google.gson.annotations.SerializedName
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.naver.maps.geometry.LatLng
@@ -21,13 +22,14 @@ import com.naver.maps.map.NaverMapOptions
 import com.naver.maps.map.OnMapReadyCallback
 import gun0912.tedbottompicker.TedBottomPicker
 import kotlinx.android.synthetic.main.activity_sticker_regist.*
+import java.io.Serializable
 
 class StickerRegistActivity : AppCompatActivity() {
-    private lateinit var photoUriList : ArrayList<Uri>
+    private lateinit var photoUriList : ArrayList<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sticker_regist)
-
+        photoUriList = arrayListOf()
         //네이버 맵 옵션 설정
         var naverMapOptions = NaverMapOptions()
         naverMapOptions.allGesturesEnabled(false)
@@ -47,10 +49,28 @@ class StickerRegistActivity : AppCompatActivity() {
                 fm.beginTransaction().add(R.id.mapframe, it).commit()
             }
 
+        setViewTouchEvent()
 
         setGridImgListener()
 
 
+
+    }
+    private fun setViewTouchEvent(){
+        txt_sticker_regist.setOnClickListener{
+            if(photoUriList.size == 0) {
+                setResult(2)
+                finish()
+            }
+            else{
+                var stickerData = StickerData()
+                stickerData.photoUriList = photoUriList
+                intent = Intent()
+                intent.putExtra("StickerData", stickerData)
+                setResult(1,intent)
+                finish()
+            }
+        }
     }
     //Grid panel의 이미지뷰들의 리스너 정의
     private fun setGridImgListener(){
@@ -74,12 +94,14 @@ class StickerRegistActivity : AppCompatActivity() {
 
                             // it 에 선택한 사진 uri 담김
                             if(it.size == 0){//사진을 선택 안했다면
-
                             }
                             else{
                                 /*
                                 var bitmap = MediaStore.Images.Media.getBitmap(contentResolver,it.get(0))
                                 imgView.setImageBitmap(bitmap)*/
+                                for(i in 0..it.size-1){
+                                    photoUriList.add(it.get(i).toString())
+                                }
                                 dragView.performClick()
                             }
                         }
