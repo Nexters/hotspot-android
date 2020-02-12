@@ -2,156 +2,477 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_esc3"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:text="E"
-        android:background="@color/colorWhite"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txt_spot" />
 
-    <TextView
-        android:id="@+id/txt_spot"
+
+    <ImageView
+        android:id="@+id/btn_esc3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        android:text="+Spots"
-        android:shadowColor="#2e000000"
-        android:shadowDy="9"
-        android:shadowRadius="20"
-        android:textSize="35sp"
-        android:textColor="#774bff"
-        android:gravity="center_horizontal"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_img_back" />
+
+    <Space
+        android:id="@+id/space_regist_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/txt_place_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/edtTxt_memo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="46dp"
-        android:backgroundTint="#FFFFFF"
-        android:hint="한줄 메모"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textColorHint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_address" />
-
-    <TextView
-        android:id="@+id/reg_category_txt"
+    <ImageView
+        android:id="@+id/img_uncheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="카페"
-        android:textSize="26sp"
-        android:textColor="#FFFFFF"
-        android:layout_marginLeft="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/txt_place_name"/>
+        android:layout_marginStart="17dp"
+        app:layout_constraintBottom_toBottomOf="@id/txt_place_name"
+        app:layout_constraintEnd_toStartOf="@id/txt_place_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txt_place_name"
+        app:srcCompat="@drawable/ic_img_uncheck" />
 
+    <ImageView
+        android:id="@+id/reg_category_txt"
+        android:layout_width="60dp"
+        android:layout_height="26dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/txt_place_name"
+        app:layout_constraintLeft_toLeftOf="@id/txt_place_name"
+         />
     <TextView
         android:id="@+id/txt_place_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
         android:layout_marginLeft="20dp"
-        android:text="장소 이름"
+        android:text="장소 추가"
+        android:textColor="#3a3d45"
         android:textSize="26sp"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@id/reg_category_txt"
-        app:layout_constraintTop_toBottomOf="@id/txt_spot" />
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/img_uncheck"
+        app:layout_constraintBottom_toTopOf="@id/space_regist_2"
+        app:layout_constraintTop_toBottomOf="@id/space_regist_1" />
 
     <TextView
         android:id="@+id/txt_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textSize="15sp"
         android:text="주소 "
-        android:textColor="#FFFFFF"
+        android:textColor="#3a3d45"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/txt_place_name"
+        app:layout_constraintTop_toBottomOf="@+id/txt_place_name" />
+
+    <Space
+        android:id="@+id/space_regist_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/edtTxt_memo"
         app:layout_constraintTop_toBottomOf="@+id/txt_place_name"
-        app:layout_constraintLeft_toLeftOf="@id/txt_place_name"/>
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteX="191dp" />
+
+    <ImageView
+        android:id="@+id/img_uncheck2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_img_uncheck"
+        app:layout_constraintBottom_toBottomOf="@id/edtTxt_memo"
+        app:layout_constraintEnd_toEndOf="@id/img_uncheck"
+        app:layout_constraintStart_toStartOf="@id/img_uncheck"
+        app:layout_constraintTop_toTopOf="@id/edtTxt_memo"
+        app:srcCompat="@drawable/ic_img_uncheck" />
+
+
+    <view
+        android:id="@+id/edtTxt_memo"
+        class="com.example.hotspot.views.CustomEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginEnd="79dp"
+        android:background="@android:color/transparent"
+        android:clickable="false"
+        android:focusable="false"
+        android:gravity="top"
+        android:hint="메모 입력 (0/50)"
+        android:imeOptions="actionNext"
+        android:padding="10dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#3a3d45"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/space_regist_3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/img_uncheck2"
+        app:layout_constraintTop_toBottomOf="@+id/space_regist_2" />
+
+
+
+    <Space
+        android:id="@+id/space_regist_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/layout_visited"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edtTxt_memo" />
+
+    <ImageView
+        android:id="@+id/img_uncheck3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="17dp"
+        app:layout_constraintBottom_toBottomOf="@id/txt_visited"
+        app:layout_constraintEnd_toStartOf="@id/txt_visited"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txt_visited"
+        app:srcCompat="@drawable/ic_img_uncheck" />
+
+    <TextView
+        android:id="@+id/txt_visited"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="방문함 "
+        android:textColor="@color/colorMyGrayDark"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toTopOf="@id/layout_visited"
+        app:layout_constraintStart_toEndOf="@id/img_uncheck3"
+        app:layout_constraintTop_toBottomOf="@id/space_regist_3" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_visited"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/space_regist_4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edtTxt_memo">
+        app:layout_constraintTop_toBottomOf="@id/txt_visited">
 
-        <TextView
-            android:id="@+id/txt_visited"
+        <ImageView
+            android:id="@+id/ratingbar1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="방문함 "
-            android:textSize="26sp"
-            android:textColor="@color/colorMyGrayDark"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintBottom_toBottomOf="@id/ratingbar2"
+            app:layout_constraintEnd_toStartOf="@id/ratingbar2"
+            app:layout_constraintTop_toTopOf="@id/ratingbar2"
+            app:srcCompat="@drawable/ic_img_start_gray" />
+
+        <ImageView
+            android:id="@+id/ratingbar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_img_start_gray" />
+
+        <ImageView
+            android:id="@+id/ratingbar3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            app:layout_constraintBottom_toBottomOf="@id/ratingbar2"
+            app:layout_constraintStart_toEndOf="@id/ratingbar2"
+            app:layout_constraintTop_toTopOf="@id/ratingbar2"
+            app:srcCompat="@drawable/ic_img_start_gray" />
+
 
         <TextView
             android:id="@+id/txt_rating_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="나쁘지 않은 곳"
+            android:text="평점을 남겨주세요!"
             android:textColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
-
-        <RatingBar
-            android:id="@+id/ratingBar"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginTop="10dp"
-            android:isIndicator="false"
-            android:max="3"
-            android:numStars="3"
-            android:stepSize="0.5"
+            app:layout_constraintEnd_toEndOf="@id/ratingbar3"
+            app:layout_constraintStart_toStartOf="@id/ratingbar1"
+            app:layout_constraintTop_toBottomOf="@+id/ratingbar2" />
 
 
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_visited" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <Space
+        android:id="@+id/space_regist_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/stickerBt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_visited" />
 
-    <Button
+    <ImageView
+        android:id="@+id/img_uncheck4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="17dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/stickerBt"
+        app:layout_constraintEnd_toStartOf="@id/stickerBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/stickerBt"
+        app:srcCompat="@drawable/ic_img_uncheck" />
+
+    <TextView
         android:id="@+id/stickerBt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-
-
+        android:visibility="invisible"
+        android:layout_marginStart="20dp"
         android:text="스티커 추가"
+        android:textColor="#3a3d45"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/space_regist_5"
+        app:layout_constraintStart_toEndOf="@id/img_uncheck4"
+        app:layout_constraintTop_toBottomOf="@+id/space_regist_4" />
+    <Space
+        android:id="@+id/space_regist_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/btn_regist"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_visited" />
+        app:layout_constraintTop_toBottomOf="@id/stickerBt" />
 
     <Button
         android:id="@+id/btn_regist"
         android:layout_width="317dp"
         android:layout_height="56dp"
+        android:background="@drawable/category_add_btn"
         android:text="등록하기 "
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/radius_btn"
+        android:textColor="#101010"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintCircleRadius="35.5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/space_regist_5" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/regist_category_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC000000"
+        android:visibility="gone"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            >
+
+            <TextView
+                android:id="@+id/txt_plus_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="19dp"
+                android:text="+ CATEGORY"
+                android:textSize="25dp"
+                android:textColor="#101010"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/img_icon_food"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="19dp"
+                app:layout_constraintEnd_toStartOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toTopOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_icon_food" />
+            <ImageView
+                android:id="@+id/img_food_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="19dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toTopOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_category_click" />
+
+            <TextView
+                android:id="@+id/txt_category_food"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="맛집"
+                android:textSize="12dp"
+                android:textColor="#101010"
+                app:layout_constraintStart_toStartOf="@id/img_icon_food"
+                app:layout_constraintEnd_toEndOf="@id/img_icon_food"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_food"/>
+
+            <ImageView
+                android:id="@+id/img_icon_cafe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                app:layout_constraintEnd_toEndOf="@id/txt_plus_category"
+                app:layout_constraintStart_toStartOf="@id/txt_plus_category"
+                app:layout_constraintTop_toBottomOf="@id/txt_plus_category"
+                app:srcCompat="@drawable/ic_img_icon_cafe" />
+
+            <ImageView
+                android:id="@+id/img_cafe_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/txt_plus_category"
+                app:layout_constraintStart_toStartOf="@id/txt_plus_category"
+                app:layout_constraintTop_toBottomOf="@id/txt_plus_category"
+                app:srcCompat="@drawable/ic_img_category_click" />
+
+            <TextView
+                android:id="@+id/txt_category_cafe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="#101010"
+                android:text="카페"
+                app:layout_constraintStart_toStartOf="@id/img_icon_cafe"
+                app:layout_constraintEnd_toEndOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_cafe" />
+
+
+            <ImageView
+                android:id="@+id/img_icon_drink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="19dp"
+                app:layout_constraintStart_toEndOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toTopOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_icon_drink" />
+            <ImageView
+                android:id="@+id/img_drink_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="19dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toTopOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_category_click" />
+
+            <TextView
+                android:id="@+id/txt_category_drink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="#101010"
+                android:text="술집"
+                app:layout_constraintStart_toStartOf="@id/img_icon_drink"
+                app:layout_constraintEnd_toEndOf="@id/img_icon_drink"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_drink"/>
+
+            <ImageView
+                android:id="@+id/img_icon_culture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                app:layout_constraintEnd_toEndOf="@id/img_icon_food"
+                app:layout_constraintStart_toStartOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_icon_culture" />
+
+            <ImageView
+                android:id="@+id/img_culture_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/img_icon_food"
+                app:layout_constraintStart_toStartOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_category_click" />
+
+            <TextView
+                android:id="@+id/txt_category_culture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="#101010"
+                android:text="문화"
+                app:layout_constraintStart_toStartOf="@id/img_icon_culture"
+                app:layout_constraintEnd_toEndOf="@id/img_icon_culture"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_culture"/>
+
+            <ImageView
+                android:id="@+id/img_icon_etc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                app:layout_constraintEnd_toStartOf="@id/img_icon_drink"
+                app:layout_constraintStart_toEndOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_icon_etc" />
+
+            <ImageView
+                android:id="@+id/img_etc_click"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/img_icon_drink"
+                app:layout_constraintStart_toEndOf="@id/img_icon_cafe"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_cafe"
+                app:srcCompat="@drawable/ic_img_category_click" />
+
+            <TextView
+                android:id="@+id/txt_category_etc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="#101010"
+                android:text="기타"
+                app:layout_constraintStart_toStartOf="@id/img_icon_etc"
+                app:layout_constraintEnd_toEndOf="@id/img_icon_etc"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_etc"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_category_add"
+                android:layout_width="230dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/category_add_btn_black"
+                android:text="등록하기"
+                android:textColor="#d8d8d6"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_icon_etc" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

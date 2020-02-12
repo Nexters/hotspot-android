@@ -55,4 +55,9 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+    override fun onBackPressed() {
+        //일단 벡 버튼 막아놓음
+        // 정말 돌아가시겠슴니까? 팝업창 띄워야함
+    }
+
 }

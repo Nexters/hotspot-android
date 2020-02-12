@@ -7,6 +7,7 @@ import retrofit2.Call
 import retrofit2.http.*
 import java.util.*
 
+val baseUrl = "https://api.dev.hotspot-team.com"
 interface APIService {
     @POST("/auth/login/kakao")
     fun postToken(@Body token: Token) : Call<AccessToken>
@@ -16,7 +17,7 @@ interface APIService {
 
     @POST("/place/my_places")
     fun postPlace(@Header("Authorization") auth : String,
-                  @Body spotObject : SpotListVO) : Call<ResponseBody>
+                  @Body spotObject : SpotListVO) : Call<SpotListVO>
 
     @GET("/place/my_places")
     fun getMyPlaces(@Header("Authorization") auth : String) : Call<GetSpotList>

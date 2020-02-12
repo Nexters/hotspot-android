@@ -9,11 +9,13 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -26,6 +28,7 @@ import com.naver.maps.map.overlay.Overlay
 import com.naver.maps.map.overlay.OverlayImage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.map_view.*
+import kotlinx.android.synthetic.main.register_view.*
 
 
 class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEventListener*/
@@ -37,6 +40,7 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
     private lateinit var btn_insta : Button
     private lateinit var instaTag : String
     private lateinit var layout_transparency : ConstraintLayout
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,6 +49,7 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
 
         spotinfoLayout = activity!!.findViewById(R.id.spotinfolayout)
         layout_transparency = activity!!.findViewById(R.id.layout_trans_main)
+
         val bundle = arguments
         placeList = bundle!!.getSerializable("PlaceList") as List<MyPlace>
 
@@ -59,7 +64,6 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
 
         return view
     }
-
 
     override fun onMapReady(p0: NaverMap) {
         p0.mapType = NaverMap.MapType.Navi

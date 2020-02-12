@@ -3,10 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="colorMyGrayDark">#2b2b2b</color>
+    <color name="colorMyGrayDark">#3a3d45</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="transparency">#80000000</color>"
     <color name="colorMain">#774bff</color>
     <color name="colorNeon">#c3f04e</color>
+    <color name="colorEditTextGray">#3a3d45</color>
 </resources>

@@ -29,7 +29,6 @@ import kotlin.coroutines.coroutineContext
 
 class FragmentSearch : Fragment() {
     lateinit var searchList: List<Place>
-    private val URL : String = "http://hotspot-dev-654767138.ap-northeast-2.elb.amazonaws.com"
     private var mainScope = MainScope()
 
     override fun onCreateView(
@@ -53,7 +52,7 @@ class FragmentSearch : Fragment() {
 
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(URL)
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
