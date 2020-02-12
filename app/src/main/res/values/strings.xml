@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">HotSpot</string>
-    <string name="app_key">9971e3398828a036b300a5a4730d9240</string>
     <string name="title_activity_album">AlbumActivity</string>
 </resources>

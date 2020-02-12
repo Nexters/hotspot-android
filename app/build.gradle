@@ -6,6 +6,10 @@ apply plugin: 'kotlin-android-extensions'
 
 //apply plugin: 'com.google.gms.google-services'
 
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -16,6 +20,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+        each { type ->
+            type.buildConfigField 'String', "ApiKey", apikeyProperties['APP_KEY']
+            type.resValue 'string', "api_key", apikeyProperties['APP_KEY']
+        }
     }
     buildTypes {
         release {
