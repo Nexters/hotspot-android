@@ -11,8 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.register_view.*
 import okhttp3.ResponseBody
@@ -21,6 +25,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+
 
 class FragmentRegister : BaseFragment() {
     companion object{
@@ -48,27 +54,7 @@ class FragmentRegister : BaseFragment() {
     }
 
 
-    @Subscribe
-    fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
-        onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())
 
-    }
-    // resultCode 2 : 사진 없음 , resultCode 3 : 스티커 없음 (data null), resultCode : 1 스티커 잇음
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when(resultCode){
-            1 -> {
-                stickerData = data!!.getSerializableExtra("StickerData") as StickerData
-            }
-            2 -> {
-
-            }
-            3 -> {
-
-            }
-        }
-
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -218,6 +204,59 @@ class FragmentRegister : BaseFragment() {
         }
     }
 
+    @Subscribe
+    fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
+        onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())
+
+    }
+    // resultCode 2 : 스티커 없음 , resultCode : 1 스티커 잇음  (사진은 선택하면 바로 업로드)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(resultCode){
+            1 -> {
+                //사진 업로드 테스트 코드
+                stickerData = data!!.getSerializableExtra("StickerData") as StickerData
+
+                //cloudinary init config
+                val config = HashMap<String,String>()
+                config.put("cloud_name", "hotspot-team")
+                MediaManager.init(activity!!, config)
+
+                val requestId = MediaManager.get().upload(stickerData.photoUriList!!.get(0).toUri())
+                    .unsigned("hotspot-dev")
+                    .callback(object : UploadCallback{
+                        override fun onError(requestId: String?, error: ErrorInfo?) {
+                            d("Cloudinary", "error : ${error.toString()}")
+
+                        }
+
+                        override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                        }
+
+                        override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                        }
+
+                        override fun onStart(requestId: String?) {
+                        }
+
+                        override fun onSuccess(
+                            requestId: String?,
+                            resultData: MutableMap<Any?, Any?>?
+                        ) {
+                            d("Cloudinary", "resultData : ${resultData.toString()}")
+
+                        }
+                    }).dispatch()
+            }
+            2 -> {
+
+            }
+            3 -> {
+
+            }
+        }
+
+    }
 
 
     private fun setLayout(){

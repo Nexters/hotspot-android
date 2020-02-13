@@ -10,6 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.mylist_view.*
 import java.io.Serializable
+import androidx.recyclerview.widget.RecyclerView
+import androidx.annotation.NonNull
+import androidx.recyclerview.widget.ItemTouchHelper
+
+
 
 class FragmentMyPlace : Fragment() {
 
@@ -19,18 +24,39 @@ class FragmentMyPlace : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.mylist_view,container,false)
-
         return v
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val placeList = arguments!!.getSerializable("PlaceList") as List<MyPlace>
+        val placeList = arguments!!.getSerializable("PlaceList") as MutableList<MyPlace>
+
 
         myplace_recyclerview.setHasFixedSize(true)
         myplace_recyclerview.layoutManager = LinearLayoutManager(context)
         myplace_recyclerview.adapter = MyPlaceRecyclerAdapter(placeList)
+        val simpleItemTouchCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                placeList.removeAt(position)
+                myplace_recyclerview.adapter!!.notifyItemRemoved(position)
+            }
+        }
+
+
+        var itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(myplace_recyclerview)
 
         myplace_recyclerview.addOnItemTouchListener(
             FragmentSearch.RecyclerTouchListener(

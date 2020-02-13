@@ -8,8 +8,12 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.*
+import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.categoty_items.*
@@ -26,13 +30,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
 
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     private lateinit var mMyPlaceList : List<MyPlace>
     private lateinit var tmpMyPlaceList : List<MyPlace>
     private var myPlaceSize: Int = 0
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
+    private lateinit var locationSource: FusedLocationSource
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    }
 //    val mainScope = MainScope()
 
     val categoryList = listOf("ALL", "카페", "맛집", "술집", "문화", "기타") // Category List
@@ -42,6 +50,8 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        locationSource =
+            FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
 
         setRetrofitInit()
         setApiServiceInit()
@@ -57,7 +67,7 @@ class MainActivity : AppCompatActivity(){
 
             d("TAG 전체", "$mMyPlaceList")
             myPlaceSize = mMyPlaceList.size
-            hpCount.text = mMyPlaceList.toString()
+            hpCount.text = myPlaceSize.toString()
             if(fragmentState)
                 getMap(mMyPlaceList)
             else
@@ -82,7 +92,7 @@ class MainActivity : AppCompatActivity(){
             }
             d("TAG 맛집", "$myPlace")
             myPlaceSize = myPlace.size
-            hpCount.text = myPlace.toString()
+            hpCount.text = myPlaceSize.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -107,7 +117,7 @@ class MainActivity : AppCompatActivity(){
             }
             d("TAG 카페", "$myPlace")
             myPlaceSize = myPlace.size
-            hpCount.text = myPlace.toString()
+            hpCount.text = myPlaceSize.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -132,7 +142,7 @@ class MainActivity : AppCompatActivity(){
             }
             d("TAG 술집", "$myPlace")
             myPlaceSize = myPlace.size
-            hpCount.text = myPlace.toString()
+            hpCount.text = myPlaceSize.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -157,7 +167,7 @@ class MainActivity : AppCompatActivity(){
             }
             d("TAG 문화", "$myPlace")
             myPlaceSize = myPlace.size
-            hpCount.text = myPlace.toString()
+            hpCount.text = myPlaceSize.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -182,7 +192,7 @@ class MainActivity : AppCompatActivity(){
             }
             d("TAG 기타", "$myPlace")
             myPlaceSize = myPlace.size
-            hpCount.text = myPlace.toString()
+            hpCount.text = myPlaceSize.toString()
             if(fragmentState)
                 getMap(myPlace)
             else
@@ -320,6 +330,8 @@ class MainActivity : AppCompatActivity(){
         val mapFragment = FragmentMap()
         var bundle = Bundle()
 
+        MapFragment.newInstance()
+
         d("TAG getMap", "myPlaceList is not null")
 
         bundle.putSerializable("PlaceList",myPlaceList as Serializable)
@@ -329,6 +341,10 @@ class MainActivity : AppCompatActivity(){
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_map, mapFragment)//mapFragment로 교체
             .commitAllowingStateLoss()//  onSaveInstanceState 이후에 이런 액션(본인의 경우 다른 플래그먼트 호출)을 할수 없어 추가
+
+
+
+
     }
 
     fun setRetrofitInit(){
@@ -346,4 +362,7 @@ class MainActivity : AppCompatActivity(){
     fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
     }
+
+
+
 }

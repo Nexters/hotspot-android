@@ -49,7 +49,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    //
+
+    //naver 사용자 위치 추적 기능 (구글꺼 제공)
+    implementation("com.google.android.gms:play-services-location:16.0.0")
+
+    //사진 picker
     implementation 'gun0912.ted:tedbottompicker:1.2.6'
     implementation 'gun0912.ted:tedpermission:2.2.2'
 

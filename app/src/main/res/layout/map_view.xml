@@ -10,7 +10,9 @@
     <com.naver.maps.map.MapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+
+        >
 
 
     </com.naver.maps.map.MapView>
@@ -64,16 +66,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/space_main_4" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <ImageView
         android:id="@+id/map_btn_add"
-        android:layout_width="246sp"
-        android:layout_height="60sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
-        android:background="@drawable/add_btn"
-        android:gravity="center"
-        android:text="어디를 저장해볼까요?"
-        android:textColor="#66101010"
-        android:textSize="19sp"
+        android:src="@drawable/img_main_btn_add"
         app:layout_constraintBottom_toTopOf="@id/space_main_6"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -87,5 +85,25 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/map_btn_add"/>
+
+    <ImageView
+        android:id="@+id/img_curr_pos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_img_curr_position" />
+
+    <ImageView
+        android:id="@+id/img_main_isvisited"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_main_all"
+        app:layout_constraintStart_toStartOf="@id/img_curr_pos"
+        app:layout_constraintEnd_toEndOf="@id/img_curr_pos"
+        app:layout_constraintTop_toBottomOf="@id/img_curr_pos"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
