@@ -134,19 +134,19 @@ class FragmentRegister : BaseFragment() {
                 if(choicedCategory != ""){
                     when(choicedCategory){
                         "카페" -> {
-                            reg_category_txt.setImageResource(R.drawable.img_cafe)
+                            reg_category_txt.setImageResource(R.drawable.img_category_cafe)
                         }
                         "맛집" -> {
-                            reg_category_txt.setImageResource(R.drawable.ic_img_category_food)
+                            reg_category_txt.setImageResource(R.drawable.img_category_food)
                         }
                         "문화" -> {
-                            reg_category_txt.setImageResource(R.drawable.ic_img_category_culture)
+                            reg_category_txt.setImageResource(R.drawable.img_category_culture)
                         }
                         "술집" -> {
-                            reg_category_txt.setImageResource(R.drawable.ic_img_category_drink)
+                            reg_category_txt.setImageResource(R.drawable.img_category_drink)
                         }
                         "기타" -> {
-                            reg_category_txt.setImageResource(R.drawable.ic_img_category_etc)
+                            reg_category_txt.setImageResource(R.drawable.img_category_etc)
                         }
 
                     }
@@ -284,19 +284,19 @@ class FragmentRegister : BaseFragment() {
 
             when(place.categoryName){
                 "카페" -> {
-                    reg_category_txt.setImageResource(R.drawable.img_cafe)
+                    reg_category_txt.setImageResource(R.drawable.img_category_cafe)
                 }
                 "맛집" -> {
-                    reg_category_txt.setImageResource(R.drawable.ic_img_category_food)
+                    reg_category_txt.setImageResource(R.drawable.img_category_food)
                 }
                 "문화" -> {
-                    reg_category_txt.setImageResource(R.drawable.ic_img_category_culture)
+                    reg_category_txt.setImageResource(R.drawable.img_category_culture)
                 }
                 "술집" -> {
-                    reg_category_txt.setImageResource(R.drawable.ic_img_category_drink)
+                    reg_category_txt.setImageResource(R.drawable.img_category_drink)
                 }
                 "기타" -> {
-                    reg_category_txt.setImageResource(R.drawable.ic_img_category_etc)
+                    reg_category_txt.setImageResource(R.drawable.img_category_etc)
                 }
 
             }

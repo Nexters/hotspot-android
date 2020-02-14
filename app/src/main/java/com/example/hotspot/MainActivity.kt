@@ -202,7 +202,7 @@ class MainActivity : AppCompatActivity() {
         //MyList Btn
         listBt.setOnClickListener {
             //fragment operation
-            listBt.visibility = View.GONE
+            listBt.visibility = View.INVISIBLE
             mapBt.visibility = View.VISIBLE
 
             category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity() {
 
         //remove MyPlace Fragment
         mapBt.setOnClickListener {
-            mapBt.visibility = View.GONE
+            mapBt.visibility = View.INVISIBLE
             listBt.visibility = View.VISIBLE
 
             category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
@@ -243,13 +243,13 @@ class MainActivity : AppCompatActivity() {
 //            )
 //            category_recyclerview.adapter = CategoryRecyclerAdapter(categoryList, mMyPlaceList)
 
-
+        getMyPlaceApi()
 
     }
 
     override fun onResume() {
         super.onResume()
-        getMyPlaceApi()
+        d("Resune","Resume start!")
     }
 
     override fun onDestroy() {

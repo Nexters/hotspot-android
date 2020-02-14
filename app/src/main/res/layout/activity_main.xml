@@ -44,34 +44,43 @@
             app:layout_constraintBottom_toBottomOf="@id/hpCount"
             app:layout_constraintLeft_toRightOf="@+id/hpCount"/>
 
-        <Button
+        <ImageView
             android:id="@+id/findBt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="4dp"
-            android:text="검색"
+            android:layout_marginEnd="11dp"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.078"
+            app:layout_constraintDimensionRatio="1:1"
+            app:srcCompat="@drawable/ic_search"
             app:layout_constraintEnd_toStartOf="@+id/listBt"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageView
             android:id="@+id/listBt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:text="list"
+            app:srcCompat="@drawable/ic_img_list"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.078"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageView
             android:id="@+id/mapBt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:srcCompat="@drawable/ic_map"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:text="map"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.078"
+            app:layout_constraintDimensionRatio="1:1"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -187,7 +196,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/transparency"
-        app:layout_constraintTop_toBottomOf="@+id/categoryframe"
+        app:layout_constraintTop_toBottomOf="@id/categoryframe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -206,25 +215,158 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/spotinfolayout"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="24dp"
-        android:background="@color/colorMyGrayDark"
+        android:background="@drawable/myplace_list_btn1"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintDimensionRatio="3.32:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"
         >
 
-        <Button
-            android:id="@+id/btn_insta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="스팟 정보 창"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/spotinfolayout_in1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txt_spotinfo_placename"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="18sp"
+                android:singleLine="true"
+                app:layout_constraintStart_toStartOf="@id/img__spotinfo_category"
+                app:layout_constraintTop_toBottomOf="@id/img__spotinfo_category"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8" />
+
+            <TextView
+                android:id="@+id/txt_spotinfo_address"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:textSize="12sp"
+                android:singleLine="true"
+                app:layout_constraintDimensionRatio="6:1"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8"
+                app:layout_constraintStart_toStartOf="@id/img__spotinfo_category"
+                app:layout_constraintTop_toBottomOf="@id/txt_spotinfo_placename"
+                />
+
+            <ImageView
+                android:id="@+id/img__spotinfo_category"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.22"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_etc_black" />
+
+            <ImageView
+                android:id="@+id/img_spotinfo_rating1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="5dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/img__spotinfo_category"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.22"
+                app:layout_constraintStart_toEndOf="@id/img__spotinfo_category"
+                app:layout_constraintTop_toTopOf="@id/img__spotinfo_category"
+                app:srcCompat="@drawable/ic_rating_black" />
+            <ImageView
+                android:id="@+id/img_spotinfo_rating2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.22"
+                app:layout_constraintDimensionRatio="1:1"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ic_rating_black"
+                app:layout_constraintTop_toTopOf="@id/img_spotinfo_rating1"
+                app:layout_constraintBottom_toBottomOf="@id/img_spotinfo_rating1"
+                app:layout_constraintStart_toEndOf="@id/img_spotinfo_rating1"/>
+            <ImageView
+                android:id="@+id/img_spotinfo_rating3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.22"
+                app:layout_constraintDimensionRatio="1:1"
+                app:srcCompat="@drawable/ic_rating_black"
+                app:layout_constraintTop_toTopOf="@id/img_spotinfo_rating1"
+                app:layout_constraintBottom_toBottomOf="@id/img_spotinfo_rating1"
+                app:layout_constraintStart_toEndOf="@id/img_spotinfo_rating2"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/spotinfolayout_in2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <ImageView
+                android:id="@+id/btn_search_road"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="11dp"
+                app:layout_constraintBottom_toBottomOf="@id/btn_share"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.3"
+                app:layout_constraintStart_toEndOf="@id/btn_share"
+                app:layout_constraintTop_toTopOf="@id/btn_share"
+                app:srcCompat="@drawable/ic_img_search_road" />
+
+            <ImageView
+                android:id="@+id/btn_share"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent="0.3"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:srcCompat="@drawable/ic_img_share"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                 />
+
+            <ImageView
+                android:id="@+id/btn_insta"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="11dp"
+                app:layout_constraintBottom_toBottomOf="@id/btn_share"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@id/btn_share"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.3"
+                app:layout_constraintTop_toTopOf="@id/btn_share"
+                app:srcCompat="@drawable/ic_img_insta" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

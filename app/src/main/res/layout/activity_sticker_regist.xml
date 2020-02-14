@@ -9,10 +9,10 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:umanoDragView = "@id/dragView"
-    app:umanoPanelHeight="50sp"
-    app:umanoParallaxOffset="150dp"
+    app:umanoPanelHeight="54sp"
+    app:umanoParallaxOffset="70sp"
     app:umanoScrollableView="@id/gridLayout"
-    app:umanoShadowHeight="10dp"
+    app:umanoShadowHeight="10sp"
     tools:context=".StickerRegistActivity">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -57,90 +57,198 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
+
         android:focusable="false"
         android:orientation="vertical"
+        android:weightSum="0.4"
         >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#1c2226"
+            android:background="#101010"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/sliding_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#1c2226"
-                android:paddingLeft="16sp"
-                android:text="Action"
+                android:background="#101010"
+                android:paddingLeft="25dp"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:text="추가정보"
                 android:textColor="#f1f4ff"
-                android:textSize="24sp" />
+                android:textSize="18dp" />
 
         </LinearLayout>
 
         <!-- 스크롤 해서 보여줄 부분은 listview 또는 custom listview 또는 recyclerview를 사용 -->
-        <GridLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gridLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_gravity="center"
-            android:background="#1c2226"
+            android:background="#101010"
+            android:paddingBottom="15dp"
             android:columnCount="3"
             android:rowCount="3"
             android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/gallery_img"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/gallery"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
-            <ImageView
-                android:id="@+id/best_menu_img"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/best_menu"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
-            <ImageView
-                android:id="@+id/open_time_img"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/open_time"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
-            <ImageView
-                android:id="@+id/img4"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
-            <ImageView
-                android:id="@+id/img5"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
-            <ImageView
-                android:id="@+id/img6"
-                android:layout_height = "50dp"
-                android:layout_width = "110dp"
-                android:src = "@drawable/star_marker"
-                android:layout_margin="5dp"
-                >
-            </ImageView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/best_menu_img"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/img_sticker_list_best"
+                    app:layout_constraintBottom_toBottomOf="@id/open_time_img"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toStartOf="@id/open_time_img"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintTop_toTopOf="@id/open_time_img"></ImageView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="베스트메뉴"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp"
+                    app:layout_constraintStart_toStartOf="@id/best_menu_img"
+                    app:layout_constraintEnd_toEndOf="@id/best_menu_img"
+                    app:layout_constraintTop_toBottomOf="@id/best_menu_img"/>
+
+                <ImageView
+                    android:id="@+id/open_time_img"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/img_sticker_list_time"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"></ImageView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="영업시간"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/open_time_img"
+                    app:layout_constraintStart_toStartOf="@id/open_time_img"
+                    app:layout_constraintEnd_toEndOf="@id/open_time_img"/>
+
+                <ImageView
+                    android:id="@+id/work_24_img"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/img_sticker_list_24"
+                    app:layout_constraintBottom_toBottomOf="@id/open_time_img"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintStart_toEndOf="@id/open_time_img"
+                    app:layout_constraintTop_toTopOf="@id/open_time_img"></ImageView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="24시"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp"
+                    app:layout_constraintStart_toStartOf="@id/work_24_img"
+                    app:layout_constraintEnd_toEndOf="@id/work_24_img"
+                    app:layout_constraintTop_toBottomOf="@id/work_24_img"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-        </GridLayout>
+                <ImageView
+                    android:id="@+id/consent_img"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/img_sticker_list_consent"
+                    app:layout_constraintBottom_toBottomOf="@id/park_img"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toStartOf="@id/park_img"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintTop_toTopOf="@id/park_img"></ImageView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="콘센트"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp"
+                    app:layout_constraintStart_toStartOf="@id/consent_img"
+                    app:layout_constraintEnd_toEndOf="@id/consent_img"
+                    app:layout_constraintTop_toBottomOf="@id/consent_img"/>
+
+                <ImageView
+                    android:id="@+id/park_img"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/img_sticker_list_park"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></ImageView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="주차장"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp"
+                    app:layout_constraintStart_toStartOf="@id/park_img"
+                    app:layout_constraintEnd_toEndOf="@id/park_img"
+                    app:layout_constraintTop_toBottomOf="@id/park_img"/>
+
+                <ImageView
+                    android:id="@+id/gallery_img"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/img_sticker_list_gallery"
+                    app:layout_constraintBottom_toBottomOf="@id/park_img"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintStart_toEndOf="@id/park_img"
+                    app:layout_constraintTop_toTopOf="@id/park_img"></ImageView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="사진추가"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14dp"
+                    app:layout_constraintStart_toStartOf="@id/gallery_img"
+                    app:layout_constraintEnd_toEndOf="@id/gallery_img"
+                    app:layout_constraintTop_toBottomOf="@id/gallery_img"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
