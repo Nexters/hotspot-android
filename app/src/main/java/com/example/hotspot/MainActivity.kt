@@ -1,10 +1,12 @@
 package com.example.hotspot
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
+import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.categoty_items.*
@@ -43,9 +46,9 @@ class MainActivity : AppCompatActivity() {
     }
 //    val mainScope = MainScope()
 
-    val categoryList = listOf("ALL", "카페", "맛집", "술집", "문화", "기타") // Category List
+    val categoryList = listOf("ALL", "맛집", "카페", "술집", "문화", "기타") // Category List
     var fragmentState : Boolean = true
-
+    private lateinit var stateCategory : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -57,170 +60,212 @@ class MainActivity : AppCompatActivity() {
         setApiServiceInit()
 //        getMyPlaceApi()
 
-        category_item1_txt.setOnClickListener {
-            category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
-            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+        category_item1_txt2.setOnClickListener {
+            stateCategory = "전체"
+            category_item1_txt2.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt2.setTextColor(Color.parseColor("#393D46"))
 
             d("TAG 전체", "$mMyPlaceList")
+            title_category_imgview.setImageResource(R.drawable.img_category_title_all)
             myPlaceSize = mMyPlaceList.size
             hpCount.text = myPlaceSize.toString()
             if(fragmentState)
                 getMap(mMyPlaceList)
             else
-                getMyPlace(mMyPlaceList)
+                getMyPlace(mMyPlaceList,stateCategory)
         }
 
-        category_item2_txt.setOnClickListener {
+        category_item2_txt2.setOnClickListener {
+            stateCategory = "맛집"
             var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
 
-            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item2_txt.setTextColor(Color.parseColor("#FFFFFF"))
-            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item1_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt2.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item3_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt2.setTextColor(Color.parseColor("#393D46"))
 
-            val iter = myPlace.iterator()
+            val iter = myPlace.listIterator()
             while(iter.hasNext()){
-                if(!categoryList[1].equals(iter.next())){
+                if(iter.next().place.categoryName.isNullOrEmpty()){
                     iter.remove()
+                }
+                else if(!categoryList[1].equals(iter.previous().place.categoryName)){
+                    iter.remove()
+                }
+                else{
+                    iter.next()
                 }
             }
             d("TAG 맛집", "$myPlace")
+            title_category_imgview.setImageResource(R.drawable.img_category_title_food)
             myPlaceSize = myPlace.size
             hpCount.text = myPlaceSize.toString()
             if(fragmentState)
-                getMap(myPlace)
             else
-                getMyPlace(myPlace)
+                getMyPlace(myPlace,stateCategory)
         }
 
-        category_item3_txt.setOnClickListener {
+        category_item3_txt2.setOnClickListener {
+            stateCategory = "카페"
             var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
 
-            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item3_txt.setTextColor(Color.parseColor("#FFFFFF"))
-            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item1_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt2.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item4_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt2.setTextColor(Color.parseColor("#393D46"))
 
-            val iter = myPlace.iterator()
+            val iter = myPlace.listIterator()
             while(iter.hasNext()){
-                if(!categoryList[2].equals(iter.next())){
+                if(iter.next().place.categoryName.isNullOrEmpty()){
                     iter.remove()
+                }
+                else if(!categoryList[2].equals(iter.previous().place.categoryName)){
+                    iter.remove()
+                }
+                else{
+                    iter.next()
                 }
             }
             d("TAG 카페", "$myPlace")
+            title_category_imgview.setImageResource(R.drawable.img_category_title_cafe)
             myPlaceSize = myPlace.size
             hpCount.text = myPlaceSize.toString()
             if(fragmentState)
-                getMap(myPlace)
             else
-                getMyPlace(myPlace)
+                getMyPlace(myPlace,stateCategory)
         }
 
-        category_item4_txt.setOnClickListener {
+        category_item4_txt2.setOnClickListener {
+            stateCategory = "술집"
             var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
 
-            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item4_txt.setTextColor(Color.parseColor("#FFFFFF"))
-            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item1_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt2.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item5_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt2.setTextColor(Color.parseColor("#393D46"))
 
-            val iter = myPlace.iterator()
+            val iter = myPlace.listIterator()
             while(iter.hasNext()){
-                if(!categoryList[3].equals(iter.next())){
+                if(iter.next().place.categoryName.isNullOrEmpty()){
                     iter.remove()
+                }
+                else if(!categoryList[3].equals(iter.previous().place.categoryName)){
+                    iter.remove()
+                }
+                else{
+                    iter.next()
                 }
             }
             d("TAG 술집", "$myPlace")
+            title_category_imgview.setImageResource(R.drawable.img_category_title_drink)
             myPlaceSize = myPlace.size
             hpCount.text = myPlaceSize.toString()
             if(fragmentState)
-                getMap(myPlace)
             else
-                getMyPlace(myPlace)
+                getMyPlace(myPlace,stateCategory)
         }
 
-        category_item5_txt.setOnClickListener {
+        category_item5_txt2.setOnClickListener {
+            stateCategory = "문화"
             var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
 
-            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item5_txt.setTextColor(Color.parseColor("#FFFFFF"))
-            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item1_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt2.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item6_txt2.setTextColor(Color.parseColor("#393D46"))
 
-            val iter = myPlace.iterator()
+            val iter = myPlace.listIterator()
             while(iter.hasNext()){
-                if(!categoryList[4].equals(iter.next())){
+                if(iter.next().place.categoryName.isNullOrEmpty()){
                     iter.remove()
+                }
+                else if(!categoryList[4].equals(iter.previous().place.categoryName)){
+                    iter.remove()
+                }
+                else{
+                    iter.next()
                 }
             }
             d("TAG 문화", "$myPlace")
+            title_category_imgview.setImageResource(R.drawable.img_category_title_culture)
             myPlaceSize = myPlace.size
             hpCount.text = myPlaceSize.toString()
             if(fragmentState)
-                getMap(myPlace)
             else
-                getMyPlace(myPlace)
+                getMyPlace(myPlace,stateCategory)
         }
 
-        category_item6_txt.setOnClickListener {
+        category_item6_txt2.setOnClickListener {
+            stateCategory = "기타"
             var myPlace = mMyPlaceList.toMutableList() //myPlaceList temperary list
 
-            category_item1_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item6_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item1_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt2.setTextColor(Color.parseColor("#FFFFFF"))
 
-            val iter = myPlace.iterator()
+            val iter = myPlace.listIterator()
             while(iter.hasNext()){
-                if(!categoryList[5].equals(iter.next())){
+                if(iter.next().place.categoryName.isNullOrEmpty()){
+
+                }
+                else if(!categoryList[5].equals(iter.previous().place.categoryName)){
                     iter.remove()
+                }
+                else{
+                    iter.next()
                 }
             }
             d("TAG 기타", "$myPlace")
+            title_category_imgview.setImageResource(R.drawable.img_category_title_etc)
             myPlaceSize = myPlace.size
             hpCount.text = myPlaceSize.toString()
             if(fragmentState)
-                getMap(myPlace)
             else
-                getMyPlace(myPlace)
+                getMyPlace(myPlace,stateCategory)
         }
 
         //MyList Btn
         listBt.setOnClickListener {
+            stateCategory = "전체"
             //fragment operation
             listBt.visibility = View.INVISIBLE
             mapBt.visibility = View.VISIBLE
+            categoryframe.visibility = View.INVISIBLE
+            categoryframe2.visibility = View.VISIBLE
 
-            category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
-            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
-            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item1_txt2.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt2.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt2.setTextColor(Color.parseColor("#393D46"))
 
             myPlaceSize = mMyPlaceList.size
             hpCount.text = myPlaceSize.toString()
-            getMyPlace(mMyPlaceList)
+            getMyPlace(mMyPlaceList,stateCategory)
         }
 
         //remove MyPlace Fragment
         mapBt.setOnClickListener {
             mapBt.visibility = View.INVISIBLE
             listBt.visibility = View.VISIBLE
+            categoryframe.visibility = View.VISIBLE
+            categoryframe2.visibility = View.INVISIBLE
 
             category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
             category_item2_txt.setTextColor(Color.parseColor("#393D46"))
@@ -299,7 +344,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun getMyPlace(myPlaceList : List<MyPlace>) {
+    fun getMyPlace(myPlaceList : List<MyPlace>,stateCategory: String) {
         d("TAG getMyPlace","myPlaceList : $myPlaceList")
         fragmentState = false
 
@@ -316,6 +361,7 @@ class MainActivity : AppCompatActivity() {
 
             val fr_myPlace = FragmentMyPlace()
             bundle.putSerializable("PlaceList", myPlaceList as Serializable)
+            bundle.putSerializable("CateGory",stateCategory as Serializable)
             fr_myPlace.arguments = bundle
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_map, fr_myPlace)
@@ -362,6 +408,8 @@ class MainActivity : AppCompatActivity() {
     fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
     }
+
+
 
 
 

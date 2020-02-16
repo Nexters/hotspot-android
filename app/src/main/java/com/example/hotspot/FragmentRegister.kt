@@ -18,6 +18,7 @@ import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.squareup.otto.Subscribe
+import kotlinx.android.synthetic.main.myplace_item.*
 import kotlinx.android.synthetic.main.register_view.*
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -38,7 +39,7 @@ class FragmentRegister : BaseFragment() {
     private lateinit var spotList : SpotListVO
 
     private var accessToken = GlobalApplication.prefs.getPreferences()
-    var rating = 0
+    var rating : Int? = 0
     var choicedCategory = ""
     var isEdtChecked = false
 
@@ -188,6 +189,10 @@ class FragmentRegister : BaseFragment() {
             img_uncheck4.setImageResource(R.drawable.ic_img_check)
             stickerBt.setTextColor(resources.getColor(R.color.colorWhite))
             var intent = Intent(activity, StickerRegistActivity::class.java)
+            intent.putExtra("Category",choicedCategory)
+            intent.putExtra("PlaceName",place.placeName)
+            intent.putExtra("Longitude",place.x.toDouble())
+            intent.putExtra("Latitude",place.y.toDouble())
             activity!!.startActivityForResult(intent, 1)
 
 
@@ -281,8 +286,8 @@ class FragmentRegister : BaseFragment() {
 
             txt_place_name.setTextColor(resources.getColor(R.color.colorWhite))
             place = arguments!!.getSerializable("searchPlace") as Place
-
-            when(place.categoryName){
+            choicedCategory = place.categoryName
+            when(choicedCategory){
                 "카페" -> {
                     reg_category_txt.setImageResource(R.drawable.img_category_cafe)
                 }
@@ -323,7 +328,10 @@ class FragmentRegister : BaseFragment() {
         if(txt_visited.currentTextColor == Color.WHITE){
             isVisited = true
         }
-        else isVisited = false
+        else {
+            isVisited = false
+            rating = null
+        }
         val registPlace = Place(
             place.kakaoId,place.kakaoUrl,
             place.placeName,
@@ -346,6 +354,9 @@ class FragmentRegister : BaseFragment() {
                 if (response.isSuccessful) {
                     d("TAG", "RegisterActivity onResponse() ")
                     activity!!.finish()
+                }
+                else{
+                    d("TAG","Regist onResPonse : " + response.toString())
                 }
             }
 
@@ -479,12 +490,14 @@ class FragmentRegister : BaseFragment() {
             setRatingTxt(rating)
         }
     }
-    private fun setRatingTxt(rating: Int){
-        when(rating){
-            0 -> txt_rating_info.text = "평점을 남겨주세요!"
-            1 -> txt_rating_info.text = "나쁘지 않은 곳이에요!"
-            2 -> txt_rating_info.text = "멋진 곳이에요!"
-            3 -> txt_rating_info.text = "내 맘에 쏙 드는 곳이에요!"
+    private fun setRatingTxt(rating: Int?){
+        if(rating != null) {
+            when (rating) {
+                0 -> txt_rating_info.text = "평점을 남겨주세요!"
+                1 -> txt_rating_info.text = "나쁘지 않은 곳이에요!"
+                2 -> txt_rating_info.text = "멋진 곳이에요!"
+                3 -> txt_rating_info.text = "내 맘에 쏙 드는 곳이에요!"
+            }
         }
     }
 

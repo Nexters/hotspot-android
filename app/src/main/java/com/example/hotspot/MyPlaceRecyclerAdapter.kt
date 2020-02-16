@@ -1,16 +1,19 @@
 package com.example.hotspot
 
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.myplace_item.view.*
 
-class MyPlaceRecyclerAdapter (private val list:List<MyPlace>) :
+class MyPlaceRecyclerAdapter (private val list:List<MyPlace>,private val cardstyleList : ArrayList<Drawable>,private val category : String) :
 
     RecyclerView.Adapter<MyPlaceRecyclerAdapter.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val v: View = LayoutInflater.from(parent.context).inflate(R.layout.myplace_item, parent,false)
+
 
             return ViewHolder(v)
         }
@@ -23,8 +26,26 @@ class MyPlaceRecyclerAdapter (private val list:List<MyPlace>) :
             val placeName_text = list.get(position).place.placeName
             val roadAddressName_text = list.get(position).place.roadAddressName
 //            val rating_num = list.get(position).rating
-
-
+            when (category) {
+                "전체" -> {
+                    holder.cardLayout.background = cardstyleList.get(5)
+                }
+                "맛집" -> {
+                    holder.cardLayout.background = cardstyleList.get(0)
+                }
+                "카페" -> {
+                    holder.cardLayout.background = cardstyleList.get(1)
+                }
+                "술집" -> {
+                    holder.cardLayout.background = cardstyleList.get(2)
+                }
+                "문화" -> {
+                    holder.cardLayout.background = cardstyleList.get(3)
+                }
+                "기타" -> {
+                    holder.cardLayout.background = cardstyleList.get(4)
+                }
+            }
             holder.placeName_txtV.text = placeName_text
             holder.roadAddressName_txtV.text =roadAddressName_text
 //            holder.rating_rbV.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
@@ -37,6 +58,7 @@ class MyPlaceRecyclerAdapter (private val list:List<MyPlace>) :
         RecyclerView.ViewHolder(itemView){
         val placeName_txtV = itemView.placeName_txt
         val roadAddressName_txtV = itemView.roadAddressName_txt
+        val cardLayout = itemView.rcyl_card_layout
 //        val rating_rbV = itemView.rating_rb
     }
 }

@@ -1,0 +1,67 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_best_2"
+    android:id="@+id/bg">
+
+    <Space
+        android:id="@+id/space0"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.56"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/up1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="3dp"
+        android:background="@null"
+        android:gravity="center_horizontal"
+        android:hint="베스트 메뉴 입력"
+        android:maxLength="9"
+        android:singleLine="true"
+        app:layout_constraintDimensionRatio="5.5:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/space0"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.75" />
+
+    <Space
+        android:id="@+id/space1"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.78"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/up2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="3dp"
+        android:background="@null"
+        android:gravity="center_horizontal"
+        android:hint="베스트 메뉴 입력"
+        android:maxLength="9"
+        android:singleLine="true"
+        app:layout_constraintDimensionRatio="5.5:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/space1"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.75" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

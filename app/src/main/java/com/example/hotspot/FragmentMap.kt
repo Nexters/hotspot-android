@@ -43,10 +43,13 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
     private lateinit var btn_insta : ImageView
     private lateinit var instaTag : String
     private lateinit var layout_transparency : ConstraintLayout
+    private var stateCategory = "전체"
     private var stateImgVisted = 2 // 0이면 방문함 1이면 방문예정 2이면 모두
-
+    private val MARKER_WIDTH = 200
+    private val MARKER_HEIGHT = 200
     //사용자 위치 추적 기능
     private lateinit var locationSource : FusedLocationSource
+    private var spot_count = 0
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
@@ -78,7 +81,7 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
 
         val bundle = arguments
         placeList = bundle!!.getSerializable("PlaceList") as List<MyPlace>
-
+        spot_count = placeList.size
 
 
         val view = inflater.inflate(R.layout.map_view,container,false)
@@ -113,6 +116,11 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
             marker.position =
                 LatLng(myPlace.place.y.toDouble(), myPlace.place.x.toDouble())
             marker.map = p0
+            if(myPlace.place.categoryName.isNullOrEmpty()){
+                setMarkerImg("기타",marker,p0)
+            }else{
+                setMarkerImg(myPlace.place.categoryName,marker,p0)
+            }
             marker.setOnClickListener(Overlay.OnClickListener {
 
                 var placeName = myPlace.place.placeName
@@ -153,6 +161,7 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                     categoryImgView.setImageResource(R.drawable.ic_etc_black)
                     spotinfoLayout.background =
                         resources.getDrawable(R.drawable.myplace_list_btn5)
+
                 }
                 activity!!.findViewById<TextView>(R.id.txt_spotinfo_placename).text = placeName
                 activity!!.findViewById<TextView>(R.id.txt_spotinfo_address).text = roadAdress
@@ -211,16 +220,150 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                 }
                 true
             })
-            //마커 아이콘 세팅
-            var size = BitmapFactory.decodeResource(resources, R.drawable.star_marker)
-            size = Bitmap.createScaledBitmap(size, 250, 250, true)
-            marker.icon = OverlayImage.fromBitmap(size)
             marker.captionText = placeList[i].place.placeName
             markerList.add(marker)
         }
         //Map 위의 버튼들 세팅
         setButton(p0)
 
+    }
+    private fun setMarkerImg(categoryName : String,marker : Marker, nMap: NaverMap){
+        when(categoryName){
+            "카페" -> {
+                var size = BitmapFactory.decodeResource(resources,R.drawable.img_icon_cafe_png)
+                size = Bitmap.createScaledBitmap(size,MARKER_WIDTH,MARKER_HEIGHT,true)
+                marker.icon = OverlayImage.fromBitmap(size)
+                marker.map = nMap
+            }
+            "맛집" -> {
+                var size = BitmapFactory.decodeResource(resources,R.drawable.img_icon_food_png)
+                size = Bitmap.createScaledBitmap(size,MARKER_WIDTH,MARKER_HEIGHT,true)
+                marker.icon = OverlayImage.fromBitmap(size)
+                marker.map = nMap
+            }
+            "문화" -> {
+                var size = BitmapFactory.decodeResource(resources,R.drawable.img_icon_culture_png)
+                size = Bitmap.createScaledBitmap(size,MARKER_WIDTH,MARKER_HEIGHT,true)
+                marker.icon = OverlayImage.fromBitmap(size)
+                marker.map = nMap
+            }
+            "술집" -> {
+                var size = BitmapFactory.decodeResource(resources,R.drawable.img_icon_drink_png)
+                size = Bitmap.createScaledBitmap(size,MARKER_WIDTH,MARKER_HEIGHT,true)
+                marker.icon = OverlayImage.fromBitmap(size)
+                marker.map = nMap
+            }
+            "기타" -> {
+                var size = BitmapFactory.decodeResource(resources,R.drawable.img_icon_etc_png)
+                size = Bitmap.createScaledBitmap(size,MARKER_WIDTH,MARKER_HEIGHT,true)
+                marker.icon = OverlayImage.fromBitmap(size)
+                marker.map = nMap
+            }
+        }
+    }
+    private fun changeCategory(nMap : NaverMap,stateCategory : String , stateImgVisited : Int){// 0이면 방문함 1이면 방문예정 2이면 모두
+        spot_count = 0
+        when(stateImgVisited){
+            0 ->{
+                for( i in 0..(markerList.size-1)){
+                    var marker = markerList.get(i)
+                    var place = placeList.get(i)
+                    if(place.place.categoryName.isNullOrEmpty()){
+                        if(stateCategory.equals("기타")||stateCategory.equals("전체")){
+                            if(place.visited){
+                                marker.map = nMap
+                                spot_count++
+                            }
+                            else marker.map = null
+                        }
+                        else{
+                            marker.map = null
+                        }
+                    }
+                    else if(stateCategory.equals("전체")){
+                        if(place.visited){
+                            marker.map = nMap
+                            spot_count++
+                        }
+                        else marker.map = null
+                    }
+                    else if((place.visited)&&(place.place.categoryName.equals(stateCategory))){
+                        marker.map = nMap
+                        spot_count++
+                    }
+                    else{
+                        marker.map = null
+                    }
+                }
+                activity!!.findViewById<TextView>(R.id.hpCount).text = spot_count.toString()
+            }
+            1 ->{
+                for( i in 0..(markerList.size-1)){
+                    var marker = markerList.get(i)
+                    var place = placeList.get(i)
+                    if(place.place.categoryName.isNullOrEmpty()){
+                        if(stateCategory.equals("기타")||stateCategory.equals("전체")){
+                            if(!place.visited){
+                                marker.map = nMap
+                                spot_count++
+
+                            }
+                            else marker.map = null
+                        }
+                        else{
+                            marker.map = null
+                        }
+                    }
+                    else if(stateCategory.equals("전체")){
+                        if(!place.visited){
+                            marker.map = nMap
+                            spot_count++
+
+                        }
+                        else marker.map = null
+                    }
+                    else if((!place.visited)&&(place.place.categoryName.equals(stateCategory))){
+                        marker.map = nMap
+                        spot_count++
+
+                    }
+                    else{
+                        marker.map = null
+                    }
+                }
+                activity!!.findViewById<TextView>(R.id.hpCount).text = spot_count.toString()
+
+
+            }
+            2 ->{
+                for( i in 0..(markerList.size-1)){
+                    var marker = markerList.get(i)
+                    var place = placeList.get(i)
+                    if(place.place.categoryName.isNullOrEmpty()){
+                        if(stateCategory.equals("기타")||stateCategory.equals("전체")){
+                            marker.map = nMap
+                            spot_count++
+                        }
+                        else{
+                            marker.map = null
+                        }
+                    }
+                    else if(stateCategory.equals("전체")){
+                        marker.map = nMap
+                        spot_count++
+                    }
+                    else if(place.place.categoryName.equals(stateCategory)){
+                        marker.map = nMap
+                        spot_count++
+                    }
+                    else{
+                        marker.map = null
+                    }
+                }
+                activity!!.findViewById<TextView>(R.id.hpCount).text = spot_count.toString()
+
+            }
+        }
     }
     private fun setButton(nMap : NaverMap){
         btn_insta = activity!!.findViewById(R.id.btn_insta)
@@ -233,42 +376,180 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
             nMap.moveCamera(cameraUpdate)
         }
         img_main_isvisited.setOnClickListener{
+            spot_count= 0
             when(stateImgVisted){// 0이면 방문함 1이면 방문예정 2이면 모두
-                2 -> {//모두이면 방문함으로 바꾸고 마커들도 바꿔야함
+                2 -> {//모두이면 0 방문함으로 바꾸고 마커들도 바꿔야함
                     img_main_isvisited.setImageResource(R.drawable.img_main_ismarked)
                     stateImgVisted = 0
                     for( i in (0..markerList.size-1)){
                         var marker = markerList.get(i)
-                        if(!placeList.get(i).visited){
-                            marker.map = null
+                        var place = placeList.get(i)
+                        if(place.place.categoryName.isNullOrEmpty()){
+                            if(stateCategory.equals("기타")||stateCategory.equals("전체")){
+                                if(place.visited){
+                                    marker.map = nMap
+                                    spot_count++
+                                }
+                                else marker.map = null
+                            }
+                            else{
+                                marker.map = null
+                            }
+                        }
+                        else if(stateCategory.equals("전체")){
+                            if(place.visited){
+                                marker.map = nMap
+                                spot_count++
+                            }
+                            else marker.map = null
+                        }
+                        else if((place.visited)&&(place.place.categoryName.equals(stateCategory))){
+                            marker.map = nMap
+                            spot_count++
                         }
                         else{
-                            marker.map = nMap
+                            marker.map = null
                         }
                     }
+                    activity!!.findViewById<TextView>(R.id.hpCount).text = spot_count.toString()
 
                 }
-                1 -> {//방문예정이면 모두로 바꾸기
+                1 -> {//방문예정이면 2 모두로 바꾸기
                     img_main_isvisited.setImageResource(R.drawable.img_main_all_xxxhdpi)
                     stateImgVisted = 2
                     for( i in (0..markerList.size-1)){
-                        markerList.get(i).map = nMap
+                        var marker = markerList.get(i)
+                        var place = placeList.get(i)
+                        if(place.place.categoryName.isNullOrEmpty()){
+                            if(stateCategory.equals("기타")||stateCategory.equals("전체")){
+                                marker.map = nMap
+                                spot_count++
+                            }
+                            else{
+                                marker.map = null
+                            }
+                        }
+                        else if(stateCategory.equals("전체")){
+                            marker.map = nMap
+                            spot_count++
+                        }
+                        else if(place.place.categoryName.equals(stateCategory)) {
+                            marker.map = nMap
+                            spot_count++
+                        }
+                        else marker.map = null
                     }
+                    activity!!.findViewById<TextView>(R.id.hpCount).text = spot_count.toString()
+
                 }
-                0 -> {
+                0 -> {//방문함이면 1 방문예정으로
                     img_main_isvisited.setImageResource(R.drawable.img_main_will)
                     stateImgVisted = 1
                     for( i in (0..markerList.size-1)){
                         var marker = markerList.get(i)
-                        if(placeList.get(i).visited){
-                            marker.map = null
+                        var place = placeList.get(i)
+                        if(place.place.categoryName.isNullOrEmpty()){//카테고리 널이면 기타로 인식
+                            if(stateCategory.equals("기타")||stateCategory.equals("전체")){
+                                if(!place.visited) {
+                                    marker.map = nMap
+                                    spot_count++
+                                }
+                                else{
+                                    marker.map = null
+                                }
+                            }
+                            else{
+                                marker.map = null
+                            }
+                        }
+                        else if(stateCategory.equals("전체")){
+                            if(!place.visited) {
+                                marker.map = nMap
+                                spot_count++
+                            }
+                            else{
+                                marker.map = null
+                            }
+                        }
+                        else if((!placeList.get(i).visited)&&(placeList.get(i).place.categoryName.equals(stateCategory))){
+                            marker.map = nMap
+                            spot_count++
                         }
                         else{
-                            marker.map = nMap
+                            marker.map = null
                         }
                     }
+                    activity!!.findViewById<TextView>(R.id.hpCount).text = spot_count.toString()
+
                 }
             }
+        }
+
+        activity!!.findViewById<TextView>(R.id.category_item1_txt).setOnClickListener{
+            stateCategory="전체"
+            changeCategory(nMap,stateCategory,this.stateImgVisted)
+            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#FFFFFF"))
+            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_all)
+        }
+        activity!!.findViewById<TextView>(R.id.category_item2_txt).setOnClickListener{
+            stateCategory="맛집"
+            changeCategory(nMap,stateCategory,this.stateImgVisted)
+            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#FFFFFF"))
+            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_food)
+        }
+        activity!!.findViewById<TextView>(R.id.category_item3_txt).setOnClickListener{
+            stateCategory="카페"
+            changeCategory(nMap,stateCategory,this.stateImgVisted)
+            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#FFFFFF"))
+            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_cafe)
+        }
+        activity!!.findViewById<TextView>(R.id.category_item4_txt).setOnClickListener{
+            stateCategory="술집"
+            changeCategory(nMap,stateCategory,this.stateImgVisted)
+            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#FFFFFF"))
+            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_drink)
+        }
+        activity!!.findViewById<TextView>(R.id.category_item5_txt).setOnClickListener{
+            stateCategory="문화"
+            changeCategory(nMap,stateCategory,this.stateImgVisted)
+            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#FFFFFF"))
+            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_culture)
+        }
+        activity!!.findViewById<TextView>(R.id.category_item6_txt).setOnClickListener{
+            stateCategory="기타"
+            changeCategory(nMap,stateCategory,stateImgVisted)
+            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
+            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#FFFFFF"))
+            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_etc)
         }
     }
     override fun onMapClick(p0: PointF, p1: LatLng) {

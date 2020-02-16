@@ -3,6 +3,7 @@ package com.example.hotspot
 import android.Manifest
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.Image
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,20 +11,27 @@ import android.os.SystemClock
 import android.provider.MediaStore
 import android.view.ActionMode
 import android.view.MotionEvent
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.view.isInvisible
 import com.google.gson.annotations.SerializedName
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.widget.LocationButtonView
 import gun0912.tedbottompicker.TedBottomPicker
 import kotlinx.android.synthetic.main.activity_sticker_regist.*
+import kotlinx.android.synthetic.main.register_view.*
 import java.io.Serializable
 
 class StickerRegistActivity : AppCompatActivity() {
     private lateinit var photoUriList : ArrayList<String>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sticker_regist)
@@ -33,16 +41,20 @@ class StickerRegistActivity : AppCompatActivity() {
         naverMapOptions.allGesturesEnabled(false)
         naverMapOptions.zoomControlEnabled(false)
 
+
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.mapframe) as MapFragment?
             ?: MapFragment.newInstance(naverMapOptions).also  {
                 it.getMapAsync(OnMapReadyCallback {
                     it.mapType = NaverMap.MapType.Navi
                     it.isNightModeEnabled = true
-                    val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.527180, 126.932794)) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
-                    it.moveCamera(cameraUpdate)
                     var nmo = NaverMapOptions()
                     nmo.scrollGesturesEnabled(false)
+                    val longitude = intent.getDoubleExtra("Longitude",0.0)
+                    val latitude = intent.getDoubleExtra("Latitude",0.0)
+                    val cameraUpdate = CameraUpdate.scrollTo(LatLng(latitude,longitude)) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
+                    it.moveCamera(cameraUpdate)
+
                 })
                 fm.beginTransaction().add(R.id.mapframe, it).commit()
             }
@@ -51,9 +63,61 @@ class StickerRegistActivity : AppCompatActivity() {
 
         setGridImgListener()
 
-
-
+        val placeName = intent.getStringExtra("PlaceName")
+        val cateGory = intent.getStringExtra("Category")
+        when(cateGory){
+            "카페" -> {
+                img_sticker_category_view.setImageResource(R.drawable.ic_img_icon_cafe)
+            }
+            "맛집" -> {
+                img_sticker_category_view.setImageResource(R.drawable.ic_img_icon_food)            }
+            "문화" -> {
+                img_sticker_category_view.setImageResource(R.drawable.ic_img_icon_culture)            }
+            "술집" -> {
+                img_sticker_category_view.setImageResource(R.drawable.ic_img_icon_drink)            }
+            "기타" -> {
+                img_sticker_category_view.setImageResource(R.drawable.ic_img_icon_etc)            }
+        }
+        txt_sticker_place_name.text = placeName
     }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        setStickerPosition()
+        setSticKersListener()
+    }
+    private fun setSticKersListener(){
+        consent_img.setOnClickListener{
+            consent_fin_view.visibility = View.VISIBLE
+            dragView.performClick()
+        }
+        park_img.setOnClickListener{
+            park_fin_view.visibility = View.VISIBLE
+            dragView.performClick()
+        }
+        work_24_img.setOnClickListener{
+            h24_fin_view.visibility = View.VISIBLE
+            dragView.performClick()
+        }
+        best_menu_img.setOnClickListener{
+            mainlayout.visibility = View.INVISIBLE
+            sticker_input_layout.visibility = View.generateViewId()
+            dragView.performClick()
+            dragView.isClickable = false
+        }
+    }
+    private fun setStickerPosition(){
+        consent_fin_view.x = mainlayout.width*0.1f
+        consent_fin_view.y = mainlayout.height*0.45f
+
+        park_fin_view.x = mainlayout.width*0.35f
+        park_fin_view.y = mainlayout.height*0.62f
+
+        h24_fin_view.x = mainlayout.width*0.6f
+        h24_fin_view.y = mainlayout.height*0.3f
+    }
+
+
     private fun setViewTouchEvent(){
         txt_sticker_regist.setOnClickListener{
             if(photoUriList.size == 0) {
@@ -68,6 +132,12 @@ class StickerRegistActivity : AppCompatActivity() {
                 setResult(1,intent)
                 finish()
             }
+        }
+        input_best_menu_view.findViewById<ImageView>(R.id.best_plus_img).setOnClickListener{
+            input_best_menu_view.visibility = View.GONE
+            input_best_menu_view2.findViewById<TextView>(R.id.up1).text =
+                input_best_menu_view.findViewById<AppCompatEditText>(R.id.up1).text.toString()
+            input_best_menu_view2.visibility = View.VISIBLE
         }
     }
     //Grid panel의 이미지뷰들의 리스너 정의

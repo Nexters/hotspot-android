@@ -10,39 +10,64 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.24"
         android:background="#101010"
         android:layout_alignParentTop="true"
         android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/categoryframe" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_title_layout"
+            android:layout_width="64dp"
+            android:layout_height="73dp"
+            android:layout_marginBottom="14dp"
+            app:layout_constraintBottom_toBottomOf="@id/hpCount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/hpCount">
+
+            <ImageView
+                android:id="@+id/title_category_imgview"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/img_category_title_all"
+                app:layout_constraintBottom_toTopOf="@id/hpText"
+                app:layout_constraintDimensionRatio="1.2:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.28"
+
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/hpText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spots"
+                android:textColor="@color/colorWhite"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/hpCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="33dp"
             android:text="30"
             android:textSize="60dp"
             android:textStyle="bold"
             android:textColor="@color/colorWhite"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/hpText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="62dp"
-            android:layout_marginBottom="24dp"
-            android:text="Spots"
-            android:textStyle="bold"
-            android:textColor="@color/colorWhite"
-            android:textSize="24dp"
-            app:layout_constraintBottom_toBottomOf="@id/hpCount"
-            app:layout_constraintLeft_toRightOf="@+id/hpCount"/>
+            app:layout_constraintTop_toBottomOf="@id/findBt"
+            app:layout_constraintEnd_toStartOf="@id/main_title_layout"
+            app:layout_constraintHorizontal_chainStyle="packed"/>
 
         <ImageView
             android:id="@+id/findBt"
@@ -51,8 +76,9 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="11dp"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.078"
+            app:layout_constraintWidth_percent="0.07"
             app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintBottom_toTopOf="@id/hpCount"
             app:srcCompat="@drawable/ic_search"
             app:layout_constraintEnd_toStartOf="@+id/listBt"
             app:layout_constraintTop_toTopOf="parent" />
@@ -65,7 +91,7 @@
             android:layout_marginEnd="8dp"
             app:srcCompat="@drawable/ic_img_list"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.078"
+            app:layout_constraintWidth_percent="0.07"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -79,7 +105,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.078"
+            app:layout_constraintWidth_percent="0.07"
             app:layout_constraintDimensionRatio="1:1"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
@@ -156,6 +182,96 @@
             android:textColor="#393D46"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/category_item6_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="기타"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="#393D46"/>
+
+
+        <!--        <androidx.recyclerview.widget.RecyclerView-->
+        <!--            android:id="@+id/category_recyclerview"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--            app:layout_constraintRight_toRightOf="parent"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/categoryframe2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <TextView
+            android:id="@+id/category_item1_txt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="@color/colorWhite"/>
+        <TextView
+            android:id="@+id/category_item2_txt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="맛집"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="#393D46"/>
+        <TextView
+            android:id="@+id/category_item3_txt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="카페"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="#393D46"/>
+        <TextView
+            android:id="@+id/category_item4_txt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="술집"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="#393D46"/>
+        <TextView
+            android:id="@+id/category_item5_txt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="문화"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="#393D46"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/category_item6_txt2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

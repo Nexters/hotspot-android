@@ -12,8 +12,8 @@ data class VOClass(
 data class SpotListVO(
     val place : Place,
     val visited : Boolean,
-    val memo : String,
-    val rating : Int
+    val memo : String?,
+    val rating : Int?
 )
 
 // For GET Place data class

@@ -9,10 +9,9 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:umanoDragView = "@id/dragView"
-    app:umanoPanelHeight="54sp"
-    app:umanoParallaxOffset="70sp"
+    app:umanoPanelHeight="48dp"
+    app:umanoParallaxOffset="80dp"
     app:umanoScrollableView="@id/gridLayout"
-    app:umanoShadowHeight="10sp"
     tools:context=".StickerRegistActivity">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,6 +20,39 @@
             android:id="@+id/mapframe"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sticker_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparency"
+            android:visibility="invisible"
+            >
+            <com.example.hotspot.views.BestMenuInputView
+                android:id="@+id/input_best_menu_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.66"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.example.hotspot.views.BestMenuInputView2
+                android:id="@+id/input_best_menu_view2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.66"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/mainlayout"
@@ -43,7 +75,67 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <com.example.hotspot.views.ConsSentView
+                android:id="@+id/h24_fin_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/img_24_fin"
+                android:visibility="invisible"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.15"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="@id/img_sticker_category_view"
+                app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
+                app:layout_constraintBottom_toTopOf="@id/img_sticker_category_view"/>
 
+            <com.example.hotspot.views.ConsSentView
+                android:id="@+id/consent_fin_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/img_consent_fin"
+                android:visibility="invisible"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.15"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="@id/img_sticker_category_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/img_sticker_category_view"/>
+
+            <ImageView
+                android:id="@+id/img_sticker_category_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.1"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/txt_sticker_place_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/colorWhite"
+                android:textSize="12dp"
+                app:layout_constraintEnd_toEndOf="@id/img_sticker_category_view"
+                app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
+                app:layout_constraintTop_toBottomOf="@id/img_sticker_category_view"/>
+
+            <com.example.hotspot.views.ConsSentView
+                android:id="@+id/park_fin_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                android:src="@drawable/img_park_fin"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.15"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="@id/img_sticker_category_view"
+                app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
+                app:layout_constraintTop_toBottomOf="@id/img_sticker_category_view"/>
 
 
 
@@ -87,7 +179,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gridLayout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="#101010"
             android:paddingBottom="15dp"
@@ -96,10 +188,12 @@
             android:orientation="horizontal">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/gridLayout_in1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintHeight_default="percent"
-                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="1"
+                app:layout_constraintDimensionRatio="1:0.29"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -113,8 +207,8 @@
                     app:layout_constraintBottom_toBottomOf="@id/open_time_img"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@id/open_time_img"
-                    app:layout_constraintHeight_default="percent"
-                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.23"
                     app:layout_constraintTop_toTopOf="@id/open_time_img"></ImageView>
 
                 <TextView
@@ -132,8 +226,8 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:src="@drawable/img_sticker_list_time"
-                    app:layout_constraintHeight_percent="0.7"
-                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.23"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -156,8 +250,8 @@
                     android:src="@drawable/img_sticker_list_24"
                     app:layout_constraintBottom_toBottomOf="@id/open_time_img"
                     app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintHeight_default="percent"
-                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.23"
                     app:layout_constraintStart_toEndOf="@id/open_time_img"
                     app:layout_constraintTop_toTopOf="@id/open_time_img"></ImageView>
                 <TextView
@@ -173,13 +267,17 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/gridLayout_in2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintHeight_default="percent"
-                app:layout_constraintHeight_percent="0.5"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:0.29"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gridLayout_in1"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="1">
 
                 <ImageView
                     android:id="@+id/consent_img"
@@ -190,39 +288,41 @@
                     app:layout_constraintBottom_toBottomOf="@id/park_img"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@id/park_img"
-                    app:layout_constraintHeight_default="percent"
-                    app:layout_constraintHeight_percent="0.7"
-                    app:layout_constraintTop_toTopOf="@id/park_img"></ImageView>
+                    app:layout_constraintTop_toTopOf="@id/park_img"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.23"></ImageView>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="콘센트"
                     android:textColor="@color/colorWhite"
                     android:textSize="14dp"
-                    app:layout_constraintStart_toStartOf="@id/consent_img"
                     app:layout_constraintEnd_toEndOf="@id/consent_img"
-                    app:layout_constraintTop_toBottomOf="@id/consent_img"/>
+                    app:layout_constraintStart_toStartOf="@id/consent_img"
+                    app:layout_constraintTop_toBottomOf="@id/consent_img" />
 
                 <ImageView
                     android:id="@+id/park_img"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:src="@drawable/img_sticker_list_park"
-                    app:layout_constraintHeight_percent="0.7"
-                    app:layout_constraintHeight_default="percent"
                     app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"></ImageView>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.23"></ImageView>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="주차장"
                     android:textColor="@color/colorWhite"
                     android:textSize="14dp"
-                    app:layout_constraintStart_toStartOf="@id/park_img"
                     app:layout_constraintEnd_toEndOf="@id/park_img"
-                    app:layout_constraintTop_toBottomOf="@id/park_img"/>
+                    app:layout_constraintStart_toStartOf="@id/park_img"
+                    app:layout_constraintTop_toBottomOf="@id/park_img" />
 
                 <ImageView
                     android:id="@+id/gallery_img"
@@ -232,19 +332,20 @@
                     android:src="@drawable/img_sticker_list_gallery"
                     app:layout_constraintBottom_toBottomOf="@id/park_img"
                     app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintHeight_default="percent"
-                    app:layout_constraintHeight_percent="0.7"
                     app:layout_constraintStart_toEndOf="@id/park_img"
-                    app:layout_constraintTop_toTopOf="@id/park_img"></ImageView>
+                    app:layout_constraintTop_toTopOf="@id/park_img"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.23"></ImageView>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="사진추가"
                     android:textColor="@color/colorWhite"
                     android:textSize="14dp"
-                    app:layout_constraintStart_toStartOf="@id/gallery_img"
                     app:layout_constraintEnd_toEndOf="@id/gallery_img"
-                    app:layout_constraintTop_toBottomOf="@id/gallery_img"/>
+                    app:layout_constraintStart_toStartOf="@id/gallery_img"
+                    app:layout_constraintTop_toBottomOf="@id/gallery_img" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
