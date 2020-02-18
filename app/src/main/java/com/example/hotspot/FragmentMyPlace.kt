@@ -7,6 +7,7 @@ import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -22,7 +23,13 @@ import kotlinx.android.synthetic.main.category_view.*
 
 class FragmentMyPlace : Fragment() {
 
+    var isvisitedState = 0
     private lateinit var newPlace : MyPlace
+    private lateinit var placeList:MutableList<MyPlace>
+    private lateinit var stateCategory : String
+
+    lateinit var cardStyleList : ArrayList<Drawable>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,22 +43,24 @@ class FragmentMyPlace : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var cardStyleList : ArrayList<Drawable>
-        cardStyleList = arrayListOf()
-        cardStyleList.add(resources.getDrawable(R.drawable.myplace_list_btn1))
-        cardStyleList.add(resources.getDrawable(R.drawable.myplace_list_btn2))
-        cardStyleList.add(resources.getDrawable(R.drawable.myplace_list_btn3))
-        cardStyleList.add(resources.getDrawable(R.drawable.myplace_list_btn4))
-        cardStyleList.add(resources.getDrawable(R.drawable.myplace_list_btn5))
-        cardStyleList.add(resources.getDrawable(R.drawable.myplace_list_btn6))
 
-        val placeList = arguments!!.getSerializable("PlaceList") as MutableList<MyPlace>
-        val stateCategory = arguments!!.getSerializable("CateGory") as String
+        cardStyleList = arrayListOf()
+        cardStyleList.add(resources.getDrawable(R.drawable.ic_myplace_list_img1))
+        cardStyleList.add(resources.getDrawable(R.drawable.ic_myplace_list_img2))
+        cardStyleList.add(resources.getDrawable(R.drawable.ic_myplace_list_img3))
+        cardStyleList.add(resources.getDrawable(R.drawable.ic_myplace_list_img4))
+        cardStyleList.add(resources.getDrawable(R.drawable.ic_myplace_list_img5))
+        cardStyleList.add(resources.getDrawable(R.drawable.ic_rectangle))
+
+        placeList = arguments!!.getSerializable("PlaceList") as MutableList<MyPlace>
+        stateCategory = arguments!!.getSerializable("CateGory") as String
+
         myplace_recyclerview.setHasFixedSize(true)
         myplace_recyclerview.layoutManager = LinearLayoutManager(context)
-        myplace_recyclerview.adapter = MyPlaceRecyclerAdapter(placeList,cardStyleList,stateCategory)
+        recyclerviewInit(placeList, 0)
+
         val simpleItemTouchCallback = object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -81,28 +90,10 @@ class FragmentMyPlace : Fragment() {
 
                         val myPlace = placeList.get(position)
 
-//                        val bundle = Bundle()
-//                        bundle.putSerializable("myPlace", myPlace as Serializable )
-//
-//                        val fr_detaliview = FragmentDetailView()
-//                        fr_detaliview.arguments = bundle
-//
-//                        val fr_myPlace = fragmentManager!!.findFragmentById(R.id.fragment_map)
-
-//                        if(fr_myPlace != null) {
-//                            fragmentManager!!.beginTransaction()
-//                                .remove(fr_myPlace)
-//                                .commit()
-//                        }
-
                         val intent = Intent(activity, DetailActivity::class.java)
                         intent.putExtra("myPlace", myPlace as Serializable )
                         intent.putExtra("Position",position)
                         startActivityForResult(intent,20)
-//                        fragmentManager!!.beginTransaction()
-//                            .addToBackStack(null)
-//                            .replace(R.id.main, fr_detaliview)
-//                            .commit()
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
@@ -110,7 +101,83 @@ class FragmentMyPlace : Fragment() {
                     }
                 })
         )
+
+        myplace_isvisited.setOnClickListener {
+            if(isvisitedState>=2)
+                isvisitedState = 0
+            else
+                isvisitedState++
+
+            if(isvisitedState == 0)
+                changeCategory(0, placeList as ArrayList<MyPlace>)
+            else if(isvisitedState == 1)
+                changeCategory(1, placeList as ArrayList<MyPlace>)
+            else if(isvisitedState == 2)
+                changeCategory(2, placeList as ArrayList<MyPlace>)
+        }
+
+        myplace_add_btn.setOnClickListener {
+            val intent = Intent(activity, RegisterActivity::class.java)
+            val isAdd = true
+            intent.putExtra("IsAdd",isAdd)
+            startActivity(intent)
+        }
     }
+
+    fun recyclerviewInit(list: MutableList<MyPlace>, state: Int) {
+        myplace_recyclerview.adapter = MyPlaceRecyclerAdapter(list, cardStyleList, state)
+    }
+
+    fun changeCategory(state : Int, tempList : ArrayList<MyPlace>) {
+
+        var resultList = tempList
+        d("TAG", "state : $state")
+        d("TAG", "placeList : ${tempList}")
+
+        if(state == 0) {
+            activity!!.findViewById<ImageView>(R.id.myplace_isvisited).setImageResource(R.drawable.img_main_all_xxxhdpi)
+            recyclerviewInit(tempList, state)
+        }
+        else if(state == 1) {
+            var resultList = ArrayList<MyPlace>()
+
+            activity!!.findViewById<ImageView>(R.id.myplace_isvisited).setImageResource(R.drawable.img_main_ismarked)
+
+            for(i in 0..resultList.size) {
+                if(tempList[i].visited) {
+                    resultList.add(tempList[i])
+                }
+            }
+//            resultList.removeAll { !it.visited }
+            d("TAG", "resultList : ${resultList}")
+            recyclerviewInit(resultList, state)
+        }
+        else if(state == 2) {
+            var resultList = ArrayList<MyPlace>()
+            activity!!.findViewById<ImageView>(R.id.myplace_isvisited).setImageResource(R.drawable.img_main_will)
+
+            for(i in 0..resultList.size) {
+                if(!tempList[i].visited) {
+                    resultList.add(tempList[i])
+                }
+            }
+
+//            resultList.removeAll { it.visited }
+            d("TAG", "resultList : ${resultList}")
+            recyclerviewInit(resultList, state)
+        }
+
+
+
+        d("TAG", "placeList : ${tempList}")
+        d("TAG", "resultList.size : ${resultList.size}")
+
+        activity!!.findViewById<TextView>(R.id.hpCount).text = resultList.size.toString()
+//        hpCount.text = resultList.size.toString()
+
+
+    }
+
     @Subscribe
     fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
         onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())

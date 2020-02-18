@@ -18,5 +18,27 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/myplace_add_btn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="ADD"
+        android:textSize="18dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="25dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:id="@+id/myplace_isvisited"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/img_main_all_xxxhdpi"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.2"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/myplace_add_btn"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

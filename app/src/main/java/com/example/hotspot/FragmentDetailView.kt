@@ -2,6 +2,7 @@ package com.example.hotspot
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log.d
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.detail_view.*
 import kotlinx.android.synthetic.main.mylist_view.*
@@ -21,6 +23,9 @@ class FragmentDetailView : Fragment() {
     private var position = 0
     private var isEditSpot = false
     private lateinit var newPlace: MyPlace
+    private var dotscount = 0
+    private lateinit var instaTag : String
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,6 +39,7 @@ class FragmentDetailView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val myPlace = arguments!!.getSerializable("myPlace") as MyPlace
+
         position = arguments!!.getSerializable("Position") as Int
         d("TAG", "FragmentDetailView : ${myPlace}")
 
@@ -74,27 +80,101 @@ class FragmentDetailView : Fragment() {
             intent.putExtra("isAdd", false)
             intent.putExtra("myPlace", myPlace as Serializable)
             startActivityForResult(intent,5)
-
-//            val bundle = Bundle()
-//            bundle.putSerializable("myPlace", myPlace as Serializable)
-//            bundle.putBoolean("isAdd", false)
-
-//            val fr_reg = FragmentRegister()
-//            fr_reg.arguments = bundle
-//
-//            fragmentManager!!.beginTransaction()
-//                .addToBackStack(null)
-//                .replace(R.id.detail_activity, fr_reg)
-//                .commit()
         }
+
+        detail_insta_img.setOnClickListener {
+            var intent_insta = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/explore/tags/"+instaTag+"/"))
+            startActivity(intent_insta)
+        }
+
+        val mAdapter = ImageAdapter(activity!!)
+        viewPager.adapter = mAdapter
+        dotscount = mAdapter.count
+
+        when(dotscount) {
+            2 -> {
+                dotImageView2.visibility = View.VISIBLE
+            }
+            3 -> {
+                dotImageView2.visibility = View.VISIBLE
+                dotImageView3.visibility = View.VISIBLE
+            }
+            4 -> {
+                dotImageView2.visibility = View.VISIBLE
+                dotImageView3.visibility = View.VISIBLE
+                dotImageView4.visibility = View.VISIBLE
+            }
+            5 -> {
+                dotImageView2.visibility = View.VISIBLE
+                dotImageView3.visibility = View.VISIBLE
+                dotImageView4.visibility = View.VISIBLE
+                dotImageView5.visibility = View.VISIBLE
+            }
+        }
+
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(state: Int) {
+
+            }
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+
+                when (position) {
+                    0 -> {
+                        dotImageView1.setImageResource(R.drawable.indicator_dot_on)
+                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
+
+                    }
+                    1 -> {
+                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView2.setImageResource(R.drawable.indicator_dot_on)
+                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
+                    }
+                    2 -> {
+                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView3.setImageResource(R.drawable.indicator_dot_on)
+                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
+                    }
+                    3 -> {
+                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView4.setImageResource(R.drawable.indicator_dot_on)
+                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
+                    }
+                    4 -> {
+                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
+                        dotImageView5.setImageResource(R.drawable.indicator_dot_on)
+                    }
+                }
+            }
+        })
     }
 
     inner class ImageAdapter : PagerAdapter {
         private var mContext : Context
 
         private var mImage = mutableListOf(
-            R.drawable.img_sticker_list_best,
-            R.drawable.img_sticker_list_gallery
+            R.drawable.best_menu
+//            R.drawable.gallery
         )
 
         constructor(context: Context){
@@ -122,6 +202,40 @@ class FragmentDetailView : Fragment() {
             container.removeView(obj as ImageView)
         }
     }
+
+//    inner class ImageAdapter : PagerAdapter {
+//        private var mContext : Context
+//
+//        private var mImage = mutableListOf(
+//            R.drawable.img_sticker_list_best,
+//            R.drawable.img_sticker_list_gallery
+//        )
+//
+//        constructor(context: Context){
+//            mContext = context
+//        }
+//
+//        override fun isViewFromObject(view: View, obj: Any): Boolean {
+//            return view == obj
+//        }
+//
+//        override fun getCount(): Int {
+//            return mImage.size
+//        }
+//
+//        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+//            val imageView = ImageView(mContext)
+//            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+//            imageView.setImageResource(mImage[position])
+//            container.addView(imageView, 0)
+//
+//            return imageView
+//        }
+//
+//        override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
+//            container.removeView(obj as ImageView)
+//        }
+//    }
     @Subscribe
     fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
         onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())

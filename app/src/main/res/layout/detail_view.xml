@@ -16,35 +16,34 @@
         app:layout_constraintRight_toRightOf="parent"
         android:background="@drawable/detail_top_layout1">
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageButton
             android:id="@+id/detail_esc_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ESC"
-            android:textSize="15dp"
-            android:layout_margin="10dp"
+            android:layout_marginTop="19.5dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/ic_detail_back"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageButton
             android:id="@+id/detail_delete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
-            android:text="DEL"
-            android:textSize="15dp"
+            android:layout_marginTop="19.5dp"
+            android:layout_marginRight="25dp"
+            android:background="@drawable/ic_detail_delete_img"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toLeftOf="@id/detail_edit_btn"/>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageButton
             android:id="@+id/detail_edit_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
-            android:text="EDIT"
-            android:textSize="15dp"
+            android:layout_marginTop="19.5dp"
+            android:layout_marginRight="24dp"
+            android:background="@drawable/ic_detail_edit_img"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
@@ -86,133 +85,251 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewPager"
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="214dp"
-        android:visibility="gone"
-        android:layout_marginTop="23dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintTop_toBottomOf="@id/detail_top"/>
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/detail_top"
+        app:layout_constraintBottom_toBottomOf="parent">
 
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_memo_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:textColor="#d8d8d6"
-        android:letterSpacing="-0.04"
-        android:text="메모"
-        android:gravity="center|left"
-        android:layout_marginTop="13dp"
-        android:layout_marginLeft="16.5dp"
-        android:layout_marginRight="42.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/viewPager"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_time_txt1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:textColor="#696969"
-        android:letterSpacing="-0.04"
-        android:gravity="center_horizontal"
-        tools:text="영업시간"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="16.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_memo_txt"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="214dp"
+                android:visibility="visible"
+                android:layout_marginTop="23dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_time_txt2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#d8d8d6"
-        android:letterSpacing="-0.04"
-        android:gravity="center_horizontal"
-        tools:text="09:00 - 21:00"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="16.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_time_txt1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
+            <LinearLayout
+                android:id="@+id/dotsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/viewPager"
+                app:layout_constraintRight_toRightOf="@+id/viewPager" >
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_menu_txt1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#696969"
-        android:letterSpacing="-0.04"
-        android:gravity="center_horizontal"
-        tools:text="베스트 메뉴"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="16.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_time_txt2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
+                <ImageView
+                    android:id="@+id/dotImageView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    android:src="@drawable/indicator_dot_off" />
+                <ImageView
+                    android:id="@+id/dotImageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:contentDescription="@null"
+                    android:visibility="gone"
+                    android:src="@drawable/indicator_dot_off" />
+                <ImageView
+                    android:id="@+id/dotImageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:contentDescription="@null"
+                    android:visibility="gone"
+                    android:src="@drawable/indicator_dot_off" />
+                <ImageView
+                    android:id="@+id/dotImageView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:contentDescription="@null"
+                    android:visibility="gone"
+                    android:src="@drawable/indicator_dot_off" />
+                <ImageView
+                    android:id="@+id/dotImageView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:contentDescription="@null"
+                    android:visibility="gone"
+                    android:src="@drawable/indicator_dot_off" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_menu_txt2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#d8d8d6"
-        android:letterSpacing="-0.04"
-        android:gravity="center_horizontal"
-        tools:text="고등어찌개"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="16.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_menu_txt1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_menu_txt3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#d8d8d6"
-        android:letterSpacing="-0.04"
-        android:gravity="center_horizontal"
-        tools:text="왕폭탄계란말이"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="16.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_menu_txt2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
+            </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_additional_txt1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#696969"
-        android:letterSpacing="-0.04"
-        android:gravity="center_horizontal"
-        tools:text="부가 정보"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="16.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_menu_txt3"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_memo_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:textColor="#d8d8d6"
+                android:letterSpacing="-0.04"
+                android:text="메모"
+                android:gravity="center|left"
+                android:layout_marginTop="13dp"
+                android:layout_marginLeft="16.5dp"
+                android:layout_marginRight="42.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/viewPager"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/detail_additional_txt2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#d8d8d6"
-        android:letterSpacing="-0.04"
-        android:gravity="center_horizontal"
-        tools:text="주차가능 / 콘센트 O / 24시"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="16.5dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_additional_txt1"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_time_txt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="#696969"
+                android:letterSpacing="-0.04"
+                android:gravity="center_horizontal"
+                tools:text="영업시간"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="16.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/detail_memo_txt"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_time_txt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="#d8d8d6"
+                android:letterSpacing="-0.04"
+                android:gravity="center_horizontal"
+                tools:text="09:00 - 21:00"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="16.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/detail_time_txt1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_menu_txt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="#696969"
+                android:letterSpacing="-0.04"
+                android:gravity="center_horizontal"
+                tools:text="베스트 메뉴"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="16.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/detail_time_txt2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_menu_txt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="#d8d8d6"
+                android:letterSpacing="-0.04"
+                android:gravity="center_horizontal"
+                tools:text="고등어찌개"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="16.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/detail_menu_txt1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_menu_txt3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="#d8d8d6"
+                android:letterSpacing="-0.04"
+                android:gravity="center_horizontal"
+                tools:text="왕폭탄계란말이"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="16.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/detail_menu_txt2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_additional_txt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="#696969"
+                android:letterSpacing="-0.04"
+                android:gravity="center_horizontal"
+                tools:text="부가 정보"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="16.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/detail_menu_txt3"
+                app:layout_constraintLeft_toLeftOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detail_additional_txt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="#d8d8d6"
+                android:letterSpacing="-0.04"
+                android:gravity="center_horizontal"
+                tools:text="주차가능 / 콘센트 O / 24시"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="16.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/detail_additional_txt1"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <LinearLayout
+                android:id="@+id/detail_bottom"
+                android:layout_width="170dp"
+                android:layout_height="40dp"
+                android:background="@drawable/ic_myplace_bottom"
+                android:layout_marginTop="80dp"
+                android:layout_marginBottom="33dp"
+                android:gravity="center"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detail_additional_txt2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    app:layout_constraintTop_toTopOf="@id/detail_bottom"
+                    app:layout_constraintLeft_toLeftOf="@+id/detail_bottom"
+                    app:layout_constraintRight_toRightOf="@+id/detail_bottom"
+                    app:layout_constraintBottom_toBottomOf="@+id/detail_bottom">
+
+                    <ImageView
+                        android:id="@+id/detail_insta_img"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="15dp"
+                        android:background="@drawable/ic_myplace_insta"/>
+
+                    <ImageView
+                        android:id="@+id/detail_share_img"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="15dp"
+                        android:background="@drawable/ic_myplace_share"/>
+
+                    <ImageView
+                        android:id="@+id/detail_findroad_img"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="15dp"
+                        android:background="@drawable/ic_myplace_findroad"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

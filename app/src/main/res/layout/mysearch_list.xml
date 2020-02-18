@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center|left">
+
+    <ImageView
+        android:id="@+id/mysearch_category_img"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.15" />
+
+    <TextView
+        android:id="@+id/mysearch_placeName_txtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="9dp"
+        android:gravity="center|right"
+        android:text="장소명"
+        android:textSize="15sp"
+        android:textColor="#d8d8d6"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toRightOf="@+id/mysearch_category_img"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/mysearch_roadAddressName_txtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="도로명"
+        android:textColor="#393d46"
+        android:gravity="center"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="@+id/mysearch_placeName_txtView"
+        app:layout_constraintTop_toBottomOf="@+id/mysearch_placeName_txtView"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15.9dp"
+        android:background="#8E393d46"
+        android:layout_marginBottom="20.1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/roadAddressName_txtView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mysearch_roadAddressName_txtView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

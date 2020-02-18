@@ -285,6 +285,18 @@ class MainActivity : AppCompatActivity() {
             getMap(mMyPlaceList)
         }
 
+        findBt.setOnClickListener {
+            if(myPlaceSize == 0){
+                val intent = Intent(this, MyPlaceIsEmpty::class.java)
+                startActivityForResult(intent, 6)
+            }
+            else {
+                val intent = Intent(this, MySearchActivity::class.java)
+                intent.putExtra("myPlace", mMyPlaceList as Serializable)
+                startActivityForResult(intent, 5)
+            }
+        }
+
 //            //category Recyclerview init
 //            category_recyclerview.setHasFixedSize(true)
 //            category_recyclerview.layoutManager = LinearLayoutManager(
@@ -301,14 +313,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         d("Resune","Resume start!")
-    }
-
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-//        mainScope.cancel()
     }
 
     fun getMyPlaceApi() {

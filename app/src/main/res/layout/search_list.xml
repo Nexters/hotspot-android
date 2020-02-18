@@ -14,7 +14,7 @@
         android:gravity="center|right"
         android:layout_marginTop="18.1dp"
         android:text="장소명"
-        android:textSize="20dp"
+        android:textSize="15sp"
         android:textColor="#d8d8d6"
         android:textStyle="bold"/>
     <TextView
@@ -26,12 +26,13 @@
         android:text="도로명"
         android:textColor="#393d46"
         android:gravity="center"
-        android:textSize="15dp"/>
+        android:textSize="12sp"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#8E393d46"
+        android:layout_marginBottom="20.1dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 </LinearLayout>
