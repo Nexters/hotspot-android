@@ -33,10 +33,7 @@ android {
         }
     }
 }
-repositories {
-    mavenCentral()
-    maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
-}
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -51,6 +48,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.firebase:firebase-core:16.0.5'
 
+    implementation group: 'com.kakao.sdk', name: 'kakaolink', version: '1.27.0'
+
+    //font땜에 넣음
+    implementation 'com.android.support:appcompat-v7:28.0.0'
     //naver 사용자 위치 추적 기능 (구글꺼 제공)
     implementation("com.google.android.gms:play-services-location:16.0.0")
 

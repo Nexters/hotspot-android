@@ -8,13 +8,42 @@ data class VOClass(
     val firstname: String,
     val age: Int
 )
+/*images?: {
+  cloudinaryId: string // cloudinary 업로드했을 때 나오는 public_id
+  url: string // cloudinary 업로드했을 때 나오는 url
+}[]
+bestMenu?: string[]
+businessHours?: {
+  open: string // 0~23 string으로
+  close: string
+}
+priceRange?: string // 화면에 나오는 string 그대로
+parkingAvailable?: boolean
+allDayAvailable?: boolean
+powerPlugAvailable?: boolean*/
+data class Images(
+    val cloudinaryId : String,
+    val url : String
+): Serializable
+data class BusinessHours(
+    val open : String, // 0~23
+    val close : String
+): Serializable
+
 
 data class SpotListVO(
     val place : Place,
     val visited : Boolean,
     val memo : String?,
-    val rating : Int?
-)
+    val rating : Int?,
+    val images : ArrayList<Images>?,
+    val bestMenu : ArrayList<String>?,
+    val businessHours: BusinessHours?,
+    val parkingAvailable : Boolean?,
+    val allDayAvailable : Boolean?,
+    val powerPlugAvailable : Boolean?
+
+): Serializable
 
 // For GET Place data class
 data class Place(
@@ -33,7 +62,7 @@ data class Place(
     @SerializedName("y")
     val y: String,               // latitude
     @SerializedName("categoryName")
-    val categoryName: String
+    var categoryName: String
 ) : Serializable
 
 data class GetSpotList(
@@ -49,17 +78,29 @@ data class MyPlace(
     @SerializedName("userId")
     val userId: String,
     @SerializedName("place")
-    val place : Place,
+    var place : Place,
     @SerializedName("visited")
-    val visited: Boolean,
+    var visited: Boolean,
     @SerializedName("memo")
-    val memo: String,
+    var memo: String,
     @SerializedName("rating")
-    val rating: Int,
+    var rating: Int,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("updateAt")
-    val updateAt: String
+    val updateAt: String,
+    @SerializedName("images")
+    var images : ArrayList<Images>?,
+    @SerializedName("bestMenu")
+    var bestMenu : ArrayList<String>?,
+    @SerializedName("businessHours")
+    var businessHours: BusinessHours?,
+    @SerializedName("parkingAvailable")
+    var parkingAvailable : Boolean?,
+    @SerializedName("allDayAvailable")
+    var allDayAvailable : Boolean?,
+    @SerializedName("powerPlugAvailable")
+    var powerPlugAvailable : Boolean?
 ) : Serializable
 
 // kakao account token Data

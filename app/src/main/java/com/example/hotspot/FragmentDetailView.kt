@@ -8,14 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
+import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.detail_view.*
+import kotlinx.android.synthetic.main.mylist_view.*
 import java.io.Serializable
 
 class FragmentDetailView : Fragment() {
 
-
+    private var position = 0
+    private var isEditSpot = false
+    private lateinit var newPlace: MyPlace
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,7 +34,7 @@ class FragmentDetailView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val myPlace = arguments!!.getSerializable("myPlace") as MyPlace
-
+        position = arguments!!.getSerializable("Position") as Int
         d("TAG", "FragmentDetailView : ${myPlace}")
 
         detail_placeName_txt.text = myPlace.place.placeName
@@ -41,10 +46,22 @@ class FragmentDetailView : Fragment() {
         }
 
         detail_esc_btn.setOnClickListener {
-            fragmentManager!!.beginTransaction()
-                .remove(this)
-                .commit()
-            activity!!.finish()
+            if(isEditSpot){//장소가 업데이트 되었다 .
+                fragmentManager!!.beginTransaction()
+                    .remove(this)
+                    .commit()
+                var intent2 = Intent()
+                intent2.putExtra("NewSpotInfo",newPlace)
+                intent2.putExtra("Position",position)
+                activity!!.setResult(98,intent2)
+                activity!!.finish()
+            }
+            else {
+                fragmentManager!!.beginTransaction()
+                    .remove(this)
+                    .commit()
+                activity!!.finish()
+            }
         }
 
         //viewPager
@@ -56,7 +73,7 @@ class FragmentDetailView : Fragment() {
             val intent = Intent(activity, RegisterActivity::class.java)
             intent.putExtra("isAdd", false)
             intent.putExtra("myPlace", myPlace as Serializable)
-            startActivity(intent)
+            startActivityForResult(intent,5)
 
 //            val bundle = Bundle()
 //            bundle.putSerializable("myPlace", myPlace as Serializable)
@@ -76,8 +93,8 @@ class FragmentDetailView : Fragment() {
         private var mContext : Context
 
         private var mImage = mutableListOf(
-            R.drawable.best_menu,
-            R.drawable.gallery
+            R.drawable.img_sticker_list_best,
+            R.drawable.img_sticker_list_gallery
         )
 
         constructor(context: Context){
@@ -104,5 +121,27 @@ class FragmentDetailView : Fragment() {
         override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
             container.removeView(obj as ImageView)
         }
+    }
+    @Subscribe
+    fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
+        onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())
+
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == 99){
+
+            if(data != null){
+                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
+                //UI 업데이트!!!!!!!!!!!
+
+
+                isEditSpot = true
+            }
+
+
+
+        }
+
     }
 }

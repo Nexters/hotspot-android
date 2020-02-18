@@ -1,7 +1,6 @@
 package com.example.hotspot
 
 import android.app.Application
-import android.content.Intent
 import com.kakao.auth.KakaoSDK
 
 class GlobalApplication : Application() {
@@ -15,7 +14,6 @@ class GlobalApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         prefs = SharedPreferencesActivity(applicationContext)
-
         instance = this
         KakaoSDK.init(KakaoSDKAdapter())
 

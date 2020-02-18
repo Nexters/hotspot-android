@@ -27,7 +27,6 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register)
 
         val isAdd = intent.getBooleanExtra("isAdd",true) // true면 등록 , false면 수정
-
         val fr_reg = FragmentRegister()
         val bundle = Bundle()
         bundle.putBoolean("isAdd", isAdd)
@@ -62,8 +61,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        //일단 벡 버튼 막아놓음
-        // 정말 돌아가시겠슴니까? 팝업창 띄워야함
+
     }
 
 }

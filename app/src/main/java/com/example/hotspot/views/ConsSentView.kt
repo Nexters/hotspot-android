@@ -36,6 +36,7 @@ class ConsSentView : ImageView , View.OnTouchListener{
         initView()
     }
     private fun initView(){
+
         setOnTouchListener(this)
     }
     fun setPos( x : Float,  y : Float){
@@ -45,6 +46,7 @@ class ConsSentView : ImageView , View.OnTouchListener{
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        bringToFront()
         if(v != null && event != null) {
             val parentWidth = (v.parent as ViewGroup).width    // 부모 View 의 Width
             val parentHeight = (v.parent as ViewGroup).height    // 부모 View 의 Height

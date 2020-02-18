@@ -10,14 +10,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.squareup.otto.Subscribe
+import kotlinx.android.synthetic.main.mylist_view.*
 import kotlinx.android.synthetic.main.myplace_item.*
 import kotlinx.android.synthetic.main.register_view.*
 import okhttp3.ResponseBody
@@ -37,13 +40,16 @@ class FragmentRegister : BaseFragment() {
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
     private lateinit var spotList : SpotListVO
+    private var isAdd = true
 
     private var accessToken = GlobalApplication.prefs.getPreferences()
     var rating : Int? = 0
     var choicedCategory = ""
-    var isEdtChecked = false
+    var isRcylrdecoAdd = false
+    var search_OK = false
 
-    private lateinit var stickerData: StickerData
+    private var stickerData: StickerData? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,7 +66,6 @@ class FragmentRegister : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
         setRetrofitInit()
         setApiServiceInit()
 
@@ -69,27 +74,24 @@ class FragmentRegister : BaseFragment() {
 
 
         btn_esc3.setOnClickListener {
-            fragmentManager!!.beginTransaction()
-                .remove(this)
-                .commit()
-            activity!!.finish()
+            showFinishDailog()
+
         }
-        edtTxt_memo.setOnFocusChangeListener { v, hasFocus ->
-            img_uncheck2.setImageResource(R.drawable.ic_img_check)
-            isEdtChecked = true
-        }
+
         edtTxt_memo.doOnTextChanged { text, start, count, after ->
             if(count > 50){
                 //50자 넘어갔다고 알림창 ?
             }
+            if(text.isNullOrEmpty()){
+                img_uncheck2.setImageResource(R.drawable.ic_img_uncheck)
+            }
+            else{
+                img_uncheck2.setImageResource(R.drawable.ic_img_check)
+            }
         }
 
         reg_category_txt.setOnClickListener {
-            /*
-            fragmentManager!!.beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.register_activity, FragmentCategory())
-                .commit()*/
+
             var stateStickerBt : Boolean // stickerBt이 활성화된 상태라면 true
             var statevisited_layout : Boolean
             txt_place_name.isClickable = false
@@ -164,13 +166,11 @@ class FragmentRegister : BaseFragment() {
         }
 
         txt_visited.setOnClickListener{
-            if(isEdtChecked) {
+            if(search_OK) {
                 if (layout_visited.visibility == View.GONE) {
                     layout_visited.visibility = View.VISIBLE
                     txt_visited.setTextColor(Color.WHITE)
 
-                    stickerBt.visibility = View.VISIBLE
-                    img_uncheck4.visibility = View.VISIBLE
 
                     img_uncheck3.setImageResource(R.drawable.ic_img_check)
 
@@ -178,30 +178,29 @@ class FragmentRegister : BaseFragment() {
                 } else {
                     layout_visited.visibility = View.GONE
                     txt_visited.setTextColor(resources.getColor(R.color.colorMyGrayDark))
-                    stickerBt.visibility = View.INVISIBLE
-                    img_uncheck4.visibility = View.INVISIBLE
+                    img_uncheck3.setImageResource(R.drawable.ic_img_uncheck)
 
                 }
             }
         }
 
         stickerBt.setOnClickListener{
-            img_uncheck4.setImageResource(R.drawable.ic_img_check)
-            stickerBt.setTextColor(resources.getColor(R.color.colorWhite))
-            var intent = Intent(activity, StickerRegistActivity::class.java)
-            intent.putExtra("Category",choicedCategory)
-            intent.putExtra("PlaceName",place.placeName)
-            intent.putExtra("Longitude",place.x.toDouble())
-            intent.putExtra("Latitude",place.y.toDouble())
-            activity!!.startActivityForResult(intent, 1)
+            if(search_OK) {
 
+                var intent = Intent(activity, StickerRegistActivity::class.java)
+                intent.putExtra("Category", choicedCategory)
+                intent.putExtra("PlaceName", place.placeName)
+                intent.putExtra("Longitude", place.x.toDouble())
+                intent.putExtra("Latitude", place.y.toDouble())
+                activity!!.startActivityForResult(intent, 1)
+            }
 
         }
 
         btn_regist.setOnClickListener{
             if(txt_place_name.text == "" || txt_place_name.text == "장소 추가"){
                 Toast.makeText(activity,
-                    "장소 이름을 작성해주세요.",
+                    "장소를 추가해 주세요!",
                     Toast.LENGTH_SHORT)
                     .show()
             }
@@ -214,51 +213,91 @@ class FragmentRegister : BaseFragment() {
         onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())
 
     }
-    // resultCode 2 : 스티커 없음 , resultCode : 1 스티커 잇음  (사진은 선택하면 바로 업로드)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(resultCode){
             1 -> {
-                //사진 업로드 테스트 코드
                 stickerData = data!!.getSerializableExtra("StickerData") as StickerData
+                //리사이클러 뷰 만들고 visible
 
-                //cloudinary init config
-                val config = HashMap<String,String>()
-                config.put("cloud_name", "hotspot-team")
-                MediaManager.init(activity!!, config)
+                //리스트 만들기 (ㅅ트링 리스트)
+                val list : ArrayList<String> = arrayListOf()
+                var count = 0
+                if(stickerData!!.powerPlugAvailable){
+                    list.add("콘센트 있음")
+                    count++
+                }
+                if(stickerData!!.allDayAvailable){
+                    list.add("24시간 영업")
+                    count++
+                }
+                if(stickerData!!.parkingAvailable){
+                    list.add("주차 가능")
+                    count++
+                }
+                if(!stickerData!!.open.isNullOrEmpty()){
+                    var str : String
+                    if(stickerData!!.open.toInt()<=12){
+                        str = stickerData!!.open + "AM - "
+                    }
+                    else{
+                        str = (stickerData!!.open.toInt()-12).toString() + "PM - "
+                    }
+                    if(stickerData!!.close.toInt()<=12){
+                        str = str+ stickerData!!.close + "AM"
+                    }
+                    else{
+                        str = str+ (stickerData!!.close.toInt()-12).toString() + "PM"
+                    }
+                    list.add(str)
+                    count++
+                }
+                if(!stickerData!!.bestMenu.isNullOrEmpty()){
+                    for(i in (0..stickerData!!.bestMenu.size-1)){
+                        list.add(stickerData!!.bestMenu.get(i))
+                    }
+                    count++
+                }
+                if(!stickerData!!.cloudinaryUrlList.isNullOrEmpty()){
+                    list.add("사진 있음")
+                    count++
+                }
 
-                val requestId = MediaManager.get().upload(stickerData.photoUriList!!.get(0).toUri())
-                    .unsigned("hotspot-dev")
-                    .callback(object : UploadCallback{
-                        override fun onError(requestId: String?, error: ErrorInfo?) {
-                            d("Cloudinary", "error : ${error.toString()}")
 
-                        }
+                if(!list.isNullOrEmpty()){
+                    rcycl_sticker_view.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+                    rcycl_sticker_view.adapter = StickerRcylrAdapter(list)
+                    val deco = Stk_Rcylr_Item_Deco()
+                    if(isRcylrdecoAdd) {
+                        rcycl_sticker_view.removeItemDecorationAt(0)
+                        isRcylrdecoAdd = false
+                    }
+                    rcycl_sticker_view.addItemDecoration(deco)
+                    isRcylrdecoAdd = true
+                    if(list.size >= 3) {
+                        hide_eff_left.visibility = View.VISIBLE
+                        hide_eff_right.visibility = View.VISIBLE
+                    }
+                    else{
+                        hide_eff_left.visibility = View.INVISIBLE
+                        hide_eff_right.visibility = View.INVISIBLE
+                    }
+                    rcycl_sticker_view.visibility = View.VISIBLE
+                    stickerBt.text = "스티커 " +count.toString()+"개"
+                    img_uncheck4.setImageResource(R.drawable.ic_img_check)
+                    stickerBt.setTextColor(resources.getColor(R.color.colorWhite))
+                }
+                else{
+                    hide_eff_left.visibility = View.INVISIBLE
+                    hide_eff_right.visibility = View.INVISIBLE
+                    rcycl_sticker_view.visibility = View.INVISIBLE
+                    img_uncheck4.setImageResource(R.drawable.ic_img_uncheck)
+                    stickerBt.setTextColor(resources.getColor(R.color.colorEditTextGray))
+                }
 
-                        override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
-                        }
 
-                        override fun onReschedule(requestId: String?, error: ErrorInfo?) {
-                        }
-
-                        override fun onStart(requestId: String?) {
-                        }
-
-                        override fun onSuccess(
-                            requestId: String?,
-                            resultData: MutableMap<Any?, Any?>?
-                        ) {
-                            d("Cloudinary", "resultData : ${resultData.toString()}")
-
-                        }
-                    }).dispatch()
             }
-            2 -> {
 
-            }
-            3 -> {
-
-            }
         }
 
     }
@@ -266,21 +305,162 @@ class FragmentRegister : BaseFragment() {
 
     private fun setLayout(){
         //isAdd : true 등록, false 수정
-        val isAdd = arguments!!.getBoolean("isAdd", true)
-        val search_OK = arguments!!.getBoolean("search_OK", false)
-        val category_OK = arguments!!.getBoolean("categoty_OK", false)
+        isAdd = arguments!!.getBoolean("isAdd", true)
+        search_OK = arguments!!.getBoolean("search_OK", false)
 
-        d("TAG", "setLayout() isAdd : ${isAdd}, search_OK : $search_OK, category_OK : $category_OK")
+        d("TAG", "setLayout() isAdd : ${isAdd}, search_OK : $search_OK")
 
         if(!isAdd) {//수정 이기때문에 장소에 대한 정보 뿌리기
             myPlace = arguments!!.getSerializable("myPlace") as MyPlace
+            place = myPlace.place
+            search_OK = true
+            txt_place_name.isClickable = false
+            txt_place_name.text = place.placeName
+            txt_place_name.setTextColor(resources.getColor(R.color.colorWhite))
+            txt_address.text = place.roadAddressName
+            choicedCategory = place.categoryName
+            if(!choicedCategory.isNullOrEmpty()) {
+                when (choicedCategory) {
+                    "카페" -> {
+                        reg_category_txt.setImageResource(R.drawable.img_category_cafe)
+                    }
+                    "맛집" -> {
+                        reg_category_txt.setImageResource(R.drawable.img_category_food)
+                    }
+                    "문화" -> {
+                        reg_category_txt.setImageResource(R.drawable.img_category_culture)
+                    }
+                    "술집" -> {
+                        reg_category_txt.setImageResource(R.drawable.img_category_drink)
+                    }
+                    "기타" -> {
+                        reg_category_txt.setImageResource(R.drawable.img_category_etc)
+                    }
 
-            txt_place_name.text = myPlace.place.placeName
-            txt_address.text = myPlace.place.roadAddressName
+                }
+            }
+            else{
+                reg_category_txt.setImageResource(R.drawable.img_category_etc)
+                choicedCategory = "기타"
+            }
+            img_uncheck.setImageResource(R.drawable.ic_img_check)
+            txt_address.visibility = View.VISIBLE
             reg_category_txt.visibility = View.VISIBLE
-            //reg_category_txt 에 svg 이미지 띄우기  myplace에서 category가 카페면 카페이미지  이런식으로
+            edtTxt_memo.isFocusableInTouchMode = true
+            edtTxt_memo.isFocusable = true
+
+            if(!myPlace.memo.isNullOrEmpty()){
+                edtTxt_memo.setText(myPlace.memo)
+                img_uncheck2.setImageResource(R.drawable.ic_img_check)
+            }
+            if(myPlace.visited){
+                layout_visited.visibility = View.VISIBLE
+                txt_visited.setTextColor(Color.WHITE)
+                img_uncheck3.setImageResource(R.drawable.ic_img_check)
+                rating = myPlace.rating
+                setRatingBar()
+                setRatingTxt(rating)
+                when(rating){
+                    1 ->{
+                        ratingbar1.setImageResource(R.drawable.ic_img_star_yellow)
+                    }
+                    2 ->{
+                        ratingbar1.setImageResource(R.drawable.ic_img_star_yellow)
+                        ratingbar2.setImageResource(R.drawable.ic_img_star_yellow)
+                    }
+                    3 ->{
+                        ratingbar1.setImageResource(R.drawable.ic_img_star_yellow)
+                        ratingbar2.setImageResource(R.drawable.ic_img_star_yellow)
+                        ratingbar3.setImageResource(R.drawable.ic_img_star_yellow)
+                    }
+                }
+            }
+            //리사이클러 뷰 만들고 visible
+            stickerData = StickerData()
+            //리스트 만들기 (ㅅ트링 리스트)
+            val list : ArrayList<String> = arrayListOf()
+            var count = 0
+            if(myPlace.powerPlugAvailable != null){
+                list.add("콘센트 있음")
+                count++
+                stickerData!!.powerPlugAvailable = true
+            }
+            if(myPlace.allDayAvailable != null){
+                list.add("24시간 영업")
+                count++
+                stickerData!!.allDayAvailable = true
+            }
+            if(myPlace.parkingAvailable != null){
+                list.add("주차 가능")
+                count++
+                stickerData!!.parkingAvailable = true
+            }
+            if(!myPlace.businessHours!!.open.isNullOrEmpty()){
+                var str : String
+                stickerData!!.open = myPlace.businessHours!!.open
+                stickerData!!.close = myPlace.businessHours!!.close
+                if(myPlace.businessHours!!.open.toInt()<=12){
+                    str = myPlace.businessHours!!.open + "AM - "
+                }
+                else{
+                    str = (myPlace.businessHours!!.open.toInt()-12).toString() + "PM - "
+                }
+                if(myPlace.businessHours!!.close.toInt()<=12){
+                    str = str+ myPlace.businessHours!!.close + "AM"
+                }
+                else{
+                    str = str+ (myPlace.businessHours!!.close.toInt()-12).toString() + "PM"
+                }
+                list.add(str)
+                count++
+            }
+            if(!myPlace.bestMenu.isNullOrEmpty()){
+                for(i in (0..myPlace.bestMenu!!.size-1)){
+                    list.add(myPlace.bestMenu!!.get(i))
+                }
+                count++
+                stickerData!!.bestMenu = myPlace.bestMenu!!
+            }
+            if(!myPlace.images.isNullOrEmpty()){
+                list.add("사진 있음")
+                count++
+                for(i in (0..myPlace.images!!.size-1)){
+                    stickerData!!.cloudinaryIdList!!.add(myPlace.images!!.get(i).cloudinaryId)
+                    stickerData!!.cloudinaryUrlList!!.add(myPlace.images!!.get(i).url)
+                }
+            }
+            if(!list.isNullOrEmpty()){
+                rcycl_sticker_view.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+                rcycl_sticker_view.adapter = StickerRcylrAdapter(list)
+                val deco = Stk_Rcylr_Item_Deco()
+                if(isRcylrdecoAdd) {
+                    rcycl_sticker_view.removeItemDecorationAt(0)
+                    isRcylrdecoAdd = false
+                }
+                rcycl_sticker_view.addItemDecoration(deco)
+                isRcylrdecoAdd = true
+                if(list.size >= 3) {
+                    hide_eff_left.visibility = View.VISIBLE
+                    hide_eff_right.visibility = View.VISIBLE
+                }
+                else{
+                    hide_eff_left.visibility = View.INVISIBLE
+                    hide_eff_right.visibility = View.INVISIBLE
+                }
+                rcycl_sticker_view.visibility = View.VISIBLE
+                stickerBt.text = "스티커 " +count.toString()+"개"
+                img_uncheck4.setImageResource(R.drawable.ic_img_check)
+                stickerBt.setTextColor(resources.getColor(R.color.colorWhite))
+            }
+            else{
+                hide_eff_left.visibility = View.INVISIBLE
+                hide_eff_right.visibility = View.INVISIBLE
+                rcycl_sticker_view.visibility = View.INVISIBLE
+                img_uncheck4.setImageResource(R.drawable.ic_img_uncheck)
+                stickerBt.setTextColor(resources.getColor(R.color.colorEditTextGray))
+            }
         }
-        if(search_OK) {
+        else if(search_OK) {
             edtTxt_memo.isFocusableInTouchMode = true
             edtTxt_memo.isFocusable = true
 
@@ -313,24 +493,23 @@ class FragmentRegister : BaseFragment() {
             txt_address.visibility = View.VISIBLE
             reg_category_txt.visibility = View.VISIBLE
         }
-        if(category_OK) {
-            val category_txt = arguments!!.getString("categoryName")
-            reg_category_txt.visibility = View.VISIBLE
-            //reg_category_txt 에 svg 이미지 띄우기  myplace에서 category가 카페면 카페이미지  이런식으로
-        }
-        else {
-
-        }
     }
 
     private fun registSpot(){
         var isVisited = true
         if(txt_visited.currentTextColor == Color.WHITE){
             isVisited = true
+            if(!isAdd) {
+                myPlace.visited = true
+            }
         }
         else {
             isVisited = false
             rating = null
+            if(!isAdd) {
+                myPlace.visited = false
+                myPlace.rating = 0
+            }
         }
         val registPlace = Place(
             place.kakaoId,place.kakaoUrl,
@@ -341,30 +520,145 @@ class FragmentRegister : BaseFragment() {
             place.y,
             this.choicedCategory
         )
-        spotList = SpotListVO(
-            registPlace,
-            isVisited,
-            edtTxt_memo.text.toString(),
-            rating
-        )
-
-        apiService.postPlace("Bearer " + "${accessToken}",
-            spotList).enqueue(object : Callback<SpotListVO> {
-            override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
-                if (response.isSuccessful) {
-                    d("TAG", "RegisterActivity onResponse() ")
-                    activity!!.finish()
+        if(!isAdd) {
+            myPlace.place.categoryName = this.choicedCategory
+        }
+        //spotList는 서버에 보낼 데이터
+        if(stickerData == null) {
+            spotList = SpotListVO(
+                registPlace,
+                isVisited,
+                edtTxt_memo.text.toString(),
+                rating,
+                null, null, null, null, null, null
+            )
+            if(!isAdd) {
+                myPlace.memo = edtTxt_memo.text.toString()
+                myPlace.images = null
+                myPlace.bestMenu = null
+                myPlace.businessHours = null
+                myPlace.parkingAvailable = null
+                myPlace.allDayAvailable = null
+                myPlace.powerPlugAvailable = null
+            }
+        }
+        else{
+            if(stickerData != null) {
+                var images: ArrayList<Images>?
+                var bestMenu: ArrayList<String>?
+                var businessHours: BusinessHours?
+                var parkingAvailable: Boolean?
+                var allDayAvailable: Boolean?
+                var powerPlugAvailalbe: Boolean?
+                if (stickerData!!.cloudinaryUrlList!!.size == 0) {
+                    images = null
+                } else {
+                    images = arrayListOf()
+                    for (i in 0..(stickerData!!.cloudinaryUrlList!!.size - 1)) {
+                        var image = Images(
+                            stickerData!!.cloudinaryIdList!!.get(i),
+                            stickerData!!.cloudinaryUrlList!!.get(i)
+                        )
+                        images.add(image)
+                    }
                 }
-                else{
-                    d("TAG","Regist onResPonse : " + response.toString())
+                if (stickerData!!.bestMenu.size == 0) {
+                    bestMenu = null
+                } else {
+                    bestMenu = stickerData!!.bestMenu
+                }
+                if (stickerData!!.open.isNullOrEmpty()) {
+                    businessHours = null
+                } else {
+                    businessHours = BusinessHours(stickerData!!.open, stickerData!!.close)
+                }
+                if (!stickerData!!.parkingAvailable) {
+                    parkingAvailable = null
+                } else {
+                    parkingAvailable = true
+                }
+                if (!stickerData!!.allDayAvailable) {
+                    allDayAvailable = null
+                } else {
+                    allDayAvailable = true
+                }
+                if (!stickerData!!.powerPlugAvailable) {
+                    powerPlugAvailalbe = null
+                } else {
+                    powerPlugAvailalbe = true
+                }
+                spotList = SpotListVO(
+                    registPlace,
+                    isVisited,
+                    edtTxt_memo.text.toString(),
+                    rating,
+                    images,
+                    bestMenu,
+                    businessHours,
+                    parkingAvailable,
+                    allDayAvailable,
+                    powerPlugAvailalbe
+                )
+                if(!isAdd) {
+                    myPlace.memo = edtTxt_memo.text.toString()
+                    myPlace.images = images
+                    myPlace.bestMenu = bestMenu
+                    myPlace.businessHours = businessHours
+                    myPlace.parkingAvailable = parkingAvailable
+                    myPlace.allDayAvailable = allDayAvailable
+                    myPlace.powerPlugAvailable = powerPlugAvailalbe
                 }
             }
+        }
+        if(isAdd) {
 
-            override fun onFailure(call: Call<SpotListVO>, t: Throwable) {
-                d("TAG", "RegisterActivity onFailure() ")
-                Toast.makeText(activity,"post 실패 !!", Toast.LENGTH_LONG).show()
-            }
-        })
+            apiService.postPlace(
+                "Bearer " + "${accessToken}",
+                spotList
+            ).enqueue(object : Callback<SpotListVO> {
+                override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
+                    if (response.isSuccessful) {
+                        d("TAG", "RegisterActivity onResponse() ")
+                        var intent = Intent()
+                        intent.putExtra("NewSpotInfo", spotList)
+                        activity!!.setResult(10, intent)
+                        activity!!.finish()
+                    } else {
+                        d("TAG", "Regist onResPonse : " + response.toString())
+                        Toast.makeText(activity!!, "장소 등록 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                    }
+                }
+
+                override fun onFailure(call: Call<SpotListVO>, t: Throwable) {
+                    d("TAG", "RegisterActivity onFailure() ")
+                    Toast.makeText(activity, "post 실패 !!", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
+        else{
+            apiService.putPlace("Bearer " + "${accessToken}",
+                "${myPlace.id}",
+                spotList
+            ).enqueue(object : Callback<SpotListVO>{
+                override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
+                    if (response.isSuccessful) {
+                        d("TAG", "장소 업데이트 성공")
+                        var intent = Intent()
+                        intent.putExtra("NewSpotInfo", myPlace)
+                        activity!!.setResult(99, intent)
+                        activity!!.finish()
+                    } else {
+                        d("TAG", "Regist onResPonse : " + response.toString())
+                        Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                    }
+                }
+
+                override fun onFailure(call: Call<SpotListVO>, t: Throwable) {
+                    d("TAG", "RegisterActivity onFailure() ")
+                    Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                }
+            })
+        }
     }
 
     private fun setRetrofitInit(){
@@ -498,6 +792,22 @@ class FragmentRegister : BaseFragment() {
                 2 -> txt_rating_info.text = "멋진 곳이에요!"
                 3 -> txt_rating_info.text = "내 맘에 쏙 드는 곳이에요!"
             }
+        }
+    }
+    private fun showFinishDailog(){
+        regist_popup_layout.visibility = View.VISIBLE
+        btn_regist.visibility = View.INVISIBLE
+        regist_popup_layout.findViewById<TextView>(R.id.regist_quit_ok_txt).setOnClickListener{
+            fragmentManager!!.beginTransaction()
+                .remove(this)
+                .commit()
+            var intent = Intent()
+            activity!!.setResult(9,intent)
+            activity!!.finish()
+        }
+        regist_popup_layout.findViewById<TextView>(R.id.regist_quit_no_txt).setOnClickListener{
+            regist_popup_layout.visibility = View.GONE
+            btn_regist.visibility = View.VISIBLE
         }
     }
 

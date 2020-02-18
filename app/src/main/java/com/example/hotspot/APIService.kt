@@ -17,4 +17,9 @@ interface APIService {
 
     @GET("/place/my_places")
     fun getMyPlaces(@Header("Authorization") auth : String) : Call<GetSpotList>
+
+    @PUT("/place/my_places/{myPlaceId}")
+    fun putPlace(@Header("Authorization") auth : String,
+                 @Path("myPlaceId") myPlaceId : String,
+                 @Body spotObject: SpotListVO) : Call<SpotListVO>
 }

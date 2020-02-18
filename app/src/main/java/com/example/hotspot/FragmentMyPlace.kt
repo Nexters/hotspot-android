@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.mylist_view.*
@@ -15,12 +16,13 @@ import java.io.Serializable
 import androidx.recyclerview.widget.RecyclerView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.category_view.*
 
 
 class FragmentMyPlace : Fragment() {
 
-
+    private lateinit var newPlace : MyPlace
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -95,8 +97,8 @@ class FragmentMyPlace : Fragment() {
 
                         val intent = Intent(activity, DetailActivity::class.java)
                         intent.putExtra("myPlace", myPlace as Serializable )
-                        startActivity(intent)
-
+                        intent.putExtra("Position",position)
+                        startActivityForResult(intent,20)
 //                        fragmentManager!!.beginTransaction()
 //                            .addToBackStack(null)
 //                            .replace(R.id.main, fr_detaliview)
@@ -108,6 +110,23 @@ class FragmentMyPlace : Fragment() {
                     }
                 })
         )
+    }
+    @Subscribe
+    fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
+        onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())
+
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == 98){//업데이트 되었음
+            if(data!=null){
+                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
+            }
+        }
+        if(resultCode == 0){
+            //do nothing
+        }
+
     }
 
 }

@@ -18,7 +18,19 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 
 import androidx.fragment.app.Fragment
+import com.example.hotspot.views.BestMenuFinView
+import com.example.hotspot.views.ConsSentView
+import com.example.hotspot.views.PhotoFinView
+import com.example.hotspot.views.WorkTimeFinView
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.ButtonObject
+import com.kakao.message.template.ContentObject
+import com.kakao.message.template.LinkObject
+import com.kakao.message.template.LocationTemplate
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -26,11 +38,14 @@ import com.naver.maps.map.overlay.Overlay
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.widget.LocationButtonView
+import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.map_view.*
+import kotlinx.android.synthetic.main.myplace_item.*
 import kotlinx.android.synthetic.main.register_view.*
 import org.w3c.dom.Text
 import java.io.Serializable
+import java.net.URLEncoder
 
 
 class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEventListener*/
@@ -55,6 +70,15 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
     }
     private var curr_longitude : Double = 0.0
     private var curr_latitude : Double = 0.0
+
+    private var stateMapReady = false
+    private lateinit var choicedMarker : Marker
+    private lateinit var nMap: NaverMap
+
+    private var searched_longitude : Double = 0.0
+    private var searched_latitude : Double = 0.0
+    private var searched_roadAddress = ""
+    private var searched_placeName = ""
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -90,8 +114,12 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         return view
     }
 
+
     override fun onMapReady(p0: NaverMap) {
         markerList = arrayListOf()
+        nMap = p0
+        p0.minZoom = 6.0
+        p0.maxZoom = 19.0
         p0.uiSettings.isCompassEnabled = false
         p0.uiSettings.isZoomControlEnabled = false
         //지도 나이트 모드
@@ -107,8 +135,9 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
             curr_longitude = location.longitude
         }
 
-        val cameraUpdate = CameraUpdate.scrollTo(LatLng(curr_latitude, curr_longitude)) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
+        val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),15.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
         p0.moveCamera(cameraUpdate)
+
         //마커추가
         for(i in 0 .. placeList.size-1) {
             val marker = Marker()
@@ -122,10 +151,11 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                 setMarkerImg(myPlace.place.categoryName,marker,p0)
             }
             marker.setOnClickListener(Overlay.OnClickListener {
-
+                setStickerPosition()
+                setSticker(marker,myPlace)
                 var placeName = myPlace.place.placeName
                 var roadAdress = myPlace.place.roadAddressName
-
+                choicedMarker = marker
                 var category = myPlace.place.categoryName
                 var categoryImgView = activity!!.findViewById<ImageView>(R.id.img__spotinfo_category)
                 if(category!=null) {
@@ -134,26 +164,31 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                             categoryImgView.setImageResource(R.drawable.ic_cafe_black)
                             spotinfoLayout.background =
                                 resources.getDrawable(R.drawable.myplace_list_btn2)
+                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_cafe_png)
                         }
                         "맛집" -> {
                             categoryImgView.setImageResource(R.drawable.ic_food_black)
                             spotinfoLayout.background =
                                 resources.getDrawable(R.drawable.myplace_list_btn1)
+                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_food_png)
                         }
                         "문화" -> {
                             categoryImgView.setImageResource(R.drawable.ic_culture_black)
                             spotinfoLayout.background =
                                 resources.getDrawable(R.drawable.myplace_list_btn4)
+                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_culture_png)
                         }
                         "술집" -> {
                             categoryImgView.setImageResource(R.drawable.ic_drink_black)
                             spotinfoLayout.background =
                                 resources.getDrawable(R.drawable.myplace_list_btn3)
+                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_drink_png)
                         }
                         "기타" -> {
                             categoryImgView.setImageResource(R.drawable.ic_etc_black)
                             spotinfoLayout.background =
                                 resources.getDrawable(R.drawable.myplace_list_btn5)
+                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_etc_png)
                         }
                     }
                 }
@@ -161,7 +196,7 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                     categoryImgView.setImageResource(R.drawable.ic_etc_black)
                     spotinfoLayout.background =
                         resources.getDrawable(R.drawable.myplace_list_btn5)
-
+                    layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_etc_png)
                 }
                 activity!!.findViewById<TextView>(R.id.txt_spotinfo_placename).text = placeName
                 activity!!.findViewById<TextView>(R.id.txt_spotinfo_address).text = roadAdress
@@ -191,24 +226,33 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                 }
 
                 instaTag = placeName
+                searched_latitude = myPlace.place.y.toDouble()
+                searched_longitude = myPlace.place.x.toDouble()
+                searched_placeName = myPlace.place.placeName
+                searched_roadAddress = myPlace.place.roadAddressName
 
                 if(spotinfoLayout.isVisible){
                     spotinfoLayout.visibility = View.GONE
-                    layout_transparency.visibility = View.GONE
+                    layout_transparency.visibility = View.INVISIBLE
                     img_curr_pos.visibility = View.VISIBLE
                     img_main_isvisited.visibility = View.VISIBLE
                     activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
 
                 }
                 else{
-                    spotinfoLayout.visibility = View.VISIBLE
-                    layout_transparency.visibility = View.VISIBLE
-                    img_curr_pos.visibility = View.INVISIBLE
-                    img_main_isvisited.visibility = View.INVISIBLE
-                    activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.GONE
 
-                    val cameraUpdate2 = CameraUpdate.scrollTo(marker.position)
-                    cameraUpdate2.animate(CameraAnimation.Easing,1000)
+
+                    val cameraUpdate2 = CameraUpdate.scrollAndZoomTo(marker.position,p0.cameraPosition.zoom)
+                    cameraUpdate2.animate(CameraAnimation.Easing,700)
+                    cameraUpdate2.finishCallback {
+
+                        spotinfoLayout.visibility = View.VISIBLE
+                        layout_transparency.visibility = View.VISIBLE
+                        img_curr_pos.visibility = View.INVISIBLE
+                        img_main_isvisited.visibility = View.INVISIBLE
+                        activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.GONE
+                        marker.map = null
+                    }
                     p0.moveCamera(cameraUpdate2)
 
                     spotinfoLayout.setOnClickListener{
@@ -225,7 +269,70 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         }
         //Map 위의 버튼들 세팅
         setButton(p0)
+        stateMapReady = true
 
+    }
+    private fun setSticker(marker :Marker , myPlace : MyPlace){
+        var alldayView = layout_transparency.findViewById<ConsSentView>(R.id.main_24h_view)
+        var consentView = layout_transparency.findViewById<ConsSentView>(R.id.main_consent_view)
+        var parkView = layout_transparency.findViewById<ConsSentView>(R.id.main_park_view)
+        var bestMenuView = layout_transparency.findViewById<BestMenuFinView>(R.id.main_best_view)
+        var photoView = layout_transparency.findViewById<PhotoFinView>(R.id.main_photo_view)
+        var worktimeView = layout_transparency.findViewById<WorkTimeFinView>(R.id.main_worktime_view)
+        if(myPlace.allDayAvailable == null){
+            alldayView.visibility = View.INVISIBLE
+        }
+        else{
+            alldayView.visibility = View.VISIBLE
+        }
+        if(myPlace.powerPlugAvailable == null){
+            consentView.visibility = View.INVISIBLE
+        }
+        else{
+            consentView.visibility = View.VISIBLE
+        }
+        if(myPlace.parkingAvailable == null){
+            parkView.visibility = View.INVISIBLE
+        }
+        else{
+            parkView.visibility = View.VISIBLE
+        }
+        if(myPlace.bestMenu.isNullOrEmpty()){
+            bestMenuView.visibility = View.INVISIBLE
+        }
+        else{
+            bestMenuView.findViewById<TextView>(R.id.up1).text = myPlace.bestMenu!![0]
+            if(myPlace.bestMenu!!.size == 2) {
+                bestMenuView.findViewById<TextView>(R.id.up2).text = myPlace.bestMenu!![1]
+            }
+            bestMenuView.visibility = View.VISIBLE
+        }
+        if(myPlace.images.isNullOrEmpty()){
+            photoView.visibility = View.INVISIBLE
+        }
+        else{
+            photoView.findViewById<TextView>(R.id.photo_count_txt).text = myPlace.images!!.size.toString()
+            photoView.visibility = View.VISIBLE
+        }
+        if(myPlace.businessHours!!.open.isNullOrEmpty()){
+            worktimeView.visibility = View.INVISIBLE
+        }
+        else{
+            if(myPlace.businessHours!!.open.toInt() <= 12){
+                worktimeView.findViewById<TextView>(R.id.work_fin_open_txt).text = myPlace.businessHours!!.open + "AM"
+            }
+            else{
+                worktimeView.findViewById<TextView>(R.id.work_fin_open_txt).text = (myPlace.businessHours!!.open.toInt()-12).toString() + "PM"
+            }
+
+            if(myPlace.businessHours!!.close.toInt() <= 12){
+                worktimeView.findViewById<TextView>(R.id.work_fin_closed_txt).text = myPlace.businessHours!!.close + "AM"
+            }
+            else{
+                worktimeView.findViewById<TextView>(R.id.work_fin_closed_txt).text = (myPlace.businessHours!!.close.toInt()-12).toString() + "PM"
+            }
+            worktimeView.visibility = View.VISIBLE
+        }
     }
     private fun setMarkerImg(categoryName : String,marker : Marker, nMap: NaverMap){
         when(categoryName){
@@ -371,8 +478,39 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
             var intent_insta = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/explore/tags/"+instaTag+"/"))
             startActivity(intent_insta)
         }
+        activity!!.findViewById<ImageView>(R.id.btn_search_road).setOnClickListener{
+            var strEncodedUrl = URLEncoder.encode(instaTag)
+            var intent_search_road = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://route/public?dlat="+searched_latitude+"&dlng="+searched_longitude+"&dname="+strEncodedUrl+"&appname=com.example.hotspot"))
+            startActivity(intent_search_road)
+        }
+        activity!!.findViewById<ImageView>(R.id.btn_share).setOnClickListener{
+
+            var params : LocationTemplate
+            params = LocationTemplate.newBuilder(searched_roadAddress,ContentObject.newBuilder(searched_placeName,
+                "https://", LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
+                    .setMobileWebUrl("https://developers.kakao.com").build())
+                .setDescrption(searched_roadAddress).build()).addButton(ButtonObject("Spotter",LinkObject.newBuilder()
+                .setWebUrl("https://developers.kakao.com")
+                .setMobileWebUrl("https://developers.kakao.com")
+                .setAndroidExecutionParams("hi").build()))
+                .setAddressTitle(searched_placeName).build()
+
+            var serverCallbackArgs = HashMap<String,String>()
+
+            serverCallbackArgs.put("user_id", "${placeList.get(0).userId}")
+            serverCallbackArgs.put("product_id", "${2}")
+            KakaoLinkService.getInstance().sendDefault(activity!!,params,serverCallbackArgs,object : ResponseCallback<KakaoLinkResponse>(){
+                override fun onFailure(errorResult: ErrorResult?) {
+                    Toast.makeText(activity!!,"카카오 링크 공유 실패!",Toast.LENGTH_LONG)
+                }
+
+                override fun onSuccess(result: KakaoLinkResponse?) {
+                    // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
+                }
+            })
+        }
         img_curr_pos.setOnClickListener{
-            val cameraUpdate = CameraUpdate.scrollTo(LatLng(curr_latitude, curr_longitude)) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
+            val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),15.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
             nMap.moveCamera(cameraUpdate)
         }
         img_main_isvisited.setOnClickListener{
@@ -553,14 +691,41 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         }
     }
     override fun onMapClick(p0: PointF, p1: LatLng) {
-
-        if(spotinfoLayout.isVisible){
-            spotinfoLayout.visibility = View.GONE
-            layout_transparency.visibility = View.GONE
-            img_curr_pos.visibility = View.VISIBLE
-            img_main_isvisited.visibility = View.VISIBLE
-            activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
+        if(stateMapReady) {
+            if (spotinfoLayout.isVisible) {
+                spotinfoLayout.visibility = View.GONE
+                layout_transparency.visibility = View.INVISIBLE
+                img_curr_pos.visibility = View.VISIBLE
+                img_main_isvisited.visibility = View.VISIBLE
+                activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
+                choicedMarker.map = nMap
+            }
         }
+        else{
+
+        }
+
+    }
+    private fun setStickerPosition(){
+        activity!!.findViewById<ConsSentView>(R.id.main_24h_view).x = layout_transparency.width*0.65f
+        activity!!.findViewById<ConsSentView>(R.id.main_24h_view).y = layout_transparency.height*0.21f
+
+        activity!!.findViewById<ConsSentView>(R.id.main_consent_view).x = layout_transparency.width*0.1f
+        activity!!.findViewById<ConsSentView>(R.id.main_consent_view).y = layout_transparency.height*0.42f
+
+        activity!!.findViewById<ConsSentView>(R.id.main_park_view).x = layout_transparency.width*0.35f
+        activity!!.findViewById<ConsSentView>(R.id.main_park_view).y = layout_transparency.height*0.57f
+
+        activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).x = layout_transparency.width*0.1f
+        activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).y = layout_transparency.height*0.57f
+
+        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).x = layout_transparency.width*0.6f
+        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).y = layout_transparency.height*0.57f
+
+        activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).x = layout_transparency.width*0.03f
+        activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).y = layout_transparency.height*0.21f
+
+
 
     }
 
@@ -569,13 +734,34 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         mapView = view.findViewById(R.id.map_view)
         mapView.getMapAsync(this)
         mapView.onCreate(savedInstanceState)
-        //FragmentSearch activity 호출
+
         map_btn_add.setOnClickListener {
             val intent = Intent(activity, RegisterActivity::class.java)
             val isAdd = true
             intent.putExtra("IsAdd",isAdd)
-            startActivity(intent)
+            //10번은 맵 > 장소등록
+            startActivityForResult(intent,10)
         }
+    }
+    @Subscribe
+    fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
+        onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())
+
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == 9){//장소등록에서 취소 햇을 때
+            //do nothing
+        }
+        if(resultCode == 10){//장소 등록했으니 맵에서 띄우고 애니메이션
+            //myplacelist에 추가
+            //markerlist에 추가
+            //위치로 카메라 업데이트 후
+            //애니메이션
+            //스티커 보여주기
+
+        }
+
     }
 
     override fun onStart() {

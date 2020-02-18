@@ -31,12 +31,14 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mMyPlaceList : List<MyPlace>
-    private lateinit var tmpMyPlaceList : List<MyPlace>
+    private lateinit var mMyPlaceList : ArrayList<MyPlace>
+    private lateinit var tmpMyPlaceList : ArrayList<MyPlace>
     private var myPlaceSize: Int = 0
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
@@ -44,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
+    private lateinit var updatedSpot : MyPlace
+    private var update_position = 0
 //    val mainScope = MainScope()
 
     val categoryList = listOf("ALL", "맛집", "카페", "술집", "문화", "기타") // Category List
@@ -60,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         setApiServiceInit()
 //        getMyPlaceApi()
 
+
         category_item1_txt2.setOnClickListener {
             stateCategory = "전체"
             category_item1_txt2.setTextColor(Color.parseColor("#FFFFFF"))
@@ -74,7 +79,6 @@ class MainActivity : AppCompatActivity() {
             myPlaceSize = mMyPlaceList.size
             hpCount.text = myPlaceSize.toString()
             if(fragmentState)
-                getMap(mMyPlaceList)
             else
                 getMyPlace(mMyPlaceList,stateCategory)
         }
@@ -247,6 +251,7 @@ class MainActivity : AppCompatActivity() {
             mapBt.visibility = View.VISIBLE
             categoryframe.visibility = View.INVISIBLE
             categoryframe2.visibility = View.VISIBLE
+            spotinfolayout.visibility = View.INVISIBLE
 
             category_item1_txt2.setTextColor(Color.parseColor("#FFFFFF"))
             category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
@@ -266,6 +271,7 @@ class MainActivity : AppCompatActivity() {
             listBt.visibility = View.VISIBLE
             categoryframe.visibility = View.VISIBLE
             categoryframe2.visibility = View.INVISIBLE
+
 
             category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
             category_item2_txt.setTextColor(Color.parseColor("#393D46"))
@@ -297,6 +303,8 @@ class MainActivity : AppCompatActivity() {
         d("Resune","Resume start!")
     }
 
+
+
     override fun onDestroy() {
         super.onDestroy()
 
@@ -312,10 +320,10 @@ class MainActivity : AppCompatActivity() {
                     d("TAG", "responsebody : ${response.body()!!}")
                     if(response.body() == null){
                         //등록된 장소가 없는 경우 (마커띄울 필요없음)
-                        mMyPlaceList = mutableListOf()
+                        mMyPlaceList = arrayListOf()
                     }
                     else{
-                        mMyPlaceList = response.body()!!.myPlaces
+                        mMyPlaceList = response.body()!!.myPlaces as ArrayList<MyPlace>
 
                         tmpMyPlaceList = mMyPlaceList
                         myPlaceSize = mMyPlaceList.size
@@ -409,7 +417,29 @@ class MainActivity : AppCompatActivity() {
         apiService = mRetrofit.create(APIService::class.java)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 9) { // 장소 등록 안함
+            BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
+        }
+        if(resultCode == 10){// 장소등록 성공
+            //애니메이션 띄우고
+            //getMyplace 요청(백그라운드?)
+        }
+        if(resultCode == 98){ // 업데이트 성공
+            //getMyplace 요청
+            if(data != null) {
+                updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
+                update_position = data.getIntExtra("Position",0)
+                BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
+                mMyPlaceList.set(update_position,updatedSpot)
+                getMyPlace(mMyPlaceList,stateCategory)
+            }
+        }
+        //새장소 편집시 > 리스트에 반영 후 myplace fragment로 onActivityresult 전달  ( 편집시에는 myPlace가 있지만 새장 소 등록할때는 myPlace가 아니다)
+        //myplace framgent에서 리스트에 추가후  어뎁터 에게 알리기
 
+    }
 
 
 

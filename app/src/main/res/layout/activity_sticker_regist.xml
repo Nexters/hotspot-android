@@ -13,13 +13,101 @@
     app:umanoParallaxOffset="80dp"
     app:umanoScrollableView="@id/gridLayout"
     tools:context=".StickerRegistActivity">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
+
         <FrameLayout
             android:id="@+id/mapframe"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sticker_popup_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparency"
+            android:visibility="invisible"
+            >
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="260dp"
+                android:layout_height="196dp"
+                android:background="@drawable/drawable_popup"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <Space
+                    android:id="@+id/stk_popup_space1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.58"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+
+                <TextView
+                    android:id="@+id/stk_quit_txt1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/spoqaregular"
+                    android:layout_marginTop="30dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="15dp"
+                    android:text="스티커 등록을 취소하시겠습니까?" />
+
+                <TextView
+                    android:id="@+id/stk_quit_txt2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/spoqaregular"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/stk_quit_txt1"
+                    android:textSize="10dp"
+                    android:textColor="#6b6b6b"
+                    android:text="지금 돌아가면 스티커가 삭제됩니다." />
+
+                <TextView
+                    android:id="@+id/stk_quit_ok_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/spoqaregular"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/stk_popup_space1"
+                    app:layout_constraintBottom_toTopOf="@id/stk_quit_no_txt"
+                    android:textSize="15dp"
+                    android:textColor="#ff2828"
+                    android:text="삭 제" />
+
+                <TextView
+                    android:id="@+id/stk_quit_no_txt"
+                    android:layout_width="wrap_content"
+                    android:fontFamily="@font/spoqaregular"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/stk_quit_ok_txt"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textSize="15dp"
+                    android:textColor="@color/colorWhite"
+                    android:text="유 지" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sticker_input_layout"
             android:layout_width="match_parent"
@@ -27,10 +115,54 @@
             android:background="@color/transparency"
             android:visibility="invisible"
             >
+
+
+
+            <Space
+                android:id="@+id/space_1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.087"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/sticker_input_btn_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/space_1"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/sticer_input_backbtn"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="17dp"
+                    app:layout_constraintBottom_toBottomOf="@id/sticker_complete_txt"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/sticker_complete_txt"
+                    android:src="@drawable/img_x"/>
+                <TextView
+                    android:id="@+id/sticker_complete_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="완 료"
+                    android:textSize="21dp"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="17dp"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <com.example.hotspot.views.BestMenuInputView
                 android:id="@+id/input_best_menu_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:visibility="invisible"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.66"
                 app:layout_constraintDimensionRatio="1:1"
@@ -52,6 +184,34 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <com.example.hotspot.views.OpenTimeInputView
+                android:id="@+id/input_open_time_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.33"
+                app:layout_constraintDimensionRatio="13:11"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/input_closed_time_view"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.example.hotspot.views.ClosedTimeInputView
+                android:id="@+id/input_closed_time_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.33"
+                app:layout_constraintDimensionRatio="13:11"
+                app:layout_constraintStart_toEndOf="@id/input_open_time_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,17 +223,36 @@
             app:layout_constraintTop_toTopOf="parent"
             >
 
+            <ImageView
+                android:id="@+id/sticker_finish_btn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="17dp"
+                android:src="@drawable/img_x"
+                app:layout_constraintTop_toTopOf="@id/txt_sticker_regist"
+                app:layout_constraintBottom_toBottomOf="@id/txt_sticker_regist"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <Space
+                android:id="@+id/space_2"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.087"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
             <TextView
                 android:id="@+id/txt_sticker_regist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="등 록"
+                android:layout_marginEnd="17dp"
+                android:text="완 료"
                 android:textColor="@color/colorWhite"
-                android:textSize="26dp"
+                android:textSize="21dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/space_2" />
 
             <com.example.hotspot.views.ConsSentView
                 android:id="@+id/h24_fin_view"
@@ -100,6 +279,18 @@
                 app:layout_constraintEnd_toEndOf="@id/img_sticker_category_view"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/img_sticker_category_view"/>
+
+            <com.example.hotspot.views.BestMenuFinView
+                android:id="@+id/best_fin_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:rotation="-8.0"
+                android:visibility="invisible"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.25"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
+                app:layout_constraintBottom_toBottomOf="@id/park_fin_view"/>
 
             <ImageView
                 android:id="@+id/img_sticker_category_view"
@@ -136,6 +327,29 @@
                 app:layout_constraintEnd_toEndOf="@id/img_sticker_category_view"
                 app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
                 app:layout_constraintTop_toBottomOf="@id/img_sticker_category_view"/>
+
+            <com.example.hotspot.views.WorkTimeFinView
+                android:id="@+id/work_time_fin_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                android:rotation="-15"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.68"
+                app:layout_constraintDimensionRatio="9:2"
+                app:layout_constraintBottom_toTopOf="@id/img_sticker_category_view"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+            <com.example.hotspot.views.PhotoFinView
+                android:id="@+id/photo_fin_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/consent_fin_view"
+                app:layout_constraintEnd_toEndOf="@id/park_fin_view"/>
+
+
+
 
 
 

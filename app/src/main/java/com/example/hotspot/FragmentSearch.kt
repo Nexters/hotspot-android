@@ -67,12 +67,12 @@ class FragmentSearch : Fragment() {
 
 
         search_esc_imgbtn.setOnClickListener {
-            fr_reg.arguments = bundle
+            //fr_reg.arguments = bundle
 
             fragmentManager!!.popBackStack()
-            fragmentManager!!.beginTransaction()
+            /*fragmentManager!!.beginTransaction()
                 .replace(R.id.register_activity, fr_reg)
-                .commit()
+                .commit()*/
         }
 
         search_delete_imgbtn.setOnClickListener {
@@ -124,6 +124,7 @@ class FragmentSearch : Fragment() {
                 search_recyclerview,
                 object : ClickListener {
                     override fun onClick(view: View?, position: Int) {
+                        mainScope.cancel()
                         d("TAG", "Recycler onClick() : ")
                         d("TAG", "searchList : ${searchList.get(position)}")
 
