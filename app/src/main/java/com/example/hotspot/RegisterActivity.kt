@@ -33,9 +33,11 @@ class RegisterActivity : AppCompatActivity() {
 
         if(!isAdd) {
             myplace = intent.getSerializableExtra("myPlace") as MyPlace
+            val requestCode = intent.getIntExtra("RequestCode",0)
             d("TAG RegisterActivity", "isAdd : $isAdd")
 
             bundle.putSerializable("myPlace", myplace as Serializable)
+            bundle.putSerializable("RequestCode", requestCode as Serializable)
             fr_reg.arguments = bundle
 
             supportFragmentManager!!.beginTransaction()
@@ -55,9 +57,9 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
-
+        if(resultCode == 1) {
+            BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
+        }
     }
 
     override fun onBackPressed() {

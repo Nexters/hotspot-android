@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     val categoryList = listOf("ALL", "맛집", "카페", "술집", "문화", "기타") // Category List
     var fragmentState : Boolean = true
-    private lateinit var stateCategory : String
+    private var stateCategory = "전체"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -430,7 +430,7 @@ class MainActivity : AppCompatActivity() {
             //애니메이션 띄우고
             //getMyplace 요청(백그라운드?)
         }
-        if(resultCode == 98){ // 업데이트 성공
+        if(resultCode == 98){ // 마이플레이스 > 디테일 업데이트 성공
             //getMyplace 요청
             if(data != null) {
                 updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
@@ -438,6 +438,15 @@ class MainActivity : AppCompatActivity() {
                 BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
                 mMyPlaceList.set(update_position,updatedSpot)
                 getMyPlace(mMyPlaceList,stateCategory)
+            }
+        }
+        if(resultCode == 97){ // 맵 > 디테일 업데이트 성공
+            if(data != null) {
+                updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
+                update_position = data.getIntExtra("Position",0)
+                BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
+                mMyPlaceList.set(update_position,updatedSpot)
+                getMap(mMyPlaceList)
             }
         }
         //새장소 편집시 > 리스트에 반영 후 myplace fragment로 onActivityresult 전달  ( 편집시에는 myPlace가 있지만 새장 소 등록할때는 myPlace가 아니다)

@@ -25,7 +25,8 @@ class FragmentDetailView : Fragment() {
     private lateinit var newPlace: MyPlace
     private var dotscount = 0
     private lateinit var instaTag : String
-
+    private var requestCode = 0
+    private var resCode = 0
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,6 +42,7 @@ class FragmentDetailView : Fragment() {
         val myPlace = arguments!!.getSerializable("myPlace") as MyPlace
 
         position = arguments!!.getSerializable("Position") as Int
+        requestCode = arguments!!.getSerializable("RequestCode") as Int
         d("TAG", "FragmentDetailView : ${myPlace}")
 
         detail_placeName_txt.text = myPlace.place.placeName
@@ -59,7 +61,7 @@ class FragmentDetailView : Fragment() {
                 var intent2 = Intent()
                 intent2.putExtra("NewSpotInfo",newPlace)
                 intent2.putExtra("Position",position)
-                activity!!.setResult(98,intent2)
+                activity!!.setResult(resCode,intent2)
                 activity!!.finish()
             }
             else {
@@ -79,7 +81,8 @@ class FragmentDetailView : Fragment() {
             val intent = Intent(activity, RegisterActivity::class.java)
             intent.putExtra("isAdd", false)
             intent.putExtra("myPlace", myPlace as Serializable)
-            startActivityForResult(intent,5)
+            intent.putExtra("RequestCode", requestCode as Serializable)
+            startActivityForResult(intent,requestCode)
         }
 
         detail_insta_img.setOnClickListener {
@@ -244,7 +247,7 @@ class FragmentDetailView : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == 99){
-
+            resCode = 98
             if(data != null){
                 newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
                 //UI 업데이트!!!!!!!!!!!
@@ -253,8 +256,16 @@ class FragmentDetailView : Fragment() {
                 isEditSpot = true
             }
 
+        }
+        else if(resultCode == 100){
+            resCode = 97
+            if(data != null){
+                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
+                //UI 업데이트!!!!!!!!!!!
 
 
+                isEditSpot = true
+            }
         }
 
     }

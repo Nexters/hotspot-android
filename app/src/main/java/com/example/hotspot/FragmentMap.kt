@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 
 import androidx.fragment.app.Fragment
@@ -48,7 +49,7 @@ import java.io.Serializable
 import java.net.URLEncoder
 
 
-class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEventListener*/
+class FragmentMap: Fragment()
     , OnMapReadyCallback
     , NaverMap.OnMapClickListener {
     private lateinit var mapView: MapView
@@ -72,7 +73,6 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
     private var curr_latitude : Double = 0.0
 
     private var stateMapReady = false
-    private lateinit var choicedMarker : Marker
     private lateinit var nMap: NaverMap
 
     private var searched_longitude : Double = 0.0
@@ -125,7 +125,6 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         //지도 나이트 모드
         p0.mapType = NaverMap.MapType.Navi
         p0.isNightModeEnabled = true
-        p0.isIndoorEnabled = true
         p0.setOnMapClickListener(this)
         //현위치 업데이트
         p0.locationSource = locationSource
@@ -151,11 +150,11 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                 setMarkerImg(myPlace.place.categoryName,marker,p0)
             }
             marker.setOnClickListener(Overlay.OnClickListener {
+                setMapBtnDisableClick()
                 setStickerPosition()
                 setSticker(marker,myPlace)
                 var placeName = myPlace.place.placeName
                 var roadAdress = myPlace.place.roadAddressName
-                choicedMarker = marker
                 var category = myPlace.place.categoryName
                 var categoryImgView = activity!!.findViewById<ImageView>(R.id.img__spotinfo_category)
                 if(category!=null) {
@@ -243,22 +242,28 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
 
 
                     val cameraUpdate2 = CameraUpdate.scrollAndZoomTo(marker.position,p0.cameraPosition.zoom)
+
                     cameraUpdate2.animate(CameraAnimation.Easing,700)
                     cameraUpdate2.finishCallback {
+                        mapView.visibility = View.VISIBLE
 
-                        spotinfoLayout.visibility = View.VISIBLE
-                        layout_transparency.visibility = View.VISIBLE
-                        img_curr_pos.visibility = View.INVISIBLE
-                        img_main_isvisited.visibility = View.INVISIBLE
-                        activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.GONE
-                        marker.map = null
                     }
+                    mapView.visibility = View.INVISIBLE
+                    spotinfoLayout.visibility = View.VISIBLE
+                    layout_transparency.visibility = View.VISIBLE
+                    img_curr_pos.visibility = View.INVISIBLE
+                    img_main_isvisited.visibility = View.INVISIBLE
+                    activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.GONE
                     p0.moveCamera(cameraUpdate2)
+
 
                     spotinfoLayout.setOnClickListener{
                         val intent = Intent(activity, DetailActivity::class.java)
-                        intent.putExtra("myPlace",myPlace as Serializable)
-                        startActivity(intent)
+                        intent.putExtra("myPlace", myPlace as Serializable )
+                        intent.putExtra("Position",i)
+                        intent.putExtra("RequestCode",21)
+                        startActivityForResult(intent,21)
+
                     }
 
                 }
@@ -271,6 +276,28 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         setButton(p0)
         stateMapReady = true
 
+    }
+    private fun setMapBtnDisableClick(){
+        activity!!.findViewById<TextView>(R.id.category_item1_txt).isClickable = false
+        activity!!.findViewById<TextView>(R.id.category_item2_txt).isClickable = false
+        activity!!.findViewById<TextView>(R.id.category_item3_txt).isClickable = false
+        activity!!.findViewById<TextView>(R.id.category_item4_txt).isClickable = false
+        activity!!.findViewById<TextView>(R.id.category_item5_txt).isClickable = false
+        activity!!.findViewById<TextView>(R.id.category_item6_txt).isClickable = false
+        img_curr_pos.isClickable = false
+        img_main_isvisited.isClickable = false
+
+
+    }
+    private fun setMapBtnAbleClick(){
+        activity!!.findViewById<TextView>(R.id.category_item1_txt).isClickable = true
+        activity!!.findViewById<TextView>(R.id.category_item2_txt).isClickable = true
+        activity!!.findViewById<TextView>(R.id.category_item3_txt).isClickable = true
+        activity!!.findViewById<TextView>(R.id.category_item4_txt).isClickable = true
+        activity!!.findViewById<TextView>(R.id.category_item5_txt).isClickable = true
+        activity!!.findViewById<TextView>(R.id.category_item6_txt).isClickable = true
+        img_curr_pos.isClickable = true
+        img_main_isvisited.isClickable = true
     }
     private fun setSticker(marker :Marker , myPlace : MyPlace){
         var alldayView = layout_transparency.findViewById<ConsSentView>(R.id.main_24h_view)
@@ -698,7 +725,7 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
                 img_curr_pos.visibility = View.VISIBLE
                 img_main_isvisited.visibility = View.VISIBLE
                 activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
-                choicedMarker.map = nMap
+                setMapBtnAbleClick()
             }
         }
         else{
@@ -734,7 +761,6 @@ class FragmentMap: Fragment()/*, MapView.MapViewEventListener,MapView.POIItemEve
         mapView = view.findViewById(R.id.map_view)
         mapView.getMapAsync(this)
         mapView.onCreate(savedInstanceState)
-
         map_btn_add.setOnClickListener {
             val intent = Intent(activity, RegisterActivity::class.java)
             val isAdd = true

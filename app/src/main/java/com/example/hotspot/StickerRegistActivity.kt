@@ -1,20 +1,15 @@
 package com.example.hotspot
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.media.Image
-import android.net.Uri
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
-import android.provider.MediaStore
-import android.text.Editable
 import android.util.Log
-import android.view.ActionMode
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
@@ -22,25 +17,19 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.net.toUri
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.google.gson.annotations.SerializedName
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
-import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.OverlayImage
-import com.naver.maps.map.widget.LocationButtonView
 import gun0912.tedbottompicker.TedBottomPicker
 import kotlinx.android.synthetic.main.activity_sticker_regist.*
 import kotlinx.android.synthetic.main.closedtime_input.*
 import kotlinx.android.synthetic.main.opentime_input.*
-import kotlinx.android.synthetic.main.register_view.*
-import org.w3c.dom.Text
-import java.io.Serializable
 
 private var isMediaManagerInit = false
 class StickerRegistActivity : AppCompatActivity() {
@@ -56,8 +45,14 @@ class StickerRegistActivity : AppCompatActivity() {
         var naverMapOptions = NaverMapOptions()
         naverMapOptions.allGesturesEnabled(false)
         naverMapOptions.zoomControlEnabled(false)
-
         dragView.performClick()
+        trash_view.setOnDragListener(dragListener(work_24_img,best_menu_img,consent_img,park_img,open_time_img,gallery_img,stickerData))
+        h24_fin_view.setOnLongClickListener(LongClickListener(trash_view,"AlldayView"))
+        consent_fin_view.setOnLongClickListener(LongClickListener(trash_view,"ConsentView"))
+        park_fin_view.setOnLongClickListener(LongClickListener(trash_view,"ParkView"))
+        photo_fin_view.setOnLongClickListener(LongClickListener(trash_view,"PhotoView"))
+        work_time_fin_view.setOnLongClickListener(LongClickListener(trash_view,"WorktimeView"))
+        best_fin_view.setOnLongClickListener(LongClickListener(trash_view,"BestView"))
 
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.mapframe) as MapFragment?
@@ -98,6 +93,27 @@ class StickerRegistActivity : AppCompatActivity() {
 
 
     }
+    inner class LongClickListener(var trashView: ImageView, var data : String) : View.OnLongClickListener {
+        override fun onLongClick(v: View?): Boolean {
+            trashView.visibility = View.VISIBLE
+            if(v != null) {
+                val item = ClipData.Item(data as CharSequence)
+                val dragData = ClipData(
+                    data as CharSequence,
+                    arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
+                    item
+                )
+                val myShadow = View.DragShadowBuilder(v)
+                v.startDragAndDrop(
+                    dragData, myShadow, v, 0
+                )
+                return true
+            }
+            else return false
+        }
+    }
+
+
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -515,6 +531,7 @@ class StickerRegistActivity : AppCompatActivity() {
 
     }
 
+
     override fun onBackPressed() {
         //팝업창
         showFinishDialog()
@@ -538,4 +555,111 @@ class StickerRegistActivity : AppCompatActivity() {
         }
     }
 
+}
+//work_24_img,best_menu_img,consent_img,park_img,open_time_img,gallery_img
+class dragListener(var alldayView: ImageView,var bestmenuView: ImageView,var consentView: ImageView,
+                   var parkView: ImageView,
+                   var worktimeView: ImageView,var photoView: ImageView,var stickerData: StickerData) : View.OnDragListener{
+
+    override fun onDrag(v: View?, event: DragEvent?): Boolean {
+
+        if(event != null) {
+            when(event.action){
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                        // As an example of what your application might do,
+                        // applies a blue color tint to the View to indicate that it can accept
+                        // data.
+
+                        // Invalidate the view to force a redraw in the new tint
+
+                        // returns true to indicate that the View can accept the dragged data.
+                        return true
+                    } else {
+                        // Returns false. During the current drag and drop operation, this View will
+                        // not receive events again until ACTION_DRAG_ENDED is sent.
+                        return false
+                    }
+
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    (v as ImageView).setColorFilter(Color.RED)
+                    v.invalidate()
+                    return true
+                }
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    (v as ImageView).clearColorFilter()
+                    v.invalidate()
+                    return true
+
+                }
+                DragEvent.ACTION_DROP ->{
+                    val item : ClipData.Item = event.clipData.getItemAt(0)
+                    val data = item.text.toString()
+                    v!!.visibility = View.INVISIBLE
+                    var view =  event.localState as View
+                    view.visibility = View.INVISIBLE
+
+                    when(data){
+                        "ConsentView" ->{
+                            consentView.clearColorFilter()
+                            stickerData.powerPlugAvailable = false
+                        }
+                        "AlldayView" ->{
+                            alldayView.clearColorFilter()
+                            stickerData.allDayAvailable = false
+                        }
+                        "ParkView" ->{
+                            parkView.clearColorFilter()
+                            stickerData.parkingAvailable = false
+                        }
+                        "WorktimeView" ->{
+                            worktimeView.clearColorFilter()
+                            stickerData.open = ""
+                            stickerData.close = ""
+                        }
+                        "BestView" ->{
+                            bestmenuView.clearColorFilter()
+                            stickerData.bestMenu.clear()
+                        }
+                        "PhotoView" ->{
+                            photoView.clearColorFilter()
+                            stickerData.photoUriList!!.clear()
+                            stickerData.cloudinaryIdList!!.clear()
+                            stickerData.cloudinaryUrlList!!.clear()
+                        }
+                    }
+
+
+                    (v as ImageView).clearColorFilter()
+                    v.invalidate()
+                    return true
+
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    (v as ImageView).clearColorFilter()
+                    if(v.isVisible){
+                        v.visibility = View.INVISIBLE
+                    }
+                    v.invalidate()
+                    when(event.result) {
+                        true ->{
+
+                        }
+                        else ->{
+
+                        }
+                    }
+
+                }
+                else -> {
+                    // An unknown action type was received.
+                    Log.e("DragDrop Example", "Unknown action type received by OnDragListener.")
+                    return false
+                }
+
+            }
+        }
+        return true
+    }
 }

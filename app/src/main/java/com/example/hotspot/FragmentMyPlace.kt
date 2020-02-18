@@ -93,7 +93,9 @@ class FragmentMyPlace : Fragment() {
                         val intent = Intent(activity, DetailActivity::class.java)
                         intent.putExtra("myPlace", myPlace as Serializable )
                         intent.putExtra("Position",position)
+                        intent.putExtra("RequestCode",20)
                         startActivityForResult(intent,20)
+
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
@@ -185,14 +187,7 @@ class FragmentMyPlace : Fragment() {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == 98){//업데이트 되었음
-            if(data!=null){
-                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
-            }
-        }
-        if(resultCode == 0){
-            //do nothing
-        }
+
 
     }
 

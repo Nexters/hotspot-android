@@ -254,7 +254,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/space_2" />
 
-            <com.example.hotspot.views.ConsSentView
+            <ImageView
                 android:id="@+id/h24_fin_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -267,7 +267,7 @@
                 app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
                 app:layout_constraintBottom_toTopOf="@id/img_sticker_category_view"/>
 
-            <com.example.hotspot.views.ConsSentView
+            <ImageView
                 android:id="@+id/consent_fin_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -280,7 +280,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/img_sticker_category_view"/>
 
-            <com.example.hotspot.views.BestMenuFinView
+            <com.example.hotspot.views.BestDragView
                 android:id="@+id/best_fin_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -315,7 +315,7 @@
                 app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
                 app:layout_constraintTop_toBottomOf="@id/img_sticker_category_view"/>
 
-            <com.example.hotspot.views.ConsSentView
+            <ImageView
                 android:id="@+id/park_fin_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -328,7 +328,7 @@
                 app:layout_constraintStart_toStartOf="@id/img_sticker_category_view"
                 app:layout_constraintTop_toBottomOf="@id/img_sticker_category_view"/>
 
-            <com.example.hotspot.views.WorkTimeFinView
+            <com.example.hotspot.views.WorkTimeDragView
                 android:id="@+id/work_time_fin_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -340,13 +340,22 @@
                 app:layout_constraintBottom_toTopOf="@id/img_sticker_category_view"
                 app:layout_constraintStart_toStartOf="parent"
                 />
-            <com.example.hotspot.views.PhotoFinView
+            <com.example.hotspot.views.PhotoDragView
                 android:id="@+id/photo_fin_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="invisible"
                 app:layout_constraintTop_toBottomOf="@id/consent_fin_view"
                 app:layout_constraintEnd_toEndOf="@id/park_fin_view"/>
+
+            <ImageView
+                android:id="@+id/trash_view"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/img_x"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 

@@ -47,7 +47,7 @@ class FragmentRegister : BaseFragment() {
     var choicedCategory = ""
     var isRcylrdecoAdd = false
     var search_OK = false
-
+    private var requestCode = 0
     private var stickerData: StickerData? = null
 
 
@@ -312,6 +312,7 @@ class FragmentRegister : BaseFragment() {
 
         if(!isAdd) {//수정 이기때문에 장소에 대한 정보 뿌리기
             myPlace = arguments!!.getSerializable("myPlace") as MyPlace
+            requestCode = arguments!!.getSerializable("RequestCode") as Int
             place = myPlace.place
             search_OK = true
             txt_place_name.isClickable = false
@@ -643,10 +644,18 @@ class FragmentRegister : BaseFragment() {
                 override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
                     if (response.isSuccessful) {
                         d("TAG", "장소 업데이트 성공")
-                        var intent = Intent()
-                        intent.putExtra("NewSpotInfo", myPlace)
-                        activity!!.setResult(99, intent)
-                        activity!!.finish()
+                        if(requestCode == 20){
+                            var intent = Intent()
+                            intent.putExtra("NewSpotInfo", myPlace)
+                            activity!!.setResult(99, intent)
+                            activity!!.finish()
+                        }
+                        else if(requestCode == 21){
+                            var intent = Intent()
+                            intent.putExtra("NewSpotInfo", myPlace)
+                            activity!!.setResult(100, intent)
+                            activity!!.finish()
+                        }
                     } else {
                         d("TAG", "Regist onResPonse : " + response.toString())
                         Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
