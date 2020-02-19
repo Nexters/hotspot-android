@@ -18,4 +18,5 @@
     <color name="colorGroup6">#d8d8d6</color>
     <color name="colorAM">#05f605</color>
     <color name="colorPM">#f94e2d</color>
+    <color name="colorNocolor">#00000000</color>
 </resources>

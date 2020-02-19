@@ -8,6 +8,8 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -95,6 +97,9 @@ class StickerRegistActivity : AppCompatActivity() {
     }
     inner class LongClickListener(var trashView: ImageView, var data : String) : View.OnLongClickListener {
         override fun onLongClick(v: View?): Boolean {
+            var vibrator: Vibrator
+            vibrator = this@StickerRegistActivity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            vibrator.vibrate(VibrationEffect.EFFECT_TICK.times(15.toLong()))
             trashView.visibility = View.VISIBLE
             if(v != null) {
                 val item = ClipData.Item(data as CharSequence)

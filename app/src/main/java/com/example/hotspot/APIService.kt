@@ -1,5 +1,6 @@
 package com.example.hotspot
 
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -25,5 +26,5 @@ interface APIService {
 
     @DELETE("/place/my_places/{myPlaceId}")
     fun deletPlace(@Header("Authorization") auth : String,
-                   @Path("myPlaceId") myPlaceId : String): Call<SpotListVO>
+                   @Path("myPlaceId") myPlaceId : String): Call<ResponseBody>
 }

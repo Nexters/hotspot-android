@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.UiThread
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
@@ -114,7 +115,7 @@ class FragmentMap: Fragment()
         return view
     }
 
-
+    @UiThread
     override fun onMapReady(p0: NaverMap) {
         markerList = arrayListOf()
         nMap = p0
@@ -263,8 +264,7 @@ class FragmentMap: Fragment()
                         intent.putExtra("Position",i)
                         intent.putExtra("RequestCode",21)
                         startActivityForResult(intent,21)
-                        spotinfoLayout.visibility = View.INVISIBLE
-                        layout_transparency.visibility = View.INVISIBLE
+                        setMapBtnAbleClick()
 
                     }
 
@@ -539,7 +539,7 @@ class FragmentMap: Fragment()
             })
         }
         img_curr_pos.setOnClickListener{
-            val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),15.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
+            val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),10.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
             nMap.moveCamera(cameraUpdate)
         }
         img_main_isvisited.setOnClickListener{
@@ -736,20 +736,20 @@ class FragmentMap: Fragment()
 
     }
     private fun setStickerPosition(){
-        activity!!.findViewById<ConsSentView>(R.id.main_24h_view).x = layout_transparency.width*0.65f
+        activity!!.findViewById<ConsSentView>(R.id.main_24h_view).x = layout_transparency.width*0.67f
         activity!!.findViewById<ConsSentView>(R.id.main_24h_view).y = layout_transparency.height*0.21f
 
         activity!!.findViewById<ConsSentView>(R.id.main_consent_view).x = layout_transparency.width*0.1f
         activity!!.findViewById<ConsSentView>(R.id.main_consent_view).y = layout_transparency.height*0.42f
 
-        activity!!.findViewById<ConsSentView>(R.id.main_park_view).x = layout_transparency.width*0.35f
+        activity!!.findViewById<ConsSentView>(R.id.main_park_view).x = layout_transparency.width*0.3f
         activity!!.findViewById<ConsSentView>(R.id.main_park_view).y = layout_transparency.height*0.57f
 
         activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).x = layout_transparency.width*0.1f
         activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).y = layout_transparency.height*0.62f
 
-        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).x = layout_transparency.width*0.6f
-        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).y = layout_transparency.height*0.5f
+        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).x = layout_transparency.width*0.5f
+        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).y = layout_transparency.height*0.42f
 
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).x = layout_transparency.width*0.03f
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).y = layout_transparency.height*0.21f

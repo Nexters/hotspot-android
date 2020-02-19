@@ -6,6 +6,7 @@ import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.myplace_item.view.*
@@ -35,7 +36,32 @@ class MyPlaceRecyclerAdapter (private val list:List<MyPlace>,private val cardsty
             d("TAG", "categoryName : ${categoryName}")
 
             if(isVisit == 2) {
+                categoryName = categoryTemp
                 holder.cardLayout.background = cardstyleList.get(5)
+                when(categoryName){
+                    "맛집" -> {
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).setImageResource(R.drawable.ic_mypl_icon_food)
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.VISIBLE
+                    }
+                    "카페" -> {
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).setImageResource(R.drawable.ic_mypl_icon_cafe)
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.VISIBLE
+
+                    }
+                    "술집" -> {
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).setImageResource(R.drawable.ic_mypl_icon_drink)
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.VISIBLE
+                    }
+                    "문화" -> {
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).setImageResource(R.drawable.ic_mypl_icon_culture)
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.VISIBLE
+                    }
+                    else ->{
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).setImageResource(R.drawable.ic_mypl_icon_etc)
+                        holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.VISIBLE
+                    }
+
+                }
             }
             else {
                 if (categoryTemp != null) {
@@ -44,20 +70,33 @@ class MyPlaceRecyclerAdapter (private val list:List<MyPlace>,private val cardsty
                     when (categoryName) {
                         "맛집" -> {
                             holder.cardLayout.background = cardstyleList.get(0)
+                            holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.INVISIBLE
                         }
                         "카페" -> {
                             holder.cardLayout.background = cardstyleList.get(1)
+                            holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.INVISIBLE
                         }
                         "술집" -> {
                             holder.cardLayout.background = cardstyleList.get(2)
+                            holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.INVISIBLE
                         }
                         "문화" -> {
                             holder.cardLayout.background = cardstyleList.get(3)
+                            holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.INVISIBLE
                         }
                         "기타" -> {
                             holder.cardLayout.background = cardstyleList.get(4)
+                            holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.INVISIBLE
+                        }
+                        else ->{
+                            holder.cardLayout.background = cardstyleList.get(4)
+                            holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.INVISIBLE
                         }
                     }
+                }
+                else{
+                    holder.cardLayout.background = cardstyleList.get(4)
+                    holder.cardLayout.findViewById<ImageView>(R.id.mypl_category_img).visibility = View.INVISIBLE
                 }
             }
 

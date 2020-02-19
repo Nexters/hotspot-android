@@ -70,7 +70,7 @@
     <ImageView
         android:id="@+id/map_btn_add"
         android:layout_width="245dp"
-        android:layout_height="93dp"
+        android:layout_height="97dp"
         app:layout_constraintDimensionRatio="4:1"
         android:layout_gravity="bottom|center"
         android:background="@drawable/img_main_btn_add_xxxhdpi"

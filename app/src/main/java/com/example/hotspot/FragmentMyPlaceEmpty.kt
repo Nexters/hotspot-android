@@ -21,10 +21,11 @@ class FragmentMyPlaceEmpty :Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        add_Btn.setOnClickListener {
+        imageView2.setOnClickListener {
             val intent = Intent(activity, RegisterActivity::class.java)
             intent.putExtra("isAdd", true)
-            startActivity(intent)
+            startActivityForResult(intent,10)
+
         }
     }
 }

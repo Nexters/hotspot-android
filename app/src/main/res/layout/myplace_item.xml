@@ -19,6 +19,16 @@
         android:background="@drawable/myplace_list_btn1"
         >
 
+        <ImageView
+            android:id="@+id/mypl_category_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_mypl_icon_drink"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/myplace_category_img"
             android:layout_width="wrap_content"
@@ -34,6 +44,7 @@
             android:layout_height="wrap_content"
             android:textColor="#030303"
             tools:text="장소 명"
+            android:singleLine="true"
             android:textSize="18dp"
             android:textStyle="bold"
             android:gravity="center|left"
@@ -47,7 +58,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center|left"
+            android:singleLine="true"
             android:textColor="#393d46"
+            android:maxLength="20"
             android:textSize="12dp"
             tools:text="주소명"
             android:layout_marginLeft="61dp"

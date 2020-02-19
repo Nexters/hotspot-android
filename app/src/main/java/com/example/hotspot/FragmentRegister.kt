@@ -468,6 +468,9 @@ class FragmentRegister : BaseFragment() {
 
             txt_place_name.setTextColor(resources.getColor(R.color.colorWhite))
             place = arguments!!.getSerializable("searchPlace") as Place
+            if(place.roadAddressName.isNullOrEmpty()){
+                place.roadAddressName = ""
+            }
             choicedCategory = place.categoryName
             when(choicedCategory){
                 "카페" -> {
@@ -498,6 +501,7 @@ class FragmentRegister : BaseFragment() {
     }
 
     private fun registSpot(){
+        btn_regist.isClickable = false
         var isVisited = true
         if(txt_visited.currentTextColor == Color.WHITE){
             isVisited = true
@@ -637,14 +641,31 @@ class FragmentRegister : BaseFragment() {
                         activity!!.setResult(10, intent)
                         activity!!.finish()
                     } else {
-                        d("TAG", "Regist onResPonse : " + response.toString())
-                        Toast.makeText(activity!!, "장소 등록 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                        if(response.code() == 403 ){
+                            //이미 등록된 장소
+                            Toast.makeText(
+                                activity!!,
+                                "이미 등록된 장소입니다!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        else {
+                            d("TAG", "Regist onResPonse : " + response.toString())
+                            d("TAG", "Regis onPresPonse : " + response.message())
+                            Toast.makeText(
+                                activity!!,
+                                "장소 등록 실패! 네트워크를 체크해 주세요.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
+                    btn_regist.isClickable = true
                 }
 
                 override fun onFailure(call: Call<SpotListVO>, t: Throwable) {
                     d("TAG", "RegisterActivity onFailure() ")
                     Toast.makeText(activity, "post 실패 !!", Toast.LENGTH_LONG).show()
+                    btn_regist.isClickable = true
                 }
             })
         }

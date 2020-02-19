@@ -56,7 +56,7 @@ data class Place(
     @SerializedName("addressName")
     val addressName: String,    // address
     @SerializedName("roadAddressName")
-    val roadAddressName: String,// road address
+    var roadAddressName: String,// road address
     @SerializedName("x")
     val x: String,              // longitude
     @SerializedName("y")

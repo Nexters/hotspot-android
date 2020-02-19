@@ -100,10 +100,12 @@ class FragmentSearch : Fragment() {
 
                             if (response != null) {
                                 searchList = response.body()!!.toList()
-                                search_recyclerview.setHasFixedSize(true)
-                                search_recyclerview.layoutManager =
-                                    LinearLayoutManager(MainActivity())
-                                search_recyclerview.adapter = SearchRecyclerAdapter(searchList)
+                                if(search_recyclerview != null) {
+                                    search_recyclerview.setHasFixedSize(true)
+                                    search_recyclerview.layoutManager =
+                                        LinearLayoutManager(MainActivity())
+                                    search_recyclerview.adapter = SearchRecyclerAdapter(searchList)
+                                }
                             }
 
                         }

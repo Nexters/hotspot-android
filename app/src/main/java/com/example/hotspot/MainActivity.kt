@@ -329,7 +329,8 @@ class MainActivity : AppCompatActivity()  {
                     }
                     else{
                         mMyPlaceList = response.body()!!.myPlaces as ArrayList<MyPlace>
-
+                        listBt.visibility = View.VISIBLE
+                        findBt.visibility = View.VISIBLE
                         tmpMyPlaceList = mMyPlaceList
                         myPlaceSize = mMyPlaceList.size
                         hpCount.text = myPlaceSize.toString()
@@ -351,7 +352,7 @@ class MainActivity : AppCompatActivity()  {
             }
 
             override fun onFailure(call: Call<GetSpotList>, t: Throwable) {
-                Toast.makeText(this@MainActivity,"get 실패 !!!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MainActivity,"장소를 불러오지 못했습니다, 네트워크를 확인바랍니다.", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -424,12 +425,13 @@ class MainActivity : AppCompatActivity()  {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 9) { // 장소 등록 안함
+        if(resultCode == 9) { // 장소 등록 안함 맵 > 등록
             BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
         }
-        if(resultCode == 10){// 장소등록 성공
+        if(resultCode == 10){// 장소등록 성공 맵 > 등록
             //애니메이션 띄우고
-            //getMyplace 요청(백그라운드?)
+            //장소 새로 받기?
+            getMyPlaceApi()
         }
         if(resultCode == 98){ // 마이플레이스 > 디테일 업데이트 성공
             //getMyplace 요청
@@ -447,6 +449,8 @@ class MainActivity : AppCompatActivity()  {
                 update_position = data.getIntExtra("Position",0)
                 //BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
                 mMyPlaceList.set(update_position,updatedSpot)
+                spotinfolayout.visibility = View.INVISIBLE
+                layout_trans_main.visibility = View.INVISIBLE
                 getMap(mMyPlaceList)
             }
         }
