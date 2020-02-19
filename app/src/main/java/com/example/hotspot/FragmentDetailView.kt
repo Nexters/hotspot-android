@@ -2,6 +2,7 @@ package com.example.hotspot
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log.d
@@ -9,14 +10,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
+import androidx.constraintlayout.widget.Constraints
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.squareup.otto.Subscribe
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Transformation
 import kotlinx.android.synthetic.main.detail_view.*
-import kotlinx.android.synthetic.main.mylist_view.*
+import kotlinx.android.synthetic.main.register_view.*
 import java.io.Serializable
+
 
 class FragmentDetailView : Fragment() {
 
@@ -27,6 +32,11 @@ class FragmentDetailView : Fragment() {
     private lateinit var instaTag : String
     private var requestCode = 0
     private var resCode = 0
+    private lateinit var urlList: ArrayList<String>
+    private lateinit var imgList: ArrayList<ImageView>
+
+    private var imageSize: Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,7 +50,6 @@ class FragmentDetailView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val myPlace = arguments!!.getSerializable("myPlace") as MyPlace
-
         position = arguments!!.getSerializable("Position") as Int
         requestCode = arguments!!.getSerializable("RequestCode") as Int
         d("TAG", "FragmentDetailView : ${myPlace}")
@@ -48,9 +57,108 @@ class FragmentDetailView : Fragment() {
         detail_placeName_txt.text = myPlace.place.placeName
         detail_roadAddressName_txt.text = myPlace.place.roadAddressName
         detail_memo_txt.text = myPlace.memo
+        val categoryName = myPlace.place.categoryName
+        val isVisited = myPlace.visited
+        val bestmenu = myPlace.bestMenu
+        val hours = myPlace.businessHours
+        val parking = myPlace.parkingAvailable
+        val allDay = myPlace.allDayAvailable
+        val powerPlug = myPlace.powerPlugAvailable
 
-        if(!myPlace.visited) {
+        if(!isVisited){
+            detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
 
+            notVisitImg.isVisible = true
+            notVisitImg.setBackgroundResource(R.drawable.group_6)
+        }
+        else if(categoryName != null && isVisited) {
+            when(categoryName) {
+                "맛집"->{
+                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout1)
+                }
+                "카페"->{
+                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout2)
+                }
+                "술집" ->{
+                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout3)
+                }
+                "문화" ->{
+                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout4)
+                }
+                "기타" ->{
+                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout5)
+                }
+            }
+        }
+
+        if(bestmenu != null) {
+            detail_menu_txt1.isVisible = true
+            detail_menu_txt2.isVisible = true
+
+
+            for(i in 0..myPlace.bestMenu!!.size-1){
+                if(i == 0){
+                    detail_menu_txt2.text = myPlace.bestMenu!![0]
+                }
+                else {
+                    detail_menu_txt3.isVisible = true
+                    detail_menu_txt3.text = myPlace.bestMenu!![1]
+                }
+            }
+        }
+
+        if(hours!!.open != null && hours!!.close != null) {
+            detail_time_txt1.isVisible = true
+            detail_time_txt2.isVisible = true
+            val st = StringBuffer()
+            var open = myPlace.businessHours!!.open.toString()
+            var close = myPlace.businessHours!!.close.toString()
+            if(open.length == 1){
+                st.append("0")
+            }
+            st.append(open)
+            st.append(":00 - ")
+
+            if(close.length == 1){
+                st.append("0")
+            }
+            st.append(close)
+            st.append(":00")
+            detail_time_txt2.text = st.toString()
+        }
+
+        if(parking != null ||
+            allDay != null ||
+            powerPlug != null) {
+
+            var st = StringBuffer()
+            if (parking != null) {
+                detail_additional_txt1.isVisible = true
+                detail_additional_txt2.isVisible = true
+                st.append("주차가능 / ")
+            }
+            if (allDay != null) {
+                detail_additional_txt1.isVisible = true
+                detail_additional_txt2.isVisible = true
+                st.append("콘센트 O / ")
+            }
+            if (powerPlug != null) {
+                detail_additional_txt1.isVisible = true
+                detail_additional_txt2.isVisible = true
+                st.append("24시 / ")
+            }
+            val len = st.length
+            st.delete(len - 2, len - 1)
+        }
+
+        urlList = arrayListOf()
+        imgList = arrayListOf()
+        for(i in 0..myPlace.images!!.size-1){
+            if(myPlace.images!!.get(i).url != null) {
+                urlList.add(myPlace.images!!.get(i).url)
+                imageSize++
+                d("TAG", "urlList[i] : ${urlList[i]}")
+            }
         }
 
         detail_esc_btn.setOnClickListener {
@@ -73,8 +181,8 @@ class FragmentDetailView : Fragment() {
         }
 
         //viewPager
-        val adapter = ImageAdapter(activity!!)
-        viewPager.adapter = adapter
+//        val adapter = ImageAdapter(activity!!, urlList)
+//        viewPager.adapter = adapter
 
         detail_edit_btn.setOnClickListener {
 
@@ -90,31 +198,55 @@ class FragmentDetailView : Fragment() {
             startActivity(intent_insta)
         }
 
-        val mAdapter = ImageAdapter(activity!!)
-        viewPager.adapter = mAdapter
-        dotscount = mAdapter.count
-
-        when(dotscount) {
-            2 -> {
-                dotImageView2.visibility = View.VISIBLE
+        ////////////////////////////////////////////////////////////////////////////////////
+        // 삭제 API 추가!
+        detail_delete_btn.setOnClickListener {
+            detail_popup_layout.visibility = View.VISIBLE
+            regist_quit_ok_txt.setOnClickListener{
+                fragmentManager!!.beginTransaction()
+                    .remove(this)
+                    .commit()
+                var intent = Intent()
+                activity!!.setResult(10,intent)
+                activity!!.finish()
             }
-            3 -> {
-                dotImageView2.visibility = View.VISIBLE
-                dotImageView3.visibility = View.VISIBLE
-            }
-            4 -> {
-                dotImageView2.visibility = View.VISIBLE
-                dotImageView3.visibility = View.VISIBLE
-                dotImageView4.visibility = View.VISIBLE
-            }
-            5 -> {
-                dotImageView2.visibility = View.VISIBLE
-                dotImageView3.visibility = View.VISIBLE
-                dotImageView4.visibility = View.VISIBLE
-                dotImageView5.visibility = View.VISIBLE
+            regist_quit_no_txt.setOnClickListener{
+                regist_popup_layout.visibility = View.GONE
             }
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////
+        // image가 존재하면 Gone 해제
+        if(imageSize != 0) {
+            viewPager.isVisible = true
+
+            val mAdapter = ImageAdapter(activity!!, urlList)
+            viewPager.adapter = mAdapter
+            dotscount = mAdapter.count
+
+            when (dotscount) {
+                2 -> {
+                    dotImageView2.visibility = View.VISIBLE
+                }
+                3 -> {
+                    dotImageView2.visibility = View.VISIBLE
+                    dotImageView3.visibility = View.VISIBLE
+                }
+                4 -> {
+                    dotImageView2.visibility = View.VISIBLE
+                    dotImageView3.visibility = View.VISIBLE
+                    dotImageView4.visibility = View.VISIBLE
+                }
+                5 -> {
+                    dotImageView2.visibility = View.VISIBLE
+                    dotImageView3.visibility = View.VISIBLE
+                    dotImageView4.visibility = View.VISIBLE
+                    dotImageView5.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        // ViewPager 동작
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(state: Int) {
 
@@ -172,16 +304,15 @@ class FragmentDetailView : Fragment() {
         })
     }
 
+    ////////////////////////////////////////////////////////////////////////
+    // ViewPager 미완
     inner class ImageAdapter : PagerAdapter {
         private var mContext : Context
+        private var mUrlList : ArrayList<String>
 
-        private var mImage = mutableListOf(
-            R.drawable.best_menu
-//            R.drawable.gallery
-        )
-
-        constructor(context: Context){
+        constructor(context: Context, urllist: ArrayList<String>){
             mContext = context
+            mUrlList = urllist
         }
 
         override fun isViewFromObject(view: View, obj: Any): Boolean {
@@ -189,56 +320,29 @@ class FragmentDetailView : Fragment() {
         }
 
         override fun getCount(): Int {
-            return mImage.size
+            return mUrlList.size
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
+
             val imageView = ImageView(mContext)
-            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-            imageView.setImageResource(mImage[position])
-            container.addView(imageView, 0)
+//            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+//            imageView.setImageResource(mImage[position])
+            Picasso.get()
+                .load(mUrlList[position])
+                .fit()
+                .centerCrop()
+                .into(imageView)
+            container.addView(imageView)
 
             return imageView
         }
 
         override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-            container.removeView(obj as ImageView)
+            container.removeView(obj as View)
         }
     }
 
-//    inner class ImageAdapter : PagerAdapter {
-//        private var mContext : Context
-//
-//        private var mImage = mutableListOf(
-//            R.drawable.img_sticker_list_best,
-//            R.drawable.img_sticker_list_gallery
-//        )
-//
-//        constructor(context: Context){
-//            mContext = context
-//        }
-//
-//        override fun isViewFromObject(view: View, obj: Any): Boolean {
-//            return view == obj
-//        }
-//
-//        override fun getCount(): Int {
-//            return mImage.size
-//        }
-//
-//        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-//            val imageView = ImageView(mContext)
-//            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-//            imageView.setImageResource(mImage[position])
-//            container.addView(imageView, 0)
-//
-//            return imageView
-//        }
-//
-//        override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-//            container.removeView(obj as ImageView)
-//        }
-//    }
     @Subscribe
     fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
         onActivityResult(activityResultEvent.get_RequestCode(),activityResultEvent.get_ResultCode(),activityResultEvent.get_Data())

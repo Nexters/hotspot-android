@@ -80,7 +80,7 @@ class FragmentRegister : BaseFragment() {
 
         edtTxt_memo.doOnTextChanged { text, start, count, after ->
             if(count > 50){
-                //50자 넘어갔다고 알림창 ?
+                //50자 넘어갔다고 알림창 ?ㅊ
             }
             if(text.isNullOrEmpty()){
                 img_uncheck2.setImageResource(R.drawable.ic_img_uncheck)
