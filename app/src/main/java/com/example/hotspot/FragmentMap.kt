@@ -134,7 +134,7 @@ class FragmentMap: Fragment()
             curr_longitude = location.longitude
         }
 
-        val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),15.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
+        val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),10.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
         p0.moveCamera(cameraUpdate)
 
         //마커추가
@@ -263,6 +263,8 @@ class FragmentMap: Fragment()
                         intent.putExtra("Position",i)
                         intent.putExtra("RequestCode",21)
                         startActivityForResult(intent,21)
+                        spotinfoLayout.visibility = View.INVISIBLE
+                        layout_transparency.visibility = View.INVISIBLE
 
                     }
 
@@ -345,18 +347,18 @@ class FragmentMap: Fragment()
             worktimeView.visibility = View.INVISIBLE
         }
         else{
-            if(myPlace.businessHours!!.open.toInt() <= 12){
+            if(myPlace.businessHours!!.open!!.toInt() <= 12){
                 worktimeView.findViewById<TextView>(R.id.work_fin_open_txt).text = myPlace.businessHours!!.open + "AM"
             }
             else{
-                worktimeView.findViewById<TextView>(R.id.work_fin_open_txt).text = (myPlace.businessHours!!.open.toInt()-12).toString() + "PM"
+                worktimeView.findViewById<TextView>(R.id.work_fin_open_txt).text = (myPlace.businessHours!!.open!!.toInt()-12).toString() + "PM"
             }
 
-            if(myPlace.businessHours!!.close.toInt() <= 12){
+            if(myPlace.businessHours!!.close!!.toInt() <= 12){
                 worktimeView.findViewById<TextView>(R.id.work_fin_closed_txt).text = myPlace.businessHours!!.close + "AM"
             }
             else{
-                worktimeView.findViewById<TextView>(R.id.work_fin_closed_txt).text = (myPlace.businessHours!!.close.toInt()-12).toString() + "PM"
+                worktimeView.findViewById<TextView>(R.id.work_fin_closed_txt).text = (myPlace.businessHours!!.close!!.toInt()-12).toString() + "PM"
             }
             worktimeView.visibility = View.VISIBLE
         }
@@ -744,10 +746,10 @@ class FragmentMap: Fragment()
         activity!!.findViewById<ConsSentView>(R.id.main_park_view).y = layout_transparency.height*0.57f
 
         activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).x = layout_transparency.width*0.1f
-        activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).y = layout_transparency.height*0.57f
+        activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).y = layout_transparency.height*0.62f
 
         activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).x = layout_transparency.width*0.6f
-        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).y = layout_transparency.height*0.57f
+        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).y = layout_transparency.height*0.5f
 
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).x = layout_transparency.width*0.03f
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).y = layout_transparency.height*0.21f
@@ -767,6 +769,7 @@ class FragmentMap: Fragment()
             intent.putExtra("IsAdd",isAdd)
             //10번은 맵 > 장소등록
             startActivityForResult(intent,10)
+
         }
     }
     @Subscribe

@@ -35,7 +35,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity()  {
 
     private lateinit var mMyPlaceList : ArrayList<MyPlace>
     private lateinit var tmpMyPlaceList : ArrayList<MyPlace>
@@ -252,6 +252,7 @@ class MainActivity : AppCompatActivity() {
             categoryframe.visibility = View.INVISIBLE
             categoryframe2.visibility = View.VISIBLE
             spotinfolayout.visibility = View.INVISIBLE
+            layout_trans_main.visibility = View.INVISIBLE
 
             category_item1_txt2.setTextColor(Color.parseColor("#FFFFFF"))
             category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
@@ -435,7 +436,7 @@ class MainActivity : AppCompatActivity() {
             if(data != null) {
                 updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
                 update_position = data.getIntExtra("Position",0)
-                BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
+                //BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
                 mMyPlaceList.set(update_position,updatedSpot)
                 getMyPlace(mMyPlaceList,stateCategory)
             }
@@ -444,7 +445,7 @@ class MainActivity : AppCompatActivity() {
             if(data != null) {
                 updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
                 update_position = data.getIntExtra("Position",0)
-                BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
+                //BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
                 mMyPlaceList.set(update_position,updatedSpot)
                 getMap(mMyPlaceList)
             }

@@ -293,6 +293,7 @@ class FragmentRegister : BaseFragment() {
                     rcycl_sticker_view.visibility = View.INVISIBLE
                     img_uncheck4.setImageResource(R.drawable.ic_img_uncheck)
                     stickerBt.setTextColor(resources.getColor(R.color.colorEditTextGray))
+                    stickerBt.text = "스티커 추가"
                 }
 
 
@@ -398,19 +399,19 @@ class FragmentRegister : BaseFragment() {
             }
             if(!myPlace.businessHours!!.open.isNullOrEmpty()){
                 var str : String
-                stickerData!!.open = myPlace.businessHours!!.open
-                stickerData!!.close = myPlace.businessHours!!.close
-                if(myPlace.businessHours!!.open.toInt()<=12){
+                stickerData!!.open = myPlace.businessHours!!.open!!
+                stickerData!!.close = myPlace.businessHours!!.close!!
+                if(myPlace.businessHours!!.open!!.toInt()<=12){
                     str = myPlace.businessHours!!.open + "AM - "
                 }
                 else{
-                    str = (myPlace.businessHours!!.open.toInt()-12).toString() + "PM - "
+                    str = (myPlace.businessHours!!.open!!.toInt()-12).toString() + "PM - "
                 }
-                if(myPlace.businessHours!!.close.toInt()<=12){
+                if(myPlace.businessHours!!.close!!.toInt()<=12){
                     str = str+ myPlace.businessHours!!.close + "AM"
                 }
                 else{
-                    str = str+ (myPlace.businessHours!!.close.toInt()-12).toString() + "PM"
+                    str = str+ (myPlace.businessHours!!.close!!.toInt()-12).toString() + "PM"
                 }
                 list.add(str)
                 count++
@@ -535,9 +536,10 @@ class FragmentRegister : BaseFragment() {
             )
             if(!isAdd) {
                 myPlace.memo = edtTxt_memo.text.toString()
-                myPlace.images = null
-                myPlace.bestMenu = null
-                myPlace.businessHours = null
+                myPlace.images!!.clear()
+                myPlace.bestMenu!!.clear()
+                myPlace.businessHours!!.open = null
+                myPlace.businessHours!!.close = null
                 myPlace.parkingAvailable = null
                 myPlace.allDayAvailable = null
                 myPlace.powerPlugAvailable = null
@@ -602,9 +604,19 @@ class FragmentRegister : BaseFragment() {
                 )
                 if(!isAdd) {
                     myPlace.memo = edtTxt_memo.text.toString()
-                    myPlace.images = images
-                    myPlace.bestMenu = bestMenu
-                    myPlace.businessHours = businessHours
+                    if(images != null) {
+                        myPlace.images = images
+                    }
+                    else myPlace.images!!.clear()
+                    if(!bestMenu.isNullOrEmpty()) {
+                        myPlace.bestMenu = bestMenu
+                    }else myPlace.bestMenu!!.clear()
+                    if(businessHours != null) {
+                        myPlace.businessHours = businessHours
+                    }else {
+                        myPlace.businessHours!!.open = null
+                        myPlace.businessHours!!.close = null
+                    }
                     myPlace.parkingAvailable = parkingAvailable
                     myPlace.allDayAvailable = allDayAvailable
                     myPlace.powerPlugAvailable = powerPlugAvailalbe

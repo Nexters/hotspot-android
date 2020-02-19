@@ -42,13 +42,13 @@
         app:layout_constraintTop_toBottomOf="@+id/mysearch_placeName_txtView"/>
 
     <View
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:layout_marginTop="15.9dp"
         android:background="#8E393d46"
         android:layout_marginBottom="20.1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@+id/roadAddressName_txtView"
+        app:layout_constraintStart_toStartOf="@id/mysearch_category_img"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mysearch_roadAddressName_txtView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

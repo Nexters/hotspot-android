@@ -22,4 +22,8 @@ interface APIService {
     fun putPlace(@Header("Authorization") auth : String,
                  @Path("myPlaceId") myPlaceId : String,
                  @Body spotObject: SpotListVO) : Call<SpotListVO>
+
+    @DELETE("/place/my_places/{myPlaceId}")
+    fun deletPlace(@Header("Authorization") auth : String,
+                   @Path("myPlaceId") myPlaceId : String): Call<SpotListVO>
 }

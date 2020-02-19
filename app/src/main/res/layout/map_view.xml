@@ -69,13 +69,11 @@
 
     <ImageView
         android:id="@+id/map_btn_add"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="1"
+        android:layout_width="245dp"
+        android:layout_height="93dp"
         app:layout_constraintDimensionRatio="4:1"
         android:layout_gravity="bottom|center"
-        android:src="@drawable/img_main_btn_add_xxxhdpi"
+        android:background="@drawable/img_main_btn_add_xxxhdpi"
         app:layout_constraintBottom_toTopOf="@id/space_main_6"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

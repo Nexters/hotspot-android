@@ -22,12 +22,12 @@ parkingAvailable?: boolean
 allDayAvailable?: boolean
 powerPlugAvailable?: boolean*/
 data class Images(
-    val cloudinaryId : String,
-    val url : String
+    var cloudinaryId : String,
+    var url : String
 ): Serializable
 data class BusinessHours(
-    val open : String, // 0~23
-    val close : String
+    var open : String?, // 0~23
+    var close : String?
 ): Serializable
 
 
