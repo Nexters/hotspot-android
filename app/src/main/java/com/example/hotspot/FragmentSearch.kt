@@ -68,7 +68,6 @@ class FragmentSearch : Fragment() {
 
         search_esc_imgbtn.setOnClickListener {
             //fr_reg.arguments = bundle
-
             fragmentManager!!.popBackStack()
             /*fragmentManager!!.beginTransaction()
                 .replace(R.id.register_activity, fr_reg)

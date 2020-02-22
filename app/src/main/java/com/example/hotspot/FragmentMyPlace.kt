@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.squareup.otto.Subscribe
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.category_view.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -42,7 +43,7 @@ class FragmentMyPlace : Fragment() {
     private lateinit var stateCategory : String
     private lateinit var currentList : ArrayList<MyPlace>   //현재 화면에 보여지고 있는 리스트
     lateinit var cardStyleList : ArrayList<Drawable>
-    private var itemTouchHelper : ItemTouchHelper? = null
+    private lateinit var itemTouchHelper : ItemTouchHelper
     private var vibrateOK = true
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
@@ -52,6 +53,8 @@ class FragmentMyPlace : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.mylist_view,container,false)
+        activity!!.mapBt.visibility = View.VISIBLE
+        activity!!.listBt.visibility = View.INVISIBLE
         return v
     }
 
@@ -81,9 +84,9 @@ class FragmentMyPlace : Fragment() {
         myplace_recyclerview.setHasFixedSize(true)
         myplace_recyclerview.layoutManager = LinearLayoutManager(context)
         recyclerviewInit(currentList, 0)
-
-
-
+        itemTouchHelper = ItemTouchHelper(ItemSwipeHelper())
+        itemTouchHelper.attachToRecyclerView(myplace_recyclerview)
+/*
         myplace_recyclerview.addOnItemTouchListener(
             FragmentSearch.RecyclerTouchListener(
                 activity,
@@ -104,83 +107,93 @@ class FragmentMyPlace : Fragment() {
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
-                        if(vibrateOK) {
-                            var vibrator: Vibrator
-                            vibrator =
-                                activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                            vibrator.vibrate(VibrationEffect.EFFECT_TICK.times(20.toLong()))
-                            vibrateOK = false
+                        val startTime = System.currentTimeMillis()
+                        var isSwipeOk = false
+                        while(!isSwipeOk){
+                            if(System.currentTimeMillis()> startTime + 500){
+                                //do something
+                                if(vibrateOK) {
+                                    var vibrator: Vibrator
+                                    vibrator =
+                                        activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                                    vibrator.vibrate(VibrationEffect.EFFECT_TICK.times(15.toLong()))
+                                    vibrateOK = false
+                                    Toast.makeText(activity!!,"왼쪽으로 스와이프해서 삭제하세요 !",Toast.LENGTH_LONG).show()
 
-                        }
-                        val simpleItemTouchCallback = object :
-                            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
-                            override fun onMove(
-                                recyclerView: RecyclerView,
-                                viewHolder: RecyclerView.ViewHolder,
-                                target: RecyclerView.ViewHolder
-                            ): Boolean {
-                                return true
-                            }
+                                }
+                                val simpleItemTouchCallback = object :
+                                    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+                                    override fun onMove(
+                                        recyclerView: RecyclerView,
+                                        viewHolder: RecyclerView.ViewHolder,
+                                        target: RecyclerView.ViewHolder
+                                    ): Boolean {
+                                        return true
+                                    }
 
 
-                            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                                itemTouchHelper!!.attachToRecyclerView(null)
-                                val position = viewHolder.adapterPosition
-                                val targetId = currentList.get(position).id
+                                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                                        itemTouchHelper!!.attachToRecyclerView(null)
+                                        val position = viewHolder.adapterPosition
+                                        val targetId = currentList.get(position).id
 
-                                //서버에 알리기
-                                val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
-                                apiService.deletPlace("Bearer " + "${accesstoken}",
-                                    "${targetId}").enqueue(object : Callback<ResponseBody> {
-                                    override fun onResponse(
-                                        call: Call<ResponseBody>,
-                                        response: Response<ResponseBody>
-                                    ) {
-                                        if(response.isSuccessful) {
-                                            //placeLIst에서도 삭제  id값으로 매핑 ?  >> 메인의 mplaceList에서도 삭제 됨!!
-                                            val maxIndex = placeList.size - 1
-                                            for (i in 0..maxIndex) {
-                                                if (targetId == placeList.get(i).id) {
-                                                    placeList.removeAt(i)
-                                                    break
+                                        //서버에 알리기
+                                        val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
+                                        apiService.deletPlace("Bearer " + "${accesstoken}",
+                                            "${targetId}").enqueue(object : Callback<ResponseBody> {
+                                            override fun onResponse(
+                                                call: Call<ResponseBody>,
+                                                response: Response<ResponseBody>
+                                            ) {
+                                                if(response.isSuccessful) {
+                                                    //placeLIst에서도 삭제  id값으로 매핑 ?  >> 메인의 mplaceList에서도 삭제 됨!!
+                                                    val maxIndex = placeList.size - 1
+                                                    for (i in 0..maxIndex) {
+                                                        if (targetId == placeList.get(i).id) {
+                                                            placeList.removeAt(i)
+                                                            break
+                                                        }
+                                                    }
+                                                    currentList.removeAt(position)
+                                                    //어뎁터에 알리기
+                                                    myplace_recyclerview.adapter!!.notifyItemRemoved(
+                                                        position
+                                                    )
+                                                    //hpCount reset
+                                                    activity!!.findViewById<TextView>(R.id.hpCount).text =
+                                                        currentList.size.toString()
+                                                    vibrateOK = true
+                                                    d("Delete", response.message())
+                                                    d("Delete", response.body().toString())
                                                 }
+                                                else{
+                                                    d("Delete Error",response.errorBody().toString())
+                                                    d("Delete Error",response.message())
+                                                }
+
                                             }
-                                            currentList.removeAt(position)
-                                            //어뎁터에 알리기
-                                            myplace_recyclerview.adapter!!.notifyItemRemoved(
-                                                position
-                                            )
-                                            //hpCount reset
-                                            activity!!.findViewById<TextView>(R.id.hpCount).text =
-                                                currentList.size.toString()
-                                            vibrateOK = true
-                                            d("Delete", response.message())
-                                            d("Delete", response.body().toString())
-                                        }
-                                        else{
-                                            d("Delete Error",response.errorBody().toString())
-                                            d("Delete Error",response.message())
-                                        }
+
+                                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                                Toast.makeText(activity!!,"삭제 실패 ! 네트워크 확인 바랍니다 !!", Toast.LENGTH_LONG).show()
+                                                vibrateOK = true
+                                                Log.d("Delete Error", t.message.toString())
+                                                Log.d("Delete Error",t.cause.toString())
+                                            }
+                                        })
 
                                     }
+                                }
 
-                                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                                        Toast.makeText(activity!!,"삭제 실패 ! 네트워크 확인 바랍니다 !!", Toast.LENGTH_LONG).show()
-                                        vibrateOK = true
-                                        Log.d("Delete Error", t.message.toString())
-                                        Log.d("Delete Error",t.cause.toString())
-                                    }
-                                })
+                                itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
+                                itemTouchHelper!!.attachToRecyclerView(myplace_recyclerview)
 
+                                isSwipeOk = true
                             }
                         }
-
-                        itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
-                        itemTouchHelper!!.attachToRecyclerView(myplace_recyclerview)
 
                     }
                 })
-        )
+        )*/
 
         myplace_isvisited.setOnClickListener {
             if(isvisitedState>=2)
@@ -205,7 +218,7 @@ class FragmentMyPlace : Fragment() {
     }
 
     fun recyclerviewInit(list: MutableList<MyPlace>, state: Int) {
-        myplace_recyclerview.adapter = MyPlaceRecyclerAdapter(list, cardStyleList, state)
+        myplace_recyclerview.adapter = MyPlaceRecyclerAdapter(list as ArrayList<MyPlace>, cardStyleList, state,activity!!)
     }
 
     fun changeCategory(state : Int, tempList : ArrayList<MyPlace>) {
@@ -288,6 +301,76 @@ class FragmentMyPlace : Fragment() {
     }
     fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
+    }
+    inner class ItemSwipeHelper : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        var isSwipeOk = true
+        fun setIsSwipeOk(bool : Boolean){
+            isSwipeOk = bool
+        }
+
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            d("TAG","onMove!!")
+            return true
+        }
+
+        override fun isItemViewSwipeEnabled(): Boolean {
+            return isSwipeOk
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.adapterPosition
+            val targetId = currentList.get(position).id
+
+            //서버에 알리기
+            val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
+            apiService.deletPlace(
+                "Bearer " + "${accesstoken}",
+                "${targetId}"
+            ).enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        //placeLIst에서도 삭제  id값으로 매핑 ?  >> 메인의 mplaceList에서도 삭제 됨!!
+
+                        val maxIndex = placeList.size - 1
+                        for (i in 0..maxIndex) {
+                            if (targetId == placeList.get(i).id) {
+                                placeList.removeAt(i)
+                                break
+                            }
+                        }
+
+                        currentList.removeAt(position)
+                        //어뎁터에 알리기
+                        myplace_recyclerview.adapter!!.notifyItemRemoved(position)
+                        //hpCount reset
+                        activity!!.findViewById<TextView>(R.id.hpCount).text =
+                            currentList.size.toString()
+                        d("Delete", response.message())
+                        d("Delete", response.body().toString())
+                    } else {
+                        d("Delete Error", response.errorBody().toString())
+                        d("Delete Error", response.message())
+                    }
+
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(context!!, "삭제 실패 ! 네트워크 확인 바랍니다 !!", Toast.LENGTH_LONG)
+                        .show()
+                    Log.d("Delete Error", t.message.toString())
+                    Log.d("Delete Error", t.cause.toString())
+                }
+            })
+
+        }
     }
 
 }

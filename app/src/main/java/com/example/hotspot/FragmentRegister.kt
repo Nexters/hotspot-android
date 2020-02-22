@@ -43,7 +43,7 @@ class FragmentRegister : BaseFragment() {
     private var isAdd = true
 
     private var accessToken = GlobalApplication.prefs.getPreferences()
-    var rating : Int? = 0
+    var rating : Int? = 1
     var choicedCategory = ""
     var isRcylrdecoAdd = false
     var search_OK = false
@@ -310,7 +310,6 @@ class FragmentRegister : BaseFragment() {
         search_OK = arguments!!.getBoolean("search_OK", false)
 
         d("TAG", "setLayout() isAdd : ${isAdd}, search_OK : $search_OK")
-
         if(!isAdd) {//수정 이기때문에 장소에 대한 정보 뿌리기
             myPlace = arguments!!.getSerializable("myPlace") as MyPlace
             requestCode = arguments!!.getSerializable("RequestCode") as Int
@@ -507,6 +506,7 @@ class FragmentRegister : BaseFragment() {
             isVisited = true
             if(!isAdd) {
                 myPlace.visited = true
+                myPlace.rating = rating!!
             }
         }
         else {
@@ -764,8 +764,7 @@ class FragmentRegister : BaseFragment() {
                     rating = 1
                 }
                 1 ->{
-                    ratingbar1.setImageResource(R.drawable.ic_img_start_gray)
-                    rating = 0
+                    rating = 1
                 }
                 2 ->{
                     ratingbar2.setImageResource(R.drawable.ic_img_start_gray)

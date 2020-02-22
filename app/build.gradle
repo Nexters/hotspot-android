@@ -50,6 +50,7 @@ dependencies {
 
     implementation group: 'com.kakao.sdk', name: 'kakaolink', version: '1.27.0'
 
+    implementation 'com.airbnb.android:lottie:3.3.0'
     //font땜에 넣음
     implementation 'com.android.support:appcompat-v7:28.0.0'
 

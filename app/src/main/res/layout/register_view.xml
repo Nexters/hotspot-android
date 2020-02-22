@@ -151,7 +151,7 @@
             app:layout_constraintBottom_toBottomOf="@id/ratingbar2"
             app:layout_constraintEnd_toStartOf="@id/ratingbar2"
             app:layout_constraintTop_toTopOf="@id/ratingbar2"
-            app:srcCompat="@drawable/ic_img_start_gray" />
+            app:srcCompat="@drawable/ic_img_star_yellow" />
 
         <ImageView
             android:id="@+id/ratingbar2"
@@ -281,7 +281,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 app:layout_constraintHeight_default="percent"
-                app:layout_constraintHeight_percent="0.58"
+                app:layout_constraintHeight_percent="0.52"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -305,11 +305,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/spoqaregular"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/regist_quit_txt1"
-                android:textSize="10dp"
+                android:textSize="12dp"
                 android:textColor="#6b6b6b"
                 android:text="지금 돌아가면 기록이 삭제됩니다." />
 
@@ -321,7 +321,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/regist_popup_space1"
-                app:layout_constraintBottom_toTopOf="@id/regist_quit_no_txt"
                 android:textSize="15dp"
                 android:textColor="#ff2828"
                 android:text="삭 제" />
@@ -334,7 +333,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/regist_quit_ok_txt"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="22dp"
                 android:textSize="15dp"
                 android:textColor="@color/colorWhite"
                 android:text="유 지" />

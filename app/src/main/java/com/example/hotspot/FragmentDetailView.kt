@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -74,19 +75,19 @@ class FragmentDetailView : Fragment() {
         else if(categoryName != null && isVisited) {
             when(categoryName) {
                 "맛집"->{
-                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout1)
+                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout1)
                 }
                 "카페"->{
-                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout2)
+                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout2)
                 }
                 "술집" ->{
-                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout3)
+                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout3)
                 }
                 "문화" ->{
-                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout4)
+                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout4)
                 }
                 "기타" ->{
-                    activity!!.findViewById<Constraints>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout5)
+                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout5)
                 }
             }
         }

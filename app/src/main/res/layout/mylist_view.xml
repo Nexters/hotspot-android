@@ -31,6 +31,7 @@
         android:id="@+id/myplace_isvisited"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginEnd="10dp"
         android:src="@drawable/img_main_all_xxxhdpi"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.2"

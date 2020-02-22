@@ -11,6 +11,7 @@ import androidx.annotation.Nullable
 
 import android.content.ClipData
 import android.content.ClipDescription
+import android.view.animation.ScaleAnimation
 
 
 class ConsSentView : ImageView , View.OnTouchListener{
@@ -19,12 +20,13 @@ class ConsSentView : ImageView , View.OnTouchListener{
 
 
 
+
+
     constructor(context: Context) : super(context){
         initView()
     }
     constructor(context: Context, @Nullable attr: AttributeSet) : super(context,  attr) {
         initView()
-
     }
     constructor(context: Context, @Nullable attr: AttributeSet, defstyleAttr : Int) : super(context, attr,defstyleAttr) {
         initView()
@@ -57,6 +59,8 @@ class ConsSentView : ImageView , View.OnTouchListener{
                     v.y = v.y + event.y - v.height/2
 
 
+
+
                 }
                 MotionEvent.ACTION_UP -> {
 
@@ -72,6 +76,7 @@ class ConsSentView : ImageView , View.OnTouchListener{
                     else if((v.y+v.height)>parentHeight){
                         v.y = parentHeight.toFloat() -v.height
                     }
+
                     /*
                     performClick()*/
                 }
@@ -81,6 +86,7 @@ class ConsSentView : ImageView , View.OnTouchListener{
         return true
 
     }
+
 
 
 }

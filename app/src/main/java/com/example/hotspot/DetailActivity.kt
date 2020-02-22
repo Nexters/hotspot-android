@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log.d
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.detail_view.*
 import java.io.Serializable
 
 class DetailActivity : AppCompatActivity(){
@@ -39,5 +40,9 @@ class DetailActivity : AppCompatActivity(){
         else if(resultCode == 100){
             BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
         }
+    }
+
+    override fun onBackPressed() {
+        detail_esc_btn.performClick()
     }
 }

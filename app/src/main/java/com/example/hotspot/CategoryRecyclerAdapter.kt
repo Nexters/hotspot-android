@@ -59,7 +59,7 @@ class CategoryRecyclerAdapter (private val categoryList:List<String>,
             d("TAG onBindViewHolder", "myPlace : ${myPlace}")
 
             val mainActivity = MainActivity()
-            mainActivity.getMap(myPlace)
+            mainActivity.getMap(myPlace,false)
 
         }
         else {

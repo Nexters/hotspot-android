@@ -45,6 +45,7 @@
             android:textColor="#030303"
             tools:text="장소 명"
             android:singleLine="true"
+            android:maxLength="11"
             android:textSize="18dp"
             android:textStyle="bold"
             android:gravity="center|left"

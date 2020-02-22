@@ -2,10 +2,14 @@ package com.example.hotspot
 
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieAnimationView
 import com.kakao.auth.AuthType
 import com.kakao.auth.ISessionCallback
 import com.kakao.auth.Session
@@ -35,6 +39,10 @@ class LoginActivity: AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+
+        login_lottie_view.setAnimation("login charac.json")
+        login_lottie_view.repeatCount = 50
+        login_lottie_view.playAnimation()
 
 
         // Get hash key and print
@@ -139,6 +147,8 @@ class LoginActivity: AppCompatActivity(){
     protected fun redirectSignupActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        login_lottie_view.cancelAnimation()
         finish()
     }
+
 }

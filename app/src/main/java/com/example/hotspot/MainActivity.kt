@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +20,9 @@ import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.activity_sticker_regist.*
 import kotlinx.android.synthetic.main.categoty_items.*
+import kotlinx.android.synthetic.main.map_view.*
 import kotlinx.android.synthetic.main.myplace_item.*
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
@@ -38,6 +41,8 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity()  {
 
     private lateinit var mMyPlaceList : ArrayList<MyPlace>
+    private var backPressedTime : Long = 0.toLong()
+    private lateinit var toastBackBt : Toast
     private lateinit var tmpMyPlaceList : ArrayList<MyPlace>
     private var myPlaceSize: Int = 0
     private lateinit var mRetrofit: Retrofit
@@ -48,6 +53,7 @@ class MainActivity : AppCompatActivity()  {
     }
     private lateinit var updatedSpot : MyPlace
     private var update_position = 0
+    private var isSpotAdd = false
 //    val mainScope = MainScope()
 
     val categoryList = listOf("ALL", "맛집", "카페", "술집", "문화", "기타") // Category List
@@ -247,8 +253,7 @@ class MainActivity : AppCompatActivity()  {
         listBt.setOnClickListener {
             stateCategory = "전체"
             //fragment operation
-            listBt.visibility = View.INVISIBLE
-            mapBt.visibility = View.VISIBLE
+
             categoryframe.visibility = View.INVISIBLE
             categoryframe2.visibility = View.VISIBLE
             spotinfolayout.visibility = View.INVISIBLE
@@ -268,8 +273,7 @@ class MainActivity : AppCompatActivity()  {
 
         //remove MyPlace Fragment
         mapBt.setOnClickListener {
-            mapBt.visibility = View.INVISIBLE
-            listBt.visibility = View.VISIBLE
+
             categoryframe.visibility = View.VISIBLE
             categoryframe2.visibility = View.INVISIBLE
 
@@ -283,7 +287,7 @@ class MainActivity : AppCompatActivity()  {
 
             myPlaceSize = mMyPlaceList.size
             hpCount.text = myPlaceSize.toString()
-            getMap(mMyPlaceList)
+            getMap(mMyPlaceList,false)
         }
 
         findBt.setOnClickListener {
@@ -314,6 +318,7 @@ class MainActivity : AppCompatActivity()  {
     override fun onResume() {
         super.onResume()
         d("Resune","Resume start!")
+
     }
 
     fun getMyPlaceApi() {
@@ -329,12 +334,11 @@ class MainActivity : AppCompatActivity()  {
                     }
                     else{
                         mMyPlaceList = response.body()!!.myPlaces as ArrayList<MyPlace>
-                        listBt.visibility = View.VISIBLE
                         findBt.visibility = View.VISIBLE
                         tmpMyPlaceList = mMyPlaceList
                         myPlaceSize = mMyPlaceList.size
                         hpCount.text = myPlaceSize.toString()
-                        getMap(mMyPlaceList)
+                        getMap(mMyPlaceList,isSpotAdd)
                     }
                 }else {
                     try {
@@ -383,7 +387,7 @@ class MainActivity : AppCompatActivity()  {
         }
     }
 
-    fun getMap(myPlaceList : List<MyPlace>) {
+    fun getMap(myPlaceList : List<MyPlace>, isSpotAdd : Boolean) {
         d("TAG getMap","myPlaceList : $myPlaceList")
         fragmentState = true
 
@@ -395,6 +399,8 @@ class MainActivity : AppCompatActivity()  {
         d("TAG getMap", "myPlaceList is not null")
 
         bundle.putSerializable("PlaceList",myPlaceList as Serializable)
+        bundle.putSerializable("IsSpotAdd", isSpotAdd as Serializable)
+        this.isSpotAdd = false
         mapFragment.arguments = bundle
 
         //fragment_naver map 시작
@@ -431,6 +437,7 @@ class MainActivity : AppCompatActivity()  {
         if(resultCode == 10){// 장소등록 성공 맵 > 등록
             //애니메이션 띄우고
             //장소 새로 받기?
+            isSpotAdd = true
             getMyPlaceApi()
         }
         if(resultCode == 98){ // 마이플레이스 > 디테일 업데이트 성공
@@ -451,13 +458,49 @@ class MainActivity : AppCompatActivity()  {
                 mMyPlaceList.set(update_position,updatedSpot)
                 spotinfolayout.visibility = View.INVISIBLE
                 layout_trans_main.visibility = View.INVISIBLE
-                getMap(mMyPlaceList)
+                getMap(mMyPlaceList,false)
             }
         }
         //새장소 편집시 > 리스트에 반영 후 myplace fragment로 onActivityresult 전달  ( 편집시에는 myPlace가 있지만 새장 소 등록할때는 myPlace가 아니다)
         //myplace framgent에서 리스트에 추가후  어뎁터 에게 알리기
 
     }
+
+    override fun onBackPressed() {
+        var currentFragment = getVisibleFragment()
+        if(currentFragment is FragmentMap){
+            if(layout_trans_main.isVisible){
+                spotinfolayout.visibility = View.GONE
+                layout_trans_main.visibility = View.INVISIBLE
+                img_curr_pos.visibility = View.VISIBLE
+                img_main_isvisited.visibility = View.VISIBLE
+                map_btn_add.visibility = View.VISIBLE
+                return
+            }
+        }
+
+        if(System.currentTimeMillis() > backPressedTime + 2000.toLong()){
+            backPressedTime = System.currentTimeMillis()
+            toastBackBt = Toast.makeText(this," 뒤로 버튼을 한번 더 누르면 종료됩니다.",Toast.LENGTH_LONG)
+            toastBackBt.show()
+            return
+        }
+        if(System.currentTimeMillis() <= backPressedTime + 2000){
+            finish()
+            toastBackBt.cancel()
+        }
+
+
+    }
+    private fun getVisibleFragment() : Fragment? {
+        for(fragment in supportFragmentManager.fragments){
+            if(fragment.isVisible){
+                return fragment
+            }
+        }
+        return null
+    }
+
 
 
 

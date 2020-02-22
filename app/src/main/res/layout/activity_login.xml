@@ -4,15 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#101010"
     tools:context=".LoginActivity">
-
+    <ImageView
+        android:layout_width="164dp"
+        android:layout_height="92dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/img_login_top"
+        android:layout_marginTop="51dp"
+        />
     <com.kakao.usermgmt.LoginButton
         android:id="@+id/btnKakaoLogin"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_width="296dp"
+        android:layout_height="52dp"
+        android:layout_marginBottom="118dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/login_lottie_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_imageAssetsFolder="images"
+        app:lottie_fileName="login charac.json"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

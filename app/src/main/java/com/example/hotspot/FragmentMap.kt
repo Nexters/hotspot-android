@@ -11,8 +11,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.view.animation.ScaleAnimation
 import android.widget.*
 import androidx.annotation.UiThread
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -70,16 +73,16 @@ class FragmentMap: Fragment()
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
-    private var curr_longitude : Double = 0.0
-    private var curr_latitude : Double = 0.0
+    private var curr_longitude : Double = 126.977944
+    private var curr_latitude : Double = 37.566293
 
-    private var stateMapReady = false
     private lateinit var nMap: NaverMap
 
     private var searched_longitude : Double = 0.0
     private var searched_latitude : Double = 0.0
     private var searched_roadAddress = ""
     private var searched_placeName = ""
+    private var isSpotAdd = false
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -106,8 +109,10 @@ class FragmentMap: Fragment()
 
         val bundle = arguments
         placeList = bundle!!.getSerializable("PlaceList") as List<MyPlace>
+        isSpotAdd = bundle!!.getSerializable("IsSpotAdd") as Boolean
         spot_count = placeList.size
-
+        activity!!.mapBt.visibility = View.INVISIBLE
+        activity!!.listBt.visibility = View.VISIBLE
 
         val view = inflater.inflate(R.layout.map_view,container,false)
 
@@ -115,7 +120,7 @@ class FragmentMap: Fragment()
         return view
     }
 
-    @UiThread
+
     override fun onMapReady(p0: NaverMap) {
         markerList = arrayListOf()
         nMap = p0
@@ -126,17 +131,34 @@ class FragmentMap: Fragment()
         //지도 나이트 모드
         p0.mapType = NaverMap.MapType.Navi
         p0.isNightModeEnabled = true
-        p0.setOnMapClickListener(this)
-        //현위치 업데이트
-        p0.locationSource = locationSource
-        p0.locationTrackingMode = LocationTrackingMode.Follow
-        p0.addOnLocationChangeListener { location ->
-            curr_latitude = location.latitude
-            curr_longitude = location.longitude
-        }
+        if(isSpotAdd) {
+            val cameraUpdate = CameraUpdate.scrollAndZoomTo(
+                LatLng(placeList.get(0).place.y.toDouble(), placeList.get(0).place.x.toDouble()),
+                10.0
+            ) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
+            p0.moveCamera(cameraUpdate)
 
-        val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),10.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
-        p0.moveCamera(cameraUpdate)
+            //마지막에 트래킹 모드 켜야함.
+            p0.locationSource = locationSource
+            p0.locationTrackingMode = LocationTrackingMode.NoFollow
+            p0.addOnLocationChangeListener { location ->
+                curr_latitude = location.latitude
+                curr_longitude = location.longitude
+            }
+        }
+        else{
+            //현위치 업데이트
+            p0.locationSource = locationSource
+            p0.locationTrackingMode = LocationTrackingMode.Follow
+            p0.addOnLocationChangeListener { location ->
+                curr_latitude = location.latitude
+                curr_longitude = location.longitude
+            }
+
+        }
+        p0.setOnMapClickListener(this)
+
+
 
         //마커추가
         for(i in 0 .. placeList.size-1) {
@@ -150,87 +172,98 @@ class FragmentMap: Fragment()
             }else{
                 setMarkerImg(myPlace.place.categoryName,marker,p0)
             }
+            marker.captionColor = resources.getColor(R.color.colorWhite)
+            marker.captionHaloColor = resources.getColor(R.color.colorNocolor)
             marker.setOnClickListener(Overlay.OnClickListener {
-                setMapBtnDisableClick()
-                setStickerPosition()
-                setSticker(marker,myPlace)
-                var placeName = myPlace.place.placeName
-                var roadAdress = myPlace.place.roadAddressName
-                var category = myPlace.place.categoryName
-                var categoryImgView = activity!!.findViewById<ImageView>(R.id.img__spotinfo_category)
-                if(category!=null) {
-                    when (category) {
-                        "카페" -> {
-                            categoryImgView.setImageResource(R.drawable.ic_cafe_black)
-                            spotinfoLayout.background =
-                                resources.getDrawable(R.drawable.myplace_list_btn2)
-                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_cafe_png)
+                if(!spotinfoLayout.isVisible) {
+                    setStickerPosition()
+                    setSticker(marker, myPlace)
+                    var placeName = myPlace.place.placeName
+                    var roadAdress = myPlace.place.roadAddressName
+                    var category = myPlace.place.categoryName
+                    var categoryImgView =
+                        activity!!.findViewById<ImageView>(R.id.img__spotinfo_category)
+                    if (category != null) {
+                        when (category) {
+                            "카페" -> {
+                                categoryImgView.setImageResource(R.drawable.ic_cafe_black)
+                                spotinfoLayout.background =
+                                    resources.getDrawable(R.drawable.myplace_list_btn2)
+                                layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view)
+                                    .setImageResource(R.drawable.img_icon_cafe_png)
+                            }
+                            "맛집" -> {
+                                categoryImgView.setImageResource(R.drawable.ic_food_black)
+                                spotinfoLayout.background =
+                                    resources.getDrawable(R.drawable.myplace_list_btn1)
+                                layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view)
+                                    .setImageResource(R.drawable.img_icon_food_png)
+                            }
+                            "문화" -> {
+                                categoryImgView.setImageResource(R.drawable.ic_culture_black)
+                                spotinfoLayout.background =
+                                    resources.getDrawable(R.drawable.myplace_list_btn4)
+                                layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view)
+                                    .setImageResource(R.drawable.img_icon_culture_png)
+                            }
+                            "술집" -> {
+                                categoryImgView.setImageResource(R.drawable.ic_drink_black)
+                                spotinfoLayout.background =
+                                    resources.getDrawable(R.drawable.myplace_list_btn3)
+                                layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view)
+                                    .setImageResource(R.drawable.img_icon_drink_png)
+                            }
+                            "기타" -> {
+                                categoryImgView.setImageResource(R.drawable.ic_etc_black)
+                                spotinfoLayout.background =
+                                    resources.getDrawable(R.drawable.myplace_list_btn5)
+                                layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view)
+                                    .setImageResource(R.drawable.img_icon_etc_png)
+                            }
                         }
-                        "맛집" -> {
-                            categoryImgView.setImageResource(R.drawable.ic_food_black)
-                            spotinfoLayout.background =
-                                resources.getDrawable(R.drawable.myplace_list_btn1)
-                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_food_png)
-                        }
-                        "문화" -> {
-                            categoryImgView.setImageResource(R.drawable.ic_culture_black)
-                            spotinfoLayout.background =
-                                resources.getDrawable(R.drawable.myplace_list_btn4)
-                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_culture_png)
-                        }
-                        "술집" -> {
-                            categoryImgView.setImageResource(R.drawable.ic_drink_black)
-                            spotinfoLayout.background =
-                                resources.getDrawable(R.drawable.myplace_list_btn3)
-                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_drink_png)
-                        }
-                        "기타" -> {
-                            categoryImgView.setImageResource(R.drawable.ic_etc_black)
-                            spotinfoLayout.background =
-                                resources.getDrawable(R.drawable.myplace_list_btn5)
-                            layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_etc_png)
+                    } else {
+                        categoryImgView.setImageResource(R.drawable.ic_etc_black)
+                        spotinfoLayout.background =
+                            resources.getDrawable(R.drawable.myplace_list_btn5)
+                        layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view)
+                            .setImageResource(R.drawable.img_icon_etc_png)
+                    }
+                    activity!!.findViewById<TextView>(R.id.txt_spotinfo_placename).text = placeName
+                    activity!!.findViewById<TextView>(R.id.txt_spotinfo_address).text = roadAdress
+
+                    if (myPlace.visited) {
+                        var rating = myPlace.rating
+                        var ratingView1 =
+                            activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating1)
+                        var ratingView2 =
+                            activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating2)
+                        var ratingView3 =
+                            activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating3)
+                        when (rating) {
+                            1 -> {
+                                ratingView1.visibility = View.VISIBLE
+                                ratingView2.visibility = View.INVISIBLE
+                                ratingView3.visibility = View.INVISIBLE
+                            }
+                            2 -> {
+                                ratingView1.visibility = View.VISIBLE
+                                ratingView2.visibility = View.VISIBLE
+                                ratingView3.visibility = View.INVISIBLE
+                            }
+                            3 -> {
+                                ratingView1.visibility = View.VISIBLE
+                                ratingView2.visibility = View.VISIBLE
+                                ratingView3.visibility = View.VISIBLE
+                            }
                         }
                     }
-                }
-                else{
-                    categoryImgView.setImageResource(R.drawable.ic_etc_black)
-                    spotinfoLayout.background =
-                        resources.getDrawable(R.drawable.myplace_list_btn5)
-                    layout_transparency.findViewById<ImageView>(R.id.main_category_sticker_view).setImageResource(R.drawable.img_icon_etc_png)
-                }
-                activity!!.findViewById<TextView>(R.id.txt_spotinfo_placename).text = placeName
-                activity!!.findViewById<TextView>(R.id.txt_spotinfo_address).text = roadAdress
 
-                if(myPlace.visited) {
-                    var rating = myPlace.rating
-                    var ratingView1 = activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating1)
-                    var ratingView2 = activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating2)
-                    var ratingView3 = activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating3)
-                    when (rating) {
-                        1 -> {
-                            ratingView1.visibility = View.VISIBLE
-                            ratingView2.visibility = View.INVISIBLE
-                            ratingView3.visibility = View.INVISIBLE
-                        }
-                        2 -> {
-                            ratingView1.visibility = View.VISIBLE
-                            ratingView2.visibility = View.VISIBLE
-                            ratingView3.visibility = View.INVISIBLE
-                        }
-                        3 -> {
-                            ratingView1.visibility = View.VISIBLE
-                            ratingView2.visibility = View.VISIBLE
-                            ratingView3.visibility = View.VISIBLE
-                        }
-                    }
-                }
-
-                instaTag = placeName
-                searched_latitude = myPlace.place.y.toDouble()
-                searched_longitude = myPlace.place.x.toDouble()
-                searched_placeName = myPlace.place.placeName
-                searched_roadAddress = myPlace.place.roadAddressName
-
+                    instaTag = placeName
+                    searched_latitude = myPlace.place.y.toDouble()
+                    searched_longitude = myPlace.place.x.toDouble()
+                    searched_placeName = myPlace.place.placeName
+                    searched_roadAddress = myPlace.place.roadAddressName
+                    /*
                 if(spotinfoLayout.isVisible){
                     spotinfoLayout.visibility = View.GONE
                     layout_transparency.visibility = View.INVISIBLE
@@ -238,18 +271,19 @@ class FragmentMap: Fragment()
                     img_main_isvisited.visibility = View.VISIBLE
                     activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
 
-                }
-                else{
+                }*/
 
 
-                    val cameraUpdate2 = CameraUpdate.scrollAndZoomTo(marker.position,p0.cameraPosition.zoom)
+                    val cameraUpdate2 =
+                        CameraUpdate.scrollAndZoomTo(marker.position, p0.cameraPosition.zoom)
 
-                    cameraUpdate2.animate(CameraAnimation.Easing,700)
+                    cameraUpdate2.animate(CameraAnimation.Easing, 700)
                     cameraUpdate2.finishCallback {
-                        mapView.visibility = View.VISIBLE
+                        //mapView.visibility = View.VISIBLE
+
 
                     }
-                    mapView.visibility = View.INVISIBLE
+                    //mapView.visibility = View.INVISIBLE
                     spotinfoLayout.visibility = View.VISIBLE
                     layout_transparency.visibility = View.VISIBLE
                     img_curr_pos.visibility = View.INVISIBLE
@@ -258,16 +292,15 @@ class FragmentMap: Fragment()
                     p0.moveCamera(cameraUpdate2)
 
 
-                    spotinfoLayout.setOnClickListener{
+                    spotinfoLayout.setOnClickListener {
                         val intent = Intent(activity, DetailActivity::class.java)
-                        intent.putExtra("myPlace", myPlace as Serializable )
-                        intent.putExtra("Position",i)
-                        intent.putExtra("RequestCode",21)
-                        startActivityForResult(intent,21)
-                        setMapBtnAbleClick()
+                        intent.putExtra("myPlace", myPlace as Serializable)
+                        intent.putExtra("Position", i)
+                        intent.putExtra("RequestCode", 21)
+                        startActivityForResult(intent, 21)
+
 
                     }
-
                 }
                 true
             })
@@ -276,31 +309,13 @@ class FragmentMap: Fragment()
         }
         //Map 위의 버튼들 세팅
         setButton(p0)
-        stateMapReady = true
 
-    }
-    private fun setMapBtnDisableClick(){
-        activity!!.findViewById<TextView>(R.id.category_item1_txt).isClickable = false
-        activity!!.findViewById<TextView>(R.id.category_item2_txt).isClickable = false
-        activity!!.findViewById<TextView>(R.id.category_item3_txt).isClickable = false
-        activity!!.findViewById<TextView>(R.id.category_item4_txt).isClickable = false
-        activity!!.findViewById<TextView>(R.id.category_item5_txt).isClickable = false
-        activity!!.findViewById<TextView>(R.id.category_item6_txt).isClickable = false
-        img_curr_pos.isClickable = false
-        img_main_isvisited.isClickable = false
+
 
 
     }
-    private fun setMapBtnAbleClick(){
-        activity!!.findViewById<TextView>(R.id.category_item1_txt).isClickable = true
-        activity!!.findViewById<TextView>(R.id.category_item2_txt).isClickable = true
-        activity!!.findViewById<TextView>(R.id.category_item3_txt).isClickable = true
-        activity!!.findViewById<TextView>(R.id.category_item4_txt).isClickable = true
-        activity!!.findViewById<TextView>(R.id.category_item5_txt).isClickable = true
-        activity!!.findViewById<TextView>(R.id.category_item6_txt).isClickable = true
-        img_curr_pos.isClickable = true
-        img_main_isvisited.isClickable = true
-    }
+
+
     private fun setSticker(marker :Marker , myPlace : MyPlace){
         var alldayView = layout_transparency.findViewById<ConsSentView>(R.id.main_24h_view)
         var consentView = layout_transparency.findViewById<ConsSentView>(R.id.main_consent_view)
@@ -502,6 +517,14 @@ class FragmentMap: Fragment()
         }
     }
     private fun setButton(nMap : NaverMap){
+        layout_transparency.setOnClickListener{
+            spotinfoLayout.visibility = View.GONE
+            layout_transparency.visibility = View.INVISIBLE
+            img_curr_pos.visibility = View.VISIBLE
+            img_main_isvisited.visibility = View.VISIBLE
+            activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
+
+        }
         btn_insta = activity!!.findViewById(R.id.btn_insta)
         btn_insta.setOnClickListener {
             var intent_insta = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/explore/tags/"+instaTag+"/"))
@@ -512,6 +535,7 @@ class FragmentMap: Fragment()
             var intent_search_road = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://route/public?dlat="+searched_latitude+"&dlng="+searched_longitude+"&dname="+strEncodedUrl+"&appname=com.example.hotspot"))
             startActivity(intent_search_road)
         }
+
         activity!!.findViewById<ImageView>(R.id.btn_share).setOnClickListener{
 
             var params : LocationTemplate
@@ -653,86 +677,128 @@ class FragmentMap: Fragment()
         }
 
         activity!!.findViewById<TextView>(R.id.category_item1_txt).setOnClickListener{
-            stateCategory="전체"
-            changeCategory(nMap,stateCategory,this.stateImgVisted)
-            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#FFFFFF"))
-            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_all)
+            if(!spotinfoLayout.isVisible) {
+                stateCategory = "전체"
+                changeCategory(nMap, stateCategory, this.stateImgVisted)
+                activity!!.findViewById<TextView>(R.id.category_item1_txt)
+                    .setTextColor(Color.parseColor("#FFFFFF"))
+                activity!!.findViewById<TextView>(R.id.category_item2_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item3_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item4_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item5_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item6_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<ImageView>(R.id.title_category_imgview)
+                    .setImageResource(R.drawable.img_category_title_all)
+            }
         }
         activity!!.findViewById<TextView>(R.id.category_item2_txt).setOnClickListener{
-            stateCategory="맛집"
-            changeCategory(nMap,stateCategory,this.stateImgVisted)
-            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#FFFFFF"))
-            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_food)
+            if(!spotinfoLayout.isVisible) {
+                stateCategory = "맛집"
+                changeCategory(nMap, stateCategory, this.stateImgVisted)
+                activity!!.findViewById<TextView>(R.id.category_item1_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item2_txt)
+                    .setTextColor(Color.parseColor("#FFFFFF"))
+                activity!!.findViewById<TextView>(R.id.category_item3_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item4_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item5_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item6_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<ImageView>(R.id.title_category_imgview)
+                    .setImageResource(R.drawable.img_category_title_food)
+            }
         }
         activity!!.findViewById<TextView>(R.id.category_item3_txt).setOnClickListener{
-            stateCategory="카페"
-            changeCategory(nMap,stateCategory,this.stateImgVisted)
-            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#FFFFFF"))
-            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_cafe)
+            if(!spotinfoLayout.isVisible) {
+                stateCategory = "카페"
+                changeCategory(nMap, stateCategory, this.stateImgVisted)
+                activity!!.findViewById<TextView>(R.id.category_item1_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item2_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item3_txt)
+                    .setTextColor(Color.parseColor("#FFFFFF"))
+                activity!!.findViewById<TextView>(R.id.category_item4_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item5_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item6_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<ImageView>(R.id.title_category_imgview)
+                    .setImageResource(R.drawable.img_category_title_cafe)
+            }
         }
         activity!!.findViewById<TextView>(R.id.category_item4_txt).setOnClickListener{
-            stateCategory="술집"
-            changeCategory(nMap,stateCategory,this.stateImgVisted)
-            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#FFFFFF"))
-            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_drink)
+            if(!spotinfoLayout.isVisible) {
+                stateCategory = "술집"
+                changeCategory(nMap, stateCategory, this.stateImgVisted)
+                activity!!.findViewById<TextView>(R.id.category_item1_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item2_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item3_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item4_txt)
+                    .setTextColor(Color.parseColor("#FFFFFF"))
+                activity!!.findViewById<TextView>(R.id.category_item5_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item6_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<ImageView>(R.id.title_category_imgview)
+                    .setImageResource(R.drawable.img_category_title_drink)
+            }
         }
         activity!!.findViewById<TextView>(R.id.category_item5_txt).setOnClickListener{
-            stateCategory="문화"
-            changeCategory(nMap,stateCategory,this.stateImgVisted)
-            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#FFFFFF"))
-            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_culture)
+            if(!spotinfoLayout.isVisible) {
+                stateCategory = "문화"
+                changeCategory(nMap, stateCategory, this.stateImgVisted)
+                activity!!.findViewById<TextView>(R.id.category_item1_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item2_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item3_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item4_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item5_txt)
+                    .setTextColor(Color.parseColor("#FFFFFF"))
+                activity!!.findViewById<TextView>(R.id.category_item6_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<ImageView>(R.id.title_category_imgview)
+                    .setImageResource(R.drawable.img_category_title_culture)
+            }
         }
         activity!!.findViewById<TextView>(R.id.category_item6_txt).setOnClickListener{
-            stateCategory="기타"
-            changeCategory(nMap,stateCategory,stateImgVisted)
-            activity!!.findViewById<TextView>(R.id.category_item1_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item2_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item3_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item4_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item5_txt).setTextColor(Color.parseColor("#393D46"))
-            activity!!.findViewById<TextView>(R.id.category_item6_txt).setTextColor(Color.parseColor("#FFFFFF"))
-            activity!!.findViewById<ImageView>(R.id.title_category_imgview).setImageResource(R.drawable.img_category_title_etc)
+            if(!spotinfoLayout.isVisible) {
+                stateCategory = "기타"
+                changeCategory(nMap, stateCategory, stateImgVisted)
+                activity!!.findViewById<TextView>(R.id.category_item1_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item2_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item3_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item4_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item5_txt)
+                    .setTextColor(Color.parseColor("#393D46"))
+                activity!!.findViewById<TextView>(R.id.category_item6_txt)
+                    .setTextColor(Color.parseColor("#FFFFFF"))
+                activity!!.findViewById<ImageView>(R.id.title_category_imgview)
+                    .setImageResource(R.drawable.img_category_title_etc)
+            }
         }
     }
     override fun onMapClick(p0: PointF, p1: LatLng) {
-        if(stateMapReady) {
-            if (spotinfoLayout.isVisible) {
-                spotinfoLayout.visibility = View.GONE
-                layout_transparency.visibility = View.INVISIBLE
-                img_curr_pos.visibility = View.VISIBLE
-                img_main_isvisited.visibility = View.VISIBLE
-                activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
-                setMapBtnAbleClick()
-            }
-        }
-        else{
 
-        }
 
     }
     private fun setStickerPosition(){
@@ -753,7 +819,69 @@ class FragmentMap: Fragment()
 
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).x = layout_transparency.width*0.03f
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).y = layout_transparency.height*0.21f
+/*
+        activity!!.findViewById<ConsSentView>(R.id.main_24h_view).setOnTouchListener(object : View.OnTouchListener{
+            var fromX: Float = 0.toFloat()
+            var fromY: Float = 0.toFloat()
+            var parentW = 0.toFloat()
+            var parentH = 0.toFloat()
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                if(v != null && event != null) {
+                    val parentWidth = (v.parent as ViewGroup).width    // 부모 View 의 Width
+                    val parentHeight = (v.parent as ViewGroup).height    // 부모 View 의 Height
+                    parentH = parentHeight.toFloat()
+                    parentW = parentWidth.toFloat()
 
+
+
+                    val action = event.action
+                    when(action){
+                        MotionEvent.ACTION_DOWN ->{
+                            fromX = event.x
+                            fromY = event.y
+
+                        }
+                        MotionEvent.ACTION_MOVE ->{
+
+                            v.x = v.x + event.x - v.width/2
+                            v.y = v.y + event.y - v.height/2
+
+                            if(isranged((v.x+v.width*0.5).toFloat(),(v.y+v.height*0.5).toFloat())) {
+                                var ani =
+                                    AnimationUtils.loadAnimation(activity!!, R.anim.trash_anim)
+                                v.startAnimation(ani)
+                            }
+
+                        }
+                        MotionEvent.ACTION_UP -> {
+
+                            if(v.x<0){
+                                v.x = 0.toFloat()
+                            }
+                            else if((v.x + v.width)> parentWidth){
+                                v.x = parentWidth.toFloat() - v.width
+                            }
+                            if(v.y <0){
+                                v.y = 0.toFloat()
+                            }
+                            else if((v.y+v.height)>parentHeight){
+                                v.y = parentHeight.toFloat() -v.height
+                            }
+
+                        }
+                    }
+                }
+
+                return true
+
+            }
+            private fun isranged(x : Float, y : Float) : Boolean{
+                if((x>(parentW*0.5 - 100.toFloat()))&&(x<(parentW*0.5 + 100.toFloat())&&(y>parentH*0.9))){
+                    return true
+                }
+                else return false
+            }
+        })*/
 
 
     }

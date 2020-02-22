@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.mylist_empty_view.*
 
 class FragmentMyPlaceEmpty :Fragment() {
@@ -15,6 +16,8 @@ class FragmentMyPlaceEmpty :Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.mylist_empty_view, container, false)
+        activity!!.mapBt.visibility = View.VISIBLE
+        activity!!.listBt.visibility = View.INVISIBLE
         return v
     }
 

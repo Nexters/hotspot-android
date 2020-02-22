@@ -7,7 +7,12 @@ import android.util.Log.d
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.map_view.*
 import kotlinx.android.synthetic.main.register_view.*
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -63,7 +68,39 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        var currentFragment = getVisibleFragment()
+        if(currentFragment is FragmentSearch){
+            supportFragmentManager.popBackStack()
+        }
+        else if(currentFragment is FragmentRegister){
+            if(regist_category_layout.isVisible){
+                edtTxt_memo.visibility = View.VISIBLE
+                edtTxt_memo.isFocusableInTouchMode = true
+                edtTxt_memo.isFocusable = true
+                txt_address.visibility = View.VISIBLE
+                txt_visited.visibility = View.VISIBLE
+                txt_place_name.isClickable = true
+                btn_regist.visibility = View.VISIBLE
 
+                stickerBt.visibility = View.VISIBLE
+                regist_category_layout.visibility = View.GONE
+                return
+            }
+            else {
+                btn_esc3.performClick()
+                return
+            }
+        }
+
+
+    }
+    private fun getVisibleFragment() : Fragment? {
+        for(fragment in supportFragmentManager.fragments){
+            if(fragment.isVisible){
+                return fragment
+            }
+        }
+        return null
     }
 
 }
