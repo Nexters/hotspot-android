@@ -8,11 +8,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.myplace_item.view.*
 import kotlinx.android.synthetic.main.mysearch_list.view.*
-import kotlinx.android.synthetic.main.search_list.view.*
-import kotlinx.android.synthetic.main.search_list.view.placeName_txtView
-import kotlinx.android.synthetic.main.search_list.view.roadAddressName_txtView
 
 class MySearchRecyclerAdapter(var context: Context,
                             var mData: ArrayList<MyPlace>,

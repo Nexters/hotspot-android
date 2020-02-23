@@ -440,6 +440,13 @@ class MainActivity : AppCompatActivity()  {
             isSpotAdd = true
             getMyPlaceApi()
         }
+        if(resultCode == 95) {// 디테일뷰 > 장소 삭제
+            val position = data!!.getIntExtra("position", 0)
+            mMyPlaceList.removeAt(position)
+            myPlaceSize = mMyPlaceList.size
+            hpCount.text = myPlaceSize.toString()
+            getMyPlace(mMyPlaceList, stateCategory)
+        }
         if(resultCode == 98){ // 마이플레이스 > 디테일 업데이트 성공
             //getMyplace 요청
             if(data != null) {

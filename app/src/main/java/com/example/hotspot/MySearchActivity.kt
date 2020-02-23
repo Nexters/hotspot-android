@@ -74,6 +74,14 @@ class MySearchActivity : AppCompatActivity() {
                 i2: Int
             ) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                if(recyclerAdapter!!.itemCount != 0) {
+                    mysearch_empty_layout.visibility = View.VISIBLE
+                    search_recyclerview.visibility = View.GONE
+                }
+                else {
+                    mysearch_empty_layout.visibility = View.GONE
+                    search_recyclerview.visibility = View.VISIBLE
+                }
                 recyclerAdapter!!.getFilter().filter(charSequence)
             }
             override fun afterTextChanged(editable: Editable) {}
@@ -104,7 +112,12 @@ class MySearchActivity : AppCompatActivity() {
                     }
                 })
         )
-
+        myplace_empty_imgbtn.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            val isAdd = true
+            intent.putExtra("IsAdd",isAdd)
+            startActivity(intent)
+        }
     }
 
     fun recyclerViewInit () {

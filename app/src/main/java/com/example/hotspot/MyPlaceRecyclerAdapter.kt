@@ -61,6 +61,9 @@ class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,private val ca
             val visited = list.get(position).visited
             var categoryTemp: String? = list.get(position).place.categoryName
             var categoryName: String? = ""
+            var buffer = StringBuffer(placeName_text)
+
+            d("TAG", "categoryName : ${categoryName}")
 
 
             (holder.cardLayout as View).setOnClickListener{
@@ -206,8 +209,12 @@ class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,private val ca
                     }
                 }
             }
-            
-            holder.placeName_txtV.text = placeName_text
+            //길이가 10 이상이면 뒤에 ... 추가
+            if(buffer.length > 10) {
+                buffer.delete(10, placeName_text.length-1)
+                buffer.append("...")
+            }
+            holder.placeName_txtV.text = buffer.toString()
             holder.roadAddressName_txtV.text =roadAddressName_text
 //            holder.rating_rbV.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
 //                ratingBar.rating = rating_num.toFloat()

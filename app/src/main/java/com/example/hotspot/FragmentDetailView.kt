@@ -3,13 +3,16 @@ package com.example.hotspot
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
 import androidx.core.view.isVisible
@@ -21,7 +24,20 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import kotlinx.android.synthetic.main.detail_view.*
 import kotlinx.android.synthetic.main.register_view.*
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.BufferedInputStream
+import java.io.IOException
 import java.io.Serializable
+import java.lang.Exception
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 class FragmentDetailView : Fragment() {
@@ -34,8 +50,9 @@ class FragmentDetailView : Fragment() {
     private var requestCode = 0
     private var resCode = 0
     private lateinit var urlList: ArrayList<String>
-    private lateinit var imgList: ArrayList<ImageView>
-
+    private lateinit var imgList: MutableList<ImageView>
+    lateinit var apiService : APIService
+    lateinit var mRetrofit: Retrofit
     private var imageSize: Int = 0
 
     override fun onCreateView(
@@ -51,9 +68,15 @@ class FragmentDetailView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val myPlace = arguments!!.getSerializable("myPlace") as MyPlace
+        imageSize = myPlace.images!!.size
         position = arguments!!.getSerializable("Position") as Int
         requestCode = arguments!!.getSerializable("RequestCode") as Int
+        instaTag = myPlace.place.placeName
         d("TAG", "FragmentDetailView : ${myPlace}")
+
+        //Retrofit init
+        setRetrofitInit()
+        setApiServiceInit()
 
         detail_placeName_txt.text = myPlace.place.placeName
         detail_roadAddressName_txt.text = myPlace.place.roadAddressName
@@ -66,35 +89,38 @@ class FragmentDetailView : Fragment() {
         val allDay = myPlace.allDayAvailable
         val powerPlug = myPlace.powerPlugAvailable
 
+        detail_menu_txt1.text = "베스트 메뉴"
+        detail_additional_txt1.text = "부가정보"
+        detail_time_txt1.text = "영업시간"
+
         if(!isVisited){
             detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
 
-            notVisitImg.isVisible = true
-            notVisitImg.setBackgroundResource(R.drawable.ic_img_novisit)
+            notVisitImg.visibility = View.VISIBLE
+            notVisitImg.setBackgroundResource(R.drawable.group_6)
         }
         else if(categoryName != null && isVisited) {
             when(categoryName) {
                 "맛집"->{
-                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout1)
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout1)
                 }
                 "카페"->{
-                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout2)
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout2)
                 }
                 "술집" ->{
-                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout3)
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout3)
                 }
                 "문화" ->{
-                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout4)
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout4)
                 }
                 "기타" ->{
-                    activity!!.findViewById<ConstraintLayout>(R.id.detail_top).setBackgroundResource(R.drawable.detail_top_layout5)
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout5)
                 }
             }
         }
 
         if(bestmenu != null) {
-            detail_menu_txt1.isVisible = true
-            detail_menu_txt2.isVisible = true
+            detail_menu_txt2.visibility = View.VISIBLE
 
 
             for(i in 0..myPlace.bestMenu!!.size-1){
@@ -102,15 +128,14 @@ class FragmentDetailView : Fragment() {
                     detail_menu_txt2.text = myPlace.bestMenu!![0]
                 }
                 else {
-                    detail_menu_txt3.isVisible = true
+                    detail_menu_txt3.visibility = View.VISIBLE
                     detail_menu_txt3.text = myPlace.bestMenu!![1]
                 }
             }
         }
 
         if(hours!!.open != null && hours!!.close != null) {
-            detail_time_txt1.isVisible = true
-            detail_time_txt2.isVisible = true
+            detail_time_txt2.visibility = View.VISIBLE
             val st = StringBuffer()
             var open = myPlace.businessHours!!.open.toString()
             var close = myPlace.businessHours!!.close.toString()
@@ -134,30 +159,25 @@ class FragmentDetailView : Fragment() {
 
             var st = StringBuffer()
             if (parking != null) {
-                detail_additional_txt1.isVisible = true
-                detail_additional_txt2.isVisible = true
                 st.append("주차가능 / ")
             }
             if (allDay != null) {
-                detail_additional_txt1.isVisible = true
-                detail_additional_txt2.isVisible = true
                 st.append("콘센트 O / ")
             }
             if (powerPlug != null) {
-                detail_additional_txt1.isVisible = true
-                detail_additional_txt2.isVisible = true
                 st.append("24시 / ")
             }
             val len = st.length
             st.delete(len - 2, len - 1)
+            detail_additional_txt2.text = st.toString()
         }
 
         urlList = arrayListOf()
-        imgList = arrayListOf()
-        for(i in 0..myPlace.images!!.size-1){
+        imgList = mutableListOf()
+        for(i in 0..imageSize-1){
             if(myPlace.images!!.get(i).url != null) {
                 urlList.add(myPlace.images!!.get(i).url)
-                imageSize++
+
                 d("TAG", "urlList[i] : ${urlList[i]}")
             }
         }
@@ -203,42 +223,84 @@ class FragmentDetailView : Fragment() {
         // 삭제 API 추가!
         detail_delete_btn.setOnClickListener {
             detail_popup_layout.visibility = View.VISIBLE
-            regist_quit_ok_txt.setOnClickListener{
-                fragmentManager!!.beginTransaction()
-                    .remove(this)
-                    .commit()
-                var intent = Intent()
-                activity!!.setResult(10,intent)
-                activity!!.finish()
-            }
-            regist_quit_no_txt.setOnClickListener{
-                regist_popup_layout.visibility = View.GONE
-            }
+        }
+        detail_quit_ok_txt.setOnClickListener {
+
+            //서버에 알리기
+            val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
+            apiService.deletPlace("Bearer " + "${accesstoken}",
+                "${myPlace.id}").enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if(response.isSuccessful) {
+                        d("Delete", "onSuccess()")
+                        d("Delete", response.message())
+                        d("Delete", response.body().toString())
+                        Toast.makeText(activity!!, "장소가 삭제되었습니다.", Toast.LENGTH_LONG).show()
+
+
+                        requestCode = 95
+                        val intent = Intent(activity, MainActivity::class.java)
+                        intent.putExtra("myPlace", myPlace as Serializable)
+                        intent.putExtra("position", position)
+                        intent.putExtra("RequestCode", requestCode as Serializable)
+                        activity!!.setResult(requestCode, intent)
+                        activity!!.finish()
+                    }
+                    else{
+                        d("Delete Error",response.errorBody().toString())
+                        d("Delete Error",response.message())
+                        Toast.makeText(activity!!, "실패!!", Toast.LENGTH_LONG).show()
+                    }
+
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(activity!!,"삭제 실패 ! 네트워크 확인 바랍니다 !!", Toast.LENGTH_LONG).show()
+                    Log.d("Delete Error", t.message.toString())
+                    Log.d("Delete Error",t.cause.toString())
+                }
+            })
+
+        }
+        detail_quit_no_txt.setOnClickListener {
+            detail_popup_layout.visibility = View.GONE
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
         // image가 존재하면 Gone 해제
         if(imageSize != 0) {
-            viewPager.isVisible = true
+            detail_cardview.visibility = View.VISIBLE
+            dotsContainer.visibility = View.VISIBLE
 
             val mAdapter = ImageAdapter(activity!!, urlList)
             viewPager.adapter = mAdapter
             dotscount = mAdapter.count
 
+            dotImageView1.setImageResource(R.drawable.indicator_dot_on)
             when (dotscount) {
+                1 -> {
+                    dotImageView1.visibility = View.VISIBLE
+                }
                 2 -> {
+                    dotImageView1.visibility = View.VISIBLE
                     dotImageView2.visibility = View.VISIBLE
                 }
                 3 -> {
+                    dotImageView1.visibility = View.VISIBLE
                     dotImageView2.visibility = View.VISIBLE
                     dotImageView3.visibility = View.VISIBLE
                 }
                 4 -> {
+                    dotImageView1.visibility = View.VISIBLE
                     dotImageView2.visibility = View.VISIBLE
                     dotImageView3.visibility = View.VISIBLE
                     dotImageView4.visibility = View.VISIBLE
                 }
                 5 -> {
+                    dotImageView1.visibility = View.VISIBLE
                     dotImageView2.visibility = View.VISIBLE
                     dotImageView3.visibility = View.VISIBLE
                     dotImageView4.visibility = View.VISIBLE
@@ -263,6 +325,7 @@ class FragmentDetailView : Fragment() {
 
             override fun onPageSelected(position: Int) {
 
+                d("TAG", "viewPager Position : ${position}")
                 when (position) {
                     0 -> {
                         dotImageView1.setImageResource(R.drawable.indicator_dot_on)
@@ -324,17 +387,44 @@ class FragmentDetailView : Fragment() {
             return mUrlList.size
         }
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        override fun instantiateItem(container: ViewGroup, position: Int): ImageView {
 
+            val urlBuffer = StringBuffer(mUrlList[position])
+
+            d("FragmentDetailView", "urlBuffer[4] : ${urlBuffer[4]}")
+
+            if(urlBuffer[4] != 's'){
+                urlBuffer.insert( 4,'s')
+            }
+
+            var bm: Bitmap? = null
             val imageView = ImageView(mContext)
-//            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-//            imageView.setImageResource(mImage[position])
-            Picasso.get()
-                .load(mUrlList[position])
-                .fit()
-                .centerCrop()
-                .into(imageView)
-            container.addView(imageView)
+            val url = urlBuffer.toString()
+
+            d("FragmentDetailView", "url : $url")
+            val runnable = Runnable {
+                d("FragmentDetailView", "setImage")
+                imageView.setImageBitmap(bm)
+            }
+
+            class NewRunnable: Runnable {
+                override fun run() {
+                    try {
+                        bm = getBitmapFromURL(url)
+                        d("FragmentDetailView", "bm : $bm")
+                    }catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    imageView.post(runnable)
+                }
+            }
+
+            val nr = NewRunnable()
+            val t = Thread(nr)
+            t.start()
+
+            container.addView(imageView, 0)
 
             return imageView
         }
@@ -372,6 +462,47 @@ class FragmentDetailView : Fragment() {
                 isEditSpot = true
             }
         }
+        else if(resultCode == 96) {
+            resCode = 95
+        }
 
+    }
+
+    fun getBitmapFromURL(src: String): Bitmap? {
+        try {
+            d("TAG", "onSuccess")
+            d("TAG", "url : $src")
+            val url = URL(src)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.setDoInput(true)
+            connection.connect()
+            val nSize = connection.contentLength
+            val bis = BufferedInputStream(connection.getInputStream(), nSize)
+            val bitmap = BitmapFactory.decodeStream(bis)
+
+            d("TAG", "Bitmap : ${bitmap}")
+
+            return bitmap
+        } catch (e: IOException) {
+            d("TAG", "onFailure")
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    fun setRetrofitInit(){
+        //interceptor 선언
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
+        mRetrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+    }
+    fun setApiServiceInit(){
+        apiService = mRetrofit.create(APIService::class.java)
     }
 }
