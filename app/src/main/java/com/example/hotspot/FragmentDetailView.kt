@@ -13,17 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Constraints
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.bumptech.glide.Glide
 import com.squareup.otto.Subscribe
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Transformation
 import kotlinx.android.synthetic.main.detail_view.*
-import kotlinx.android.synthetic.main.register_view.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -35,7 +30,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.BufferedInputStream
 import java.io.IOException
 import java.io.Serializable
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -402,27 +396,12 @@ class FragmentDetailView : Fragment() {
             val url = urlBuffer.toString()
 
             d("FragmentDetailView", "url : $url")
-            val runnable = Runnable {
-                d("FragmentDetailView", "setImage")
-                imageView.setImageBitmap(bm)
-            }
+            d("TAG", "setImage")
 
-            class NewRunnable: Runnable {
-                override fun run() {
-                    try {
-                        bm = getBitmapFromURL(url)
-                        d("FragmentDetailView", "bm : $bm")
-                    }catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-
-                    imageView.post(runnable)
-                }
-            }
-
-            val nr = NewRunnable()
-            val t = Thread(nr)
-            t.start()
+            Glide.with(activity!!)
+                .load(url)
+                .into(imageView)
+            d("TAG", "bm : $bm")
 
             container.addView(imageView, 0)
 
@@ -462,10 +441,6 @@ class FragmentDetailView : Fragment() {
                 isEditSpot = true
             }
         }
-        else if(resultCode == 96) {
-            resCode = 95
-        }
-
     }
 
     fun getBitmapFromURL(src: String): Bitmap? {
