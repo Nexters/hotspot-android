@@ -22,6 +22,7 @@
         android:layout_width="212dp"
         android:layout_height="wrap_content"
         android:background="@drawable/myplace_empty_addbtn"
+        android:fontFamily="@font/spoqabold"
         android:text="장소 등록하기"
         android:textSize="18dp"
         android:textStyle="bold"

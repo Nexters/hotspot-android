@@ -25,7 +25,6 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.category_view.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor

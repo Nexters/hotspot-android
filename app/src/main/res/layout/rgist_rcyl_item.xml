@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:text="ggggggg"
     android:paddingHorizontal="3sp"
+    android:fontFamily="@font/spoqaregular"
     android:paddingVertical="3sp"
     android:background="#222222"
     android:textColor="#d8d8d6"

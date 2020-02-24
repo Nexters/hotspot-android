@@ -87,6 +87,7 @@
         android:layout_marginEnd="3dp"
         android:background="@null"
         android:gravity="center_horizontal"
+        android:fontFamily="@font/spoqaregular"
         android:hint="베스트 메뉴 입력"
         android:maxLength="9"
         android:singleLine="true"

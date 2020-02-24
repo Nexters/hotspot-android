@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_sticker_regist.*
-import kotlinx.android.synthetic.main.categoty_items.*
 import kotlinx.android.synthetic.main.map_view.*
 import kotlinx.android.synthetic.main.myplace_item.*
 import kotlinx.coroutines.*

@@ -45,30 +45,33 @@
             android:id="@+id/placeName_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#030303"
-            tools:text="장소 명"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="7dp"
+            android:fontFamily="@font/spoqabold"
+            android:gravity="center|left"
             android:singleLine="true"
+            android:textColor="#030303"
             android:textSize="18dp"
             android:textStyle="bold"
-            android:gravity="center|left"
-            android:layout_marginTop="11dp"
-            android:layout_marginLeft="61dp"
+            app:layout_constraintStart_toEndOf="@id/mypl_category_img"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/myplace_category_img"/>
+            tools:text="장소 명" />
 
         <TextView
             android:id="@+id/roadAddressName_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:fontFamily="@font/spoqaregular"
             android:gravity="center|left"
+            android:maxLength="20"
             android:singleLine="true"
             android:textColor="#393d46"
-            android:maxLength="20"
             android:textSize="12dp"
-            tools:text="주소명"
-            android:layout_marginLeft="61dp"
-            app:layout_constraintLeft_toRightOf="@+id/myplace_category_img"
-            app:layout_constraintTop_toBottomOf="@+id/placeName_txt"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/placeName_txt"
+            app:layout_constraintTop_toBottomOf="@id/placeName_txt"
+            tools:text="주소명" />
 
         <ImageView
             android:id="@+id/myplace_rating_img1"
@@ -88,7 +91,7 @@
             android:background="@drawable/ic_myplace_rating_img"
             android:layout_marginRight="5dp"
             android:visibility="invisible"
-            app:layout_constraintRight_toLeftOf="@+id/myplace_rating_img1"
+            app:layout_constraintRight_toLeftOf="@id/myplace_rating_img1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
@@ -99,7 +102,7 @@
             android:background="@drawable/ic_myplace_rating_img"
             android:layout_marginRight="5dp"
             android:visibility="invisible"
-            app:layout_constraintRight_toLeftOf="@+id/myplace_rating_img2"
+            app:layout_constraintRight_toLeftOf="@id/myplace_rating_img2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

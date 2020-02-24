@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:textColorHint="#3a3d45"
             android:textColor="#d8d8d6"
+            android:fontFamily="@font/spoqaregular"
             android:textSize="20dp"
             android:hint="장소,주소 검색..."
             android:inputType="text"
@@ -120,17 +121,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:fontFamily="@font/spoqaregular"
             android:text="장소 명"
             android:textColor="#d8d8d6"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintLeft_toRightOf="@+id/search_category_img"/>
+            app:layout_constraintLeft_toRightOf="@+id/search_category_img"
+            app:layout_constraintTop_toTopOf="@id/search_category_img"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/search_roadAddressName_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="도로 주소명"
+            android:fontFamily="@font/spoqaregular"
             android:textColor="#393d46"
             android:textSize="15sp"
             android:layout_marginLeft="9dp"
@@ -202,6 +206,7 @@
             android:layout_width="212dp"
             android:layout_height="wrap_content"
             android:background="@drawable/myplace_empty_addbtn"
+            android:fontFamily="@font/spoqaregular"
             android:text="장소 등록하기"
             android:textSize="18dp"
             android:textStyle="bold"

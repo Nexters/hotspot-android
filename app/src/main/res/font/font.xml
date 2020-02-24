@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <font-family xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <font app:fontStyle="normal" app:fontWeight="400" android:font="@font/spoqabold"/>
-    <font app:fontStyle="normal" app:fontWeight="400" android:font="@font/spoqaregular"/>
-    <font app:fontStyle="normal" app:fontWeight="400" android:font="@font/spoqathin"/>
+    <font app:fontStyle="normal" app:font="@font/spoqabold"  android:fontStyle="normal" android:font="@font/spoqabold"/>
+    <font app:fontStyle="normal" app:font="@font/spoqaregular"  android:fontStyle="normal"  android:font="@font/spoqaregular"/>
+    <font app:fontStyle="normal" app:font="@font/spoqathin"  android:fontStyle="normal" android:font="@font/spoqathin"/>
+    <font app:fontStyle="normal" app:font="@font/montserratextrabold"  android:fontStyle="normal" android:font="@font/montserratextrabold"/>
+    <font app:fontStyle="normal" app:font="@font/montserratmedium"  android:fontStyle="normal" android:font="@font/montserratmedium"/>
 </font-family>
