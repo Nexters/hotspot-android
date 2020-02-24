@@ -91,7 +91,7 @@ class FragmentDetailView : Fragment() {
             detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
 
             notVisitImg.visibility = View.VISIBLE
-            notVisitImg.setBackgroundResource(R.drawable.group_6)
+            notVisitImg.setBackgroundResource(R.drawable.ic_img_novisit)
         }
         else if(categoryName != null && isVisited) {
             when(categoryName) {

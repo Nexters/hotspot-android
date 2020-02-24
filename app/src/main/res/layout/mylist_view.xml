@@ -44,7 +44,7 @@
         android:id="@+id/mylistEmptyimg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/group_2"
+        android:background="@drawable/img_mylist_empty"
         android:layout_marginBottom="27dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

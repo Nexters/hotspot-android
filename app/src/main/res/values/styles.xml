@@ -18,6 +18,10 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme.WhiteToLightWhiteRipple">
+        <item name="colorControlHighlight">#80FFFFFF</item>
+    </style>
+
 
 
 

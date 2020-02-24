@@ -2,13 +2,17 @@ package com.example.hotspot
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
@@ -16,10 +20,12 @@ import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.squareup.otto.Subscribe
+import kotlinx.android.synthetic.main.activity_sticker_regist.*
 import kotlinx.android.synthetic.main.mylist_view.*
 import kotlinx.android.synthetic.main.myplace_item.*
 import kotlinx.android.synthetic.main.register_view.*
@@ -29,7 +35,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
+import java.io.IOException
 
 
 class FragmentRegister : BaseFragment() {
@@ -68,7 +74,12 @@ class FragmentRegister : BaseFragment() {
 
         setRetrofitInit()
         setApiServiceInit()
-
+        txt_place_name.setOnClickListener {
+            fragmentManager!!.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.register_activity, FragmentSearch())
+                .commit()
+        }
 
         setLayout()
 
@@ -158,12 +169,7 @@ class FragmentRegister : BaseFragment() {
             }
         }
 
-        txt_place_name.setOnClickListener {
-            fragmentManager!!.beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.register_activity, FragmentSearch())
-                .commit()
-        }
+
 
         txt_visited.setOnClickListener{
             if(search_OK) {
@@ -182,6 +188,11 @@ class FragmentRegister : BaseFragment() {
 
                 }
             }
+            else{
+                var toast_add = Toast.makeText(activity, "장소를 추가해 주세요!", Toast.LENGTH_SHORT)
+                toast_add.setGravity(Gravity.CENTER_HORIZONTAL,0,0)
+                toast_add.show()
+            }
         }
 
         stickerBt.setOnClickListener{
@@ -194,18 +205,24 @@ class FragmentRegister : BaseFragment() {
                 intent.putExtra("Latitude", place.y.toDouble())
                 activity!!.startActivityForResult(intent, 1)
             }
+            else{
+                var toast_add = Toast.makeText(activity, "장소를 추가해 주세요!", Toast.LENGTH_SHORT)
+                toast_add.setGravity(Gravity.CENTER_HORIZONTAL,0,0)
+                toast_add.show()
+            }
 
         }
 
         btn_regist.setOnClickListener{
             if(txt_place_name.text == "" || txt_place_name.text == "장소 추가"){
-                Toast.makeText(activity,
-                    "장소를 추가해 주세요!",
-                    Toast.LENGTH_SHORT)
-                    .show()
+                var toast_add = Toast.makeText(activity, "장소를 추가해 주세요!", Toast.LENGTH_SHORT)
+                toast_add.setGravity(Gravity.CENTER_HORIZONTAL,0,0)
+                toast_add.show()
+
             }
             else registSpot()
         }
+
     }
 
     @Subscribe
@@ -274,22 +291,13 @@ class FragmentRegister : BaseFragment() {
                     }
                     rcycl_sticker_view.addItemDecoration(deco)
                     isRcylrdecoAdd = true
-                    if(list.size >= 3) {
-                        hide_eff_left.visibility = View.VISIBLE
-                        hide_eff_right.visibility = View.VISIBLE
-                    }
-                    else{
-                        hide_eff_left.visibility = View.INVISIBLE
-                        hide_eff_right.visibility = View.INVISIBLE
-                    }
+
                     rcycl_sticker_view.visibility = View.VISIBLE
                     stickerBt.text = "스티커 " +count.toString()+"개"
                     img_uncheck4.setImageResource(R.drawable.ic_img_check)
                     stickerBt.setTextColor(resources.getColor(R.color.colorWhite))
                 }
                 else{
-                    hide_eff_left.visibility = View.INVISIBLE
-                    hide_eff_right.visibility = View.INVISIBLE
                     rcycl_sticker_view.visibility = View.INVISIBLE
                     img_uncheck4.setImageResource(R.drawable.ic_img_uncheck)
                     stickerBt.setTextColor(resources.getColor(R.color.colorEditTextGray))
@@ -308,14 +316,31 @@ class FragmentRegister : BaseFragment() {
         //isAdd : true 등록, false 수정
         isAdd = arguments!!.getBoolean("isAdd", true)
         search_OK = arguments!!.getBoolean("search_OK", false)
+        rcycl_sticker_view.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollHorizontally(-1)) {
+                    hide_eff_left.visibility = View.INVISIBLE
+
+                } else if (!recyclerView.canScrollHorizontally(1)) {
+                    hide_eff_right.visibility = View.INVISIBLE
+                } else {
+                    hide_eff_right.visibility = View.VISIBLE
+                    hide_eff_left.visibility = View.VISIBLE
+                }
+            }
+        })
 
         d("TAG", "setLayout() isAdd : ${isAdd}, search_OK : $search_OK")
         if(!isAdd) {//수정 이기때문에 장소에 대한 정보 뿌리기
+            txt_please_spot_add.visibility = View.INVISIBLE
             myPlace = arguments!!.getSerializable("myPlace") as MyPlace
             requestCode = arguments!!.getSerializable("RequestCode") as Int
+            txt_place_name.setOnClickListener{
+                //do nothing
+            }
             place = myPlace.place
             search_OK = true
-            txt_place_name.isClickable = false
             txt_place_name.text = place.placeName
             txt_place_name.setTextColor(resources.getColor(R.color.colorWhite))
             txt_address.text = place.roadAddressName
@@ -440,28 +465,21 @@ class FragmentRegister : BaseFragment() {
                 }
                 rcycl_sticker_view.addItemDecoration(deco)
                 isRcylrdecoAdd = true
-                if(list.size >= 3) {
-                    hide_eff_left.visibility = View.VISIBLE
-                    hide_eff_right.visibility = View.VISIBLE
-                }
-                else{
-                    hide_eff_left.visibility = View.INVISIBLE
-                    hide_eff_right.visibility = View.INVISIBLE
-                }
+
                 rcycl_sticker_view.visibility = View.VISIBLE
                 stickerBt.text = "스티커 " +count.toString()+"개"
                 img_uncheck4.setImageResource(R.drawable.ic_img_check)
                 stickerBt.setTextColor(resources.getColor(R.color.colorWhite))
             }
             else{
-                hide_eff_left.visibility = View.INVISIBLE
-                hide_eff_right.visibility = View.INVISIBLE
+
                 rcycl_sticker_view.visibility = View.INVISIBLE
                 img_uncheck4.setImageResource(R.drawable.ic_img_uncheck)
                 stickerBt.setTextColor(resources.getColor(R.color.colorEditTextGray))
             }
         }
         else if(search_OK) {
+            txt_please_spot_add.visibility = View.INVISIBLE
             edtTxt_memo.isFocusableInTouchMode = true
             edtTxt_memo.isFocusable = true
 
@@ -628,6 +646,19 @@ class FragmentRegister : BaseFragment() {
             }
         }
         if(isAdd) {
+            regist_loading_layout.visibility = View.VISIBLE
+            txt_place_name.isClickable = false
+            txt_visited.isClickable = false
+            stickerBt.isClickable = false
+            ratingbar1.isClickable = false
+            ratingbar2.isClickable = false
+            ratingbar3.isClickable = false
+            edtTxt_memo.isClickable = false
+            edtTxt_memo.isFocusable = false
+            regist_loading_category_img.setImageDrawable(resources.getDrawable(R.drawable.regist_loading_anim))
+            var ani = regist_loading_category_img.drawable as AnimationDrawable
+            btn_regist.visibility = View.INVISIBLE
+            ani.start()
 
             apiService.postPlace(
                 "Bearer " + "${accessToken}",
@@ -648,6 +679,7 @@ class FragmentRegister : BaseFragment() {
                                 "이미 등록된 장소입니다!",
                                 Toast.LENGTH_LONG
                             ).show()
+                            ani.stop()
                         }
                         else {
                             d("TAG", "Regist onResPonse : " + response.toString())
@@ -657,19 +689,58 @@ class FragmentRegister : BaseFragment() {
                                 "장소 등록 실패! 네트워크를 체크해 주세요.",
                                 Toast.LENGTH_LONG
                             ).show()
+                            ani.stop()
                         }
                     }
                     btn_regist.isClickable = true
+                    regist_loading_layout.visibility = View.INVISIBLE
+                    btn_regist.visibility = View.VISIBLE
+                    txt_place_name.isClickable = true
+                    txt_visited.isClickable = true
+                    stickerBt.isClickable = true
+                    ratingbar1.isClickable = true
+                    ratingbar2.isClickable = true
+                    ratingbar3.isClickable = true
+                    edtTxt_memo.isClickable = true
+                    edtTxt_memo.isFocusable = true
+                    edtTxt_memo.isFocusableInTouchMode = true
                 }
 
                 override fun onFailure(call: Call<SpotListVO>, t: Throwable) {
                     d("TAG", "RegisterActivity onFailure() ")
-                    Toast.makeText(activity, "post 실패 !!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "장소등록 실패! 네트워크를 확인해주세요", Toast.LENGTH_LONG).show()
                     btn_regist.isClickable = true
+                    ani.stop()
+                    regist_loading_layout.visibility = View.INVISIBLE
+                    btn_regist.visibility = View.VISIBLE
+                    txt_place_name.isClickable = true
+                    txt_visited.isClickable = true
+                    stickerBt.isClickable = true
+                    ratingbar1.isClickable = true
+                    ratingbar2.isClickable = true
+                    ratingbar3.isClickable = true
+                    edtTxt_memo.isClickable = true
+                    edtTxt_memo.isFocusable = true
+                    edtTxt_memo.isFocusableInTouchMode = true
                 }
             })
+
+
         }
         else{
+            regist_loading_layout.visibility = View.VISIBLE
+            txt_place_name.isClickable = false
+            txt_visited.isClickable = false
+            stickerBt.isClickable = false
+            ratingbar1.isClickable = false
+            ratingbar2.isClickable = false
+            ratingbar3.isClickable = false
+            edtTxt_memo.isClickable = false
+            edtTxt_memo.isFocusable = false
+            regist_loading_category_img.setImageDrawable(resources.getDrawable(R.drawable.regist_loading_anim))
+            var ani = regist_loading_category_img.drawable as AnimationDrawable
+            btn_regist.visibility = View.INVISIBLE
+            ani.start()
             apiService.putPlace("Bearer " + "${accessToken}",
                 "${myPlace.id}",
                 spotList
@@ -692,12 +763,40 @@ class FragmentRegister : BaseFragment() {
                     } else {
                         d("TAG", "Regist onResPonse : " + response.toString())
                         Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                        ani.stop()
+                        btn_regist.isClickable = true
+                        ani.stop()
+                        regist_loading_layout.visibility = View.INVISIBLE
+                        btn_regist.visibility = View.VISIBLE
+                        txt_place_name.isClickable = true
+                        txt_visited.isClickable = true
+                        stickerBt.isClickable = true
+                        ratingbar1.isClickable = true
+                        ratingbar2.isClickable = true
+                        ratingbar3.isClickable = true
+                        edtTxt_memo.isClickable = true
+                        edtTxt_memo.isFocusable = true
+                        edtTxt_memo.isFocusableInTouchMode = true
                     }
                 }
 
                 override fun onFailure(call: Call<SpotListVO>, t: Throwable) {
                     d("TAG", "RegisterActivity onFailure() ")
                     Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                    ani.stop()
+                    btn_regist.isClickable = true
+                    ani.stop()
+                    regist_loading_layout.visibility = View.INVISIBLE
+                    btn_regist.visibility = View.VISIBLE
+                    txt_place_name.isClickable = true
+                    txt_visited.isClickable = true
+                    stickerBt.isClickable = true
+                    ratingbar1.isClickable = true
+                    ratingbar2.isClickable = true
+                    ratingbar3.isClickable = true
+                    edtTxt_memo.isClickable = true
+                    edtTxt_memo.isFocusable = true
+                    edtTxt_memo.isFocusableInTouchMode = true
                 }
             })
         }
@@ -838,6 +937,14 @@ class FragmentRegister : BaseFragment() {
     private fun showFinishDailog(){
         regist_popup_layout.visibility = View.VISIBLE
         btn_regist.visibility = View.INVISIBLE
+        txt_visited.isClickable = false
+        ratingbar1.isClickable = false
+        ratingbar3.isClickable = false
+        ratingbar2.isClickable = false
+        stickerBt.isClickable = false
+        txt_place_name.isClickable = false
+        edtTxt_memo.visibility = View.INVISIBLE
+        stickerBt.isClickable = false
         regist_popup_layout.findViewById<TextView>(R.id.regist_quit_ok_txt).setOnClickListener{
             fragmentManager!!.beginTransaction()
                 .remove(this)
@@ -849,7 +956,18 @@ class FragmentRegister : BaseFragment() {
         regist_popup_layout.findViewById<TextView>(R.id.regist_quit_no_txt).setOnClickListener{
             regist_popup_layout.visibility = View.GONE
             btn_regist.visibility = View.VISIBLE
+            txt_visited.isClickable = true
+            ratingbar1.isClickable = true
+            ratingbar3.isClickable = true
+            ratingbar2.isClickable = true
+            stickerBt.isClickable = true
+            edtTxt_memo.visibility = View.VISIBLE
+            txt_place_name.isClickable = true
+            stickerBt.isClickable = true
+
+
         }
     }
+
 
 }

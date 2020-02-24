@@ -37,6 +37,7 @@ import com.kakao.message.template.LocationTemplate
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.Overlay
@@ -126,6 +127,7 @@ class FragmentMap: Fragment()
         nMap = p0
         p0.minZoom = 6.0
         p0.maxZoom = 19.0
+        p0.extent = LatLngBounds(LatLng(31.43, 122.37), LatLng(44.35, 132.0))
         p0.uiSettings.isCompassEnabled = false
         p0.uiSettings.isZoomControlEnabled = false
         //지도 나이트 모드

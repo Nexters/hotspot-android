@@ -9,6 +9,7 @@
     android:layout_marginRight="16dp"
     android:layout_marginTop="16dp"
     app:cardCornerRadius="17dp"
+
     >
 
 
@@ -17,6 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/myplace_list_btn1"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         >
 
         <ImageView
@@ -73,7 +76,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ic_myplace_rating_img"
             android:layout_marginRight="20dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -84,7 +87,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ic_myplace_rating_img"
             android:layout_marginRight="5dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintRight_toLeftOf="@+id/myplace_rating_img1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -95,7 +98,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ic_myplace_rating_img"
             android:layout_marginRight="5dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintRight_toLeftOf="@+id/myplace_rating_img2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

@@ -51,6 +51,7 @@ class StickerRegistActivity : AppCompatActivity() {
     private var savedPhotoUrlList = ArrayList<String>()
     private var savedOpen = "00"
     private var savedClosed = "00"
+    private var dragViewHeight = 0.toFloat()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,14 +60,6 @@ class StickerRegistActivity : AppCompatActivity() {
         var naverMapOptions = NaverMapOptions()
         naverMapOptions.allGesturesEnabled(false)
         naverMapOptions.zoomControlEnabled(false)
-        trash_view.setOnDragListener(dragListener(work_24_img,best_menu_img,consent_img,park_img,open_time_img,gallery_img,stickerData))
-        h24_fin_view.setOnLongClickListener(LongClickListener(trash_view,"AlldayView"))
-
-        consent_fin_view.setOnLongClickListener(LongClickListener(trash_view,"ConsentView"))
-        park_fin_view.setOnLongClickListener(LongClickListener(trash_view,"ParkView"))
-        photo_fin_view.setOnLongClickListener(LongClickListener(trash_view,"PhotoView"))
-        work_time_fin_view.setOnLongClickListener(LongClickListener(trash_view,"WorktimeView"))
-        best_fin_view.setOnLongClickListener(LongClickListener(trash_view,"BestView"))
 
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.mapframe) as MapFragment?
@@ -108,36 +101,17 @@ class StickerRegistActivity : AppCompatActivity() {
 
 
     }
-    inner class LongClickListener(var trashView: ImageView, var data : String) : View.OnLongClickListener {
-        override fun onLongClick(v: View?): Boolean {
-            var vibrator: Vibrator
-            vibrator = this@StickerRegistActivity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            vibrator.vibrate(VibrationEffect.EFFECT_TICK.times(10.toLong()))
-            trashView.visibility = View.VISIBLE
-            if(v != null) {
-                val item = ClipData.Item(data as CharSequence)
-                val dragData = ClipData(
-                    data as CharSequence,
-                    arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
-                    item
-                )
-                val myShadow = View.DragShadowBuilder(v)
-                v.visibility = View.VISIBLE// ***************
-                v.startDragAndDrop(
-                    dragData, myShadow, v, 0
-                )
-                return true
-            }
-            else return false
-        }
-    }
 
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        setStickerPosition()
-        setSticKersListener()
-        dragView.performClick()
+        if(stateBestInput == 4) {
+            setStickerPosition()
+            setSticKersListener()
+            dragViewHeight = dragView.y
+            dragView.performClick()
+        }
+
     }
     private fun setSticKersListener(){
         input_open_time_view.findViewById<AppCompatEditText>(R.id.open_time_input_edt).doOnTextChanged { text, start, count, after ->
@@ -182,6 +156,7 @@ class StickerRegistActivity : AppCompatActivity() {
             consent_img.setColorFilter(resources.getColor(R.color.transparency))
             consent_fin_view.visibility = View.VISIBLE
             stickerData.powerPlugAvailable = true
+            stateBestInput = 0
 
             dragView.performClick()
         }
@@ -189,12 +164,14 @@ class StickerRegistActivity : AppCompatActivity() {
             park_img.setColorFilter(resources.getColor(R.color.transparency))
             park_fin_view.visibility = View.VISIBLE
             stickerData.parkingAvailable = true
+            stateBestInput = 0
             dragView.performClick()
         }
         work_24_img.setOnClickListener{
             work_24_img.setColorFilter(resources.getColor(R.color.transparency))
             h24_fin_view.visibility = View.VISIBLE
             stickerData.allDayAvailable = true
+            stateBestInput = 0
             dragView.performClick()
         }
         best_menu_img.setOnClickListener{
@@ -216,6 +193,7 @@ class StickerRegistActivity : AppCompatActivity() {
         }
         gallery_img.setOnClickListener{
             selectAlbum()
+            stateBestInput = 0
         }
 
 
@@ -621,8 +599,16 @@ class StickerRegistActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         //팝업창
-        if(stateBestInput == 0) {
-            showFinishDialog()
+
+        if(stateBestInput == 0 || stateBestInput == 4) {
+            if(dragView.y < dragViewHeight) {//초기 dragview의 y 보다 작아졌으면  dragView가 올라온 상태임
+                dragView.performClick()
+                stateBestInput = 0
+            }
+            else {
+                showFinishDialog()
+            }
+
         }else{
             sticer_input_backbtn.performClick()
         }
@@ -685,6 +671,8 @@ class StickerRegistActivity : AppCompatActivity() {
                                 vibrator = this@StickerRegistActivity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                                 vibrator.vibrate(VibrationEffect.EFFECT_TICK.times(10.toLong()))
                                 var ani = AnimationUtils.loadAnimation(this@StickerRegistActivity,R.anim.trash_anim)
+                                var tras_ani = AnimationUtils.loadAnimation(this@StickerRegistActivity,R.anim.trash_big_anim)
+                                trash_view.startAnimation(tras_ani)
                                 v.startAnimation(ani)
                                 isIn = true
 
@@ -696,6 +684,8 @@ class StickerRegistActivity : AppCompatActivity() {
                             if(!isranged((v.x+v.width*0.5).toFloat(),(v.y+v.height*0.5).toFloat())){//뷰의 중심 좌표
 
                                 var ani = AnimationUtils.loadAnimation(this@StickerRegistActivity,R.anim.trash_out)
+                                var tras_ani = AnimationUtils.loadAnimation(this@StickerRegistActivity,R.anim.trash_reset_anim)
+                                trash_view.startAnimation(tras_ani)
                                 v.startAnimation(ani)
                                 isIn = false
 
@@ -713,7 +703,9 @@ class StickerRegistActivity : AppCompatActivity() {
                     }
                     MotionEvent.ACTION_UP -> {
                         Log.d("TAG","Sticker Motion Act UP!")
+                        var anim = ScaleAnimation(0f,0f,0f,0f,0.5f,0.5f)
                         trash_view.visibility = View.INVISIBLE
+                        trash_view.startAnimation(anim)
                         if(isIn){
                             if(v == consent_fin_view){
                                 Log.d("TAG","Consent Sticker Act UP!")
@@ -814,114 +806,4 @@ class StickerRegistActivity : AppCompatActivity() {
     }
 
 }
-//work_24_img,best_menu_img,consent_img,park_img,open_time_img,gallery_img
-class dragListener(var alldayView: ImageView,var bestmenuView: ImageView,var consentView: ImageView,
-                   var parkView: ImageView,
-                   var worktimeView: ImageView,var photoView: ImageView,var stickerData: StickerData
-                   ) : View.OnDragListener{
 
-    override fun onDrag(v: View?, event: DragEvent?): Boolean {
-
-        if(event != null) {
-            when(event.action){
-                DragEvent.ACTION_DRAG_STARTED -> {
-                    if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                        // As an example of what your application might do,
-                        // applies a blue color tint to the View to indicate that it can accept
-                        // data.
-
-                        // Invalidate the view to force a redraw in the new tint
-
-                        // returns true to indicate that the View can accept the dragged data.
-                        return true
-                    } else {
-                        // Returns false. During the current drag and drop operation, this View will
-                        // not receive events again until ACTION_DRAG_ENDED is sent.
-                        return false
-                    }
-
-                }
-                DragEvent.ACTION_DRAG_ENTERED -> {
-                    (v as ImageView).setColorFilter(Color.RED)
-                    v.invalidate()
-                    event.localState as View
-
-                    return true
-                }
-                DragEvent.ACTION_DRAG_EXITED -> {
-                    (v as ImageView).clearColorFilter()
-                    v.invalidate()
-                    return true
-
-                }
-                DragEvent.ACTION_DROP ->{
-                    val item : ClipData.Item = event.clipData.getItemAt(0)
-                    val data = item.text.toString()
-                    v!!.visibility = View.INVISIBLE
-                    var view =  event.localState as View
-                    view.visibility = View.INVISIBLE
-
-                    when(data){
-                        "ConsentView" ->{
-                            consentView.clearColorFilter()
-                            stickerData.powerPlugAvailable = false
-                        }
-                        "AlldayView" ->{
-                            alldayView.clearColorFilter()
-                            stickerData.allDayAvailable = false
-                        }
-                        "ParkView" ->{
-                            parkView.clearColorFilter()
-                            stickerData.parkingAvailable = false
-                        }
-                        "WorktimeView" ->{
-                            worktimeView.clearColorFilter()
-                            stickerData.open = ""
-                            stickerData.close = ""
-                        }
-                        "BestView" ->{
-                            bestmenuView.clearColorFilter()
-                            stickerData.bestMenu.clear()
-                        }
-                        "PhotoView" ->{
-                            photoView.clearColorFilter()
-                            stickerData.photoUriList!!.clear()
-                            stickerData.cloudinaryIdList!!.clear()
-                            stickerData.cloudinaryUrlList!!.clear()
-                        }
-                    }
-
-
-                    (v as ImageView).clearColorFilter()
-                    v.invalidate()
-                    return true
-
-                }
-                DragEvent.ACTION_DRAG_ENDED -> {
-                    (v as ImageView).clearColorFilter()
-                    if(v.isVisible){
-                        v.visibility = View.INVISIBLE
-                    }
-                    v.invalidate()
-                    when(event.result) {
-                        true ->{
-
-                        }
-                        else ->{
-
-                        }
-                    }
-
-                }
-                else -> {
-                    // An unknown action type was received.
-                    Log.e("DragDrop Example", "Unknown action type received by OnDragListener.")
-                    return false
-                }
-
-            }
-        }
-        return true
-    }
-
-}
