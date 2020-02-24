@@ -367,13 +367,13 @@ class MainActivity : AppCompatActivity()  {
 
         var bundle = Bundle()
 
-        if(myPlaceList.isNullOrEmpty()) {
-            d("TAG getMap", "myPlaceList is null")
-
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_map, FragmentMyPlaceEmpty())
-                .commit()
-        } else {
+//        if(myPlaceList.isNullOrEmpty()) {
+//            d("TAG getMap", "myPlaceList is null")
+//
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.fragment_map, FragmentMyPlaceEmpty())
+//                .commit()
+//        } else {
             d("TAG getMap", "myPlaceList is not null")
 
             val fr_myPlace = FragmentMyPlace()
@@ -383,7 +383,7 @@ class MainActivity : AppCompatActivity()  {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_map, fr_myPlace)
                 .commitAllowingStateLoss()
-        }
+//        }
     }
 
     fun getMap(myPlaceList : List<MyPlace>, isSpotAdd : Boolean) {

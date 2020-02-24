@@ -2,6 +2,7 @@ package com.example.hotspot
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -17,6 +18,14 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.ButtonObject
+import com.kakao.message.template.ContentObject
+import com.kakao.message.template.LinkObject
+import com.kakao.message.template.LocationTemplate
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.detail_view.*
 import okhttp3.OkHttpClient
@@ -32,6 +41,7 @@ import java.io.IOException
 import java.io.Serializable
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 
 
 class FragmentDetailView : Fragment() {
@@ -40,7 +50,7 @@ class FragmentDetailView : Fragment() {
     private var isEditSpot = false
     private lateinit var newPlace: MyPlace
     private var dotscount = 0
-    private lateinit var instaTag : String
+    private lateinit var instaTag : StringBuffer
     private var requestCode = 0
     private var resCode = 0
     private lateinit var urlList: ArrayList<String>
@@ -48,6 +58,10 @@ class FragmentDetailView : Fragment() {
     lateinit var apiService : APIService
     lateinit var mRetrofit: Retrofit
     private var imageSize: Int = 0
+    private var roadAddressName = ""
+    private var latitude = 0.0
+    private var longitude = 0.0
+    private var rating = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +79,17 @@ class FragmentDetailView : Fragment() {
         imageSize = myPlace.images!!.size
         position = arguments!!.getSerializable("Position") as Int
         requestCode = arguments!!.getSerializable("RequestCode") as Int
-        instaTag = myPlace.place.placeName
+        instaTag = StringBuffer(myPlace.place.placeName)
+        latitude = myPlace.place.y.toDouble()
+        longitude = myPlace.place.x.toDouble()
+        rating = myPlace.rating
+        d("TAG", "FragmentDetailView : ${myPlace}")
+
+        for(i in 0..instaTag.length-2) {
+            if(instaTag[i] == ' '){
+                instaTag.deleteCharAt(i)
+            }
+        }
         d("TAG", "FragmentDetailView : ${myPlace}")
 
         //Retrofit init
@@ -87,30 +111,48 @@ class FragmentDetailView : Fragment() {
         detail_additional_txt1.text = "부가정보"
         detail_time_txt1.text = "영업시간"
 
-        if(!isVisited){
-            detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
-
-            notVisitImg.visibility = View.VISIBLE
-            notVisitImg.setBackgroundResource(R.drawable.ic_img_novisit)
-        }
-        else if(categoryName != null && isVisited) {
+        d("FragmentdetailView", "categoryName: ${categoryName}")
+        if(categoryName != null) {
             when(categoryName) {
                 "맛집"->{
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout1)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_food)
                 }
                 "카페"->{
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout2)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_cafe)
                 }
                 "술집" ->{
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout3)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_drink)
                 }
                 "문화" ->{
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout4)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_culture)
                 }
                 "기타" ->{
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout5)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_etc)
                 }
             }
+        }
+
+        if(!isVisited){
+            detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
+            notVisitImg.visibility = View.VISIBLE
+        }
+
+        // rating 이미지
+        d("FragmentdetailView", "rating: ${rating}")
+        if(rating == 1) {
+            detail_rating_img1.visibility = View.VISIBLE
+        }else if(rating == 2) {
+            detail_rating_img1.visibility = View.VISIBLE
+            detail_rating_img2.visibility = View.VISIBLE
+        }else {
+            detail_rating_img1.visibility = View.VISIBLE
+            detail_rating_img2.visibility = View.VISIBLE
+            detail_rating_img3.visibility = View.VISIBLE
         }
 
         if(bestmenu != null) {
@@ -209,8 +251,82 @@ class FragmentDetailView : Fragment() {
         }
 
         detail_insta_img.setOnClickListener {
-            var intent_insta = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/explore/tags/"+instaTag+"/"))
+            d("FragmentDetailView", "instaTag : ${instaTag}")
+            var intent_insta = Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://www.instagram.com/explore/tags/"+instaTag.toString()+"/"))
             startActivity(intent_insta)
+        }
+
+        detail_share_img.setOnClickListener {
+            var params : LocationTemplate
+
+            var flag = false
+            try {
+                var packageManager: PackageManager = context!!.packageManager
+                packageManager.getPackageInfo("com.kakao.talk", PackageManager.GET_ACTIVITIES)
+                flag = true
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            }
+            if(flag) {
+                params = LocationTemplate.newBuilder(
+                    roadAddressName, ContentObject.newBuilder(
+                        roadAddressName,
+                        "https://",
+                        LinkObject.newBuilder()
+                            .setWebUrl("https://developers.kakao.com")
+                            .setMobileWebUrl("https://developers.kakao.com")
+                            .build()
+                    ).setDescrption(roadAddressName).build()
+                ).addButton(
+                    ButtonObject(
+                        "Spotter", LinkObject.newBuilder()
+                            .setWebUrl("https://developers.kakao.com")
+                            .setMobileWebUrl("https://developers.kakao.com")
+                            .setAndroidExecutionParams("hi").build()
+                    )
+                ).setAddressTitle(roadAddressName).build()
+
+                var serverCallbackArgs = HashMap<String, String>()
+
+                KakaoLinkService.getInstance().sendDefault(
+                    activity!!,
+                    params,
+                    serverCallbackArgs,
+                    object : ResponseCallback<KakaoLinkResponse>() {
+                        override fun onFailure(errorResult: ErrorResult?) {
+                            Toast.makeText(activity!!, "카카오 링크 공유 실패!", Toast.LENGTH_LONG)
+                        }
+
+                        override fun onSuccess(result: KakaoLinkResponse?) {
+                            // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
+                        }
+                    })
+            } else { //
+                val url = "market://details?id="+"com.kakao.talk"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(intent)
+            }
+        }
+
+        detail_findroad_img.setOnClickListener {
+            var flag = false
+            try {
+                var packageManager: PackageManager = activity!!.packageManager
+                packageManager.getPackageInfo("com.naver.maps:map", PackageManager.GET_ACTIVITIES)
+                flag = true
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            }
+            if(flag) {
+                var strEncodedUrl = URLEncoder.encode(instaTag.toString())
+                var intent_search_road = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://route/public?dlat="+latitude+"&dlng="+longitude+"&dname="+strEncodedUrl+"&appname=com.example.hotspot"))
+                startActivity(intent_search_road)
+            } else { //
+                val url = "market://details?id="+"com.naver.maps:map"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(intent)
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -440,28 +556,6 @@ class FragmentDetailView : Fragment() {
 
                 isEditSpot = true
             }
-        }
-    }
-
-    fun getBitmapFromURL(src: String): Bitmap? {
-        try {
-            d("TAG", "onSuccess")
-            d("TAG", "url : $src")
-            val url = URL(src)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.setDoInput(true)
-            connection.connect()
-            val nSize = connection.contentLength
-            val bis = BufferedInputStream(connection.getInputStream(), nSize)
-            val bitmap = BitmapFactory.decodeStream(bis)
-
-            d("TAG", "Bitmap : ${bitmap}")
-
-            return bitmap
-        } catch (e: IOException) {
-            d("TAG", "onFailure")
-            e.printStackTrace()
-            return null
         }
     }
 

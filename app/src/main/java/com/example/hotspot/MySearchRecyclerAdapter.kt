@@ -8,14 +8,16 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.mysearch_list.view.*
 
-class MySearchRecyclerAdapter(var context: Context,
+class MySearchRecyclerAdapter(var mActivity: MySearchActivity,
                             var mData: ArrayList<MyPlace>,
                               var myPlace: ArrayList<MyPlace>) :
     RecyclerView.Adapter<MySearchRecyclerAdapter.myViewHolder>(),
     Filterable {
     internal var mfilter: NewFilter
+    private var searchActivity: MySearchActivity
 
     override fun getFilter(): Filter {
         return mfilter
@@ -23,11 +25,12 @@ class MySearchRecyclerAdapter(var context: Context,
 
     init {
         mfilter = NewFilter(this@MySearchRecyclerAdapter)
+        searchActivity = mActivity
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myViewHolder {
         val view =
-            LayoutInflater.from(context).inflate(R.layout.mysearch_list, parent, false)
+            LayoutInflater.from(mActivity).inflate(R.layout.mysearch_list, parent, false)
         return myViewHolder(view)
     }
 
@@ -103,8 +106,17 @@ class MySearchRecyclerAdapter(var context: Context,
             }
             results.values = mData
             results.count = mData!!.size
-            Log.d("TAG", "results.values = ${results.values}, results.count = ${results.count}")
+            Log.d("TAG", "results.values = ${results.values}")
+            Log.d("TAG", "results.count = ${results.count}")
 
+            if(results.count != 0) {
+                searchActivity.mysearch_empty_layout.visibility = View.GONE
+                searchActivity.search_recyclerview.visibility = View.VISIBLE
+            }
+            else {
+                searchActivity.mysearch_empty_layout.visibility = View.VISIBLE
+                searchActivity.search_recyclerview.visibility = View.GONE
+            }
             return results
         }
 

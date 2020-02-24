@@ -15,20 +15,26 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+
+        <LinearLayout
             android:id="@+id/search_esc_imgbtn"
-            android:layout_width="0dp"
+            android:layout_width="30sp"
             android:layout_height="0dp"
-            android:textSize="20dp"
-            android:text="DEL"
-            android:layout_marginLeft="15dp"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.05"
-            app:layout_constraintDimensionRatio="1:2"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:gravity="center"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:srcCompat="@drawable/ic_img_back" />
+            app:layout_constraintRight_toLeftOf="@+id/search_edtTxt">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginLeft="15dp"
+                app:srcCompat="@drawable/ic_img_back" />
+
+        </LinearLayout>
+
 
 
         <EditText
@@ -37,7 +43,6 @@
             android:layout_height="wrap_content"
             android:textColorHint="#3a3d45"
             android:textColor="#d8d8d6"
-            android:fontFamily="@font/spoqaregular"
             android:textSize="20dp"
             android:hint="장소,주소 검색..."
             android:inputType="text"
@@ -97,63 +102,60 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/search_mid_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="34dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/search_top_layout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--        android:id="@+id/search_mid_layout"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="34dp"-->
+    <!--        android:visibility="visible"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/search_top_layout"-->
+    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--        app:layout_constraintRight_toRightOf="parent">-->
 
-        <ImageView
-            android:id="@+id/search_category_img"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginLeft="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+    <!--        <ImageView-->
+    <!--            android:id="@+id/search_category_img"-->
+    <!--            android:layout_width="32dp"-->
+    <!--            android:layout_height="32dp"-->
+    <!--            android:layout_marginLeft="16dp"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/search_placeName_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:fontFamily="@font/spoqaregular"
-            android:text="장소 명"
-            android:textColor="#d8d8d6"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toRightOf="@+id/search_category_img"
-            app:layout_constraintTop_toTopOf="@id/search_category_img"/>
+    <!--        <androidx.appcompat.widget.AppCompatTextView-->
+    <!--            android:id="@+id/search_placeName_txt"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginLeft="10dp"-->
+    <!--            android:text="장소 명"-->
+    <!--            android:textColor="#d8d8d6"-->
+    <!--            android:textSize="18sp"-->
+    <!--            android:textStyle="bold"-->
+    <!--            app:layout_constraintLeft_toRightOf="@+id/search_category_img"/>-->
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/search_roadAddressName_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="도로 주소명"
-            android:fontFamily="@font/spoqaregular"
-            android:textColor="#393d46"
-            android:textSize="15sp"
-            android:layout_marginLeft="9dp"
-            app:layout_constraintLeft_toRightOf="@+id/search_category_img"
-            app:layout_constraintTop_toBottomOf="@+id/search_placeName_txt"/>
+    <!--        <androidx.appcompat.widget.AppCompatTextView-->
+    <!--            android:id="@+id/search_roadAddressName_txt"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:text="도로 주소명"-->
+    <!--            android:textColor="#393d46"-->
+    <!--            android:textSize="15sp"-->
+    <!--            android:layout_marginLeft="9dp"-->
+    <!--            app:layout_constraintLeft_toRightOf="@+id/search_category_img"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/search_placeName_txt"/>-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#393d46"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="15.5dp"
-            android:layout_marginTop="12.9dp"
-            app:layout_constraintTop_toBottomOf="@+id/search_roadAddressName_txt"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+    <!--        <View-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="1dp"-->
+    <!--            android:background="#393d46"-->
+    <!--            android:layout_marginLeft="16dp"-->
+    <!--            android:layout_marginRight="15.5dp"-->
+    <!--            android:layout_marginTop="12.9dp"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/search_roadAddressName_txt"-->
+    <!--            app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--            app:layout_constraintRight_toRightOf="parent"/>-->
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/emptylayout"
@@ -163,7 +165,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_mid_layout"/>
+        app:layout_constraintTop_toBottomOf="@+id/search_top_layout"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_recyclerview"
@@ -176,7 +178,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_mid_layout"
+        app:layout_constraintTop_toBottomOf="@+id/search_top_layout"
         app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -184,6 +186,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="34dp"
         android:background="#101010"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/search_top_layout"
@@ -206,7 +209,6 @@
             android:layout_width="212dp"
             android:layout_height="wrap_content"
             android:background="@drawable/myplace_empty_addbtn"
-            android:fontFamily="@font/spoqaregular"
             android:text="장소 등록하기"
             android:textSize="18dp"
             android:textStyle="bold"

@@ -46,6 +46,8 @@ class FragmentMyPlace : Fragment() {
     private var vibrateOK = true
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
+    private var myPlaceSize = 0
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,13 +76,15 @@ class FragmentMyPlace : Fragment() {
 
         placeList = arguments!!.getSerializable("PlaceList") as MutableList<MyPlace>
         stateCategory = arguments!!.getSerializable("CateGory") as String
+        myPlaceSize = placeList.size
+
 
         currentList = arrayListOf()
-        for(i in (0..placeList.size-1)){
+        for(i in (0..myPlaceSize-1)){
             currentList.add(placeList.get(i))
         }
 
-        if(placeList.size == 0) {
+        if(myPlaceSize == 0) {
             mylistEmptyimg.visibility = View.VISIBLE
         }
 
@@ -127,7 +131,7 @@ class FragmentMyPlace : Fragment() {
 
         if(state == 0) {
             currentList.clear()
-            for(i in (0..placeList.size-1)){
+            for(i in (0..myPlaceSize-1)){
                 currentList.add(placeList.get(i))
             }
             activity!!.findViewById<ImageView>(R.id.myplace_isvisited).setImageResource(R.drawable.img_main_all_xxxhdpi)
@@ -238,7 +242,7 @@ class FragmentMyPlace : Fragment() {
                     if (response.isSuccessful) {
                         //placeLIst에서도 삭제  id값으로 매핑 ?  >> 메인의 mplaceList에서도 삭제 됨!!
 
-                        val maxIndex = placeList.size - 1
+                        val maxIndex = myPlaceSize - 1
                         for (i in 0..maxIndex) {
                             if (targetId == placeList.get(i).id) {
                                 placeList.removeAt(i)

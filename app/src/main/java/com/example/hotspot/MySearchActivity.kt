@@ -74,6 +74,9 @@ class MySearchActivity : AppCompatActivity() {
                 i2: Int
             ) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                d("onTextChanged()", "char : ${charSequence}")
+                recyclerAdapter!!.getFilter().filter(charSequence)
+
                 if(recyclerAdapter!!.itemCount != 0) {
                     mysearch_empty_layout.visibility = View.VISIBLE
                     search_recyclerview.visibility = View.GONE
@@ -82,7 +85,6 @@ class MySearchActivity : AppCompatActivity() {
                     mysearch_empty_layout.visibility = View.GONE
                     search_recyclerview.visibility = View.VISIBLE
                 }
-                recyclerAdapter!!.getFilter().filter(charSequence)
             }
             override fun afterTextChanged(editable: Editable) {}
         })

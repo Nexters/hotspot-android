@@ -35,7 +35,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
 
-class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,private val cardstyleList : ArrayList<Drawable>, private val isVisit : Int,
+class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,
+                              private val cardstyleList : ArrayList<Drawable>,
+                              private val isVisit : Int,
                               private val context: Activity) :
 
     RecyclerView.Adapter<MyPlaceRecyclerAdapter.ViewHolder>() {
@@ -61,7 +63,8 @@ class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,private val ca
             val visited = list.get(position).visited
             var categoryTemp: String? = list.get(position).place.categoryName
             var categoryName: String? = ""
-            var buffer = StringBuffer(placeName_text)
+            var nameBuffer = StringBuffer(placeName_text)
+            var addrBuffer = StringBuffer(roadAddressName_text)
 
             d("TAG", "categoryName : ${categoryName}")
 
@@ -210,15 +213,16 @@ class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,private val ca
                 }
             }
             //길이가 10 이상이면 뒤에 ... 추가
-            if(buffer.length > 10) {
-                buffer.delete(10, placeName_text.length-1)
-                buffer.append("...")
+            if(nameBuffer.length > 9) {
+                nameBuffer.delete(9, placeName_text.length-1)
+                nameBuffer.append("...")
             }
-            holder.placeName_txtV.text = buffer.toString()
-            holder.roadAddressName_txtV.text =roadAddressName_text
-//            holder.rating_rbV.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
-//                ratingBar.rating = rating_num.toFloat()
-//            }
+            if(addrBuffer.length > 20){
+                addrBuffer.delete(20, roadAddressName_text.length-1)
+                addrBuffer.append("...")
+            }
+            holder.placeName_txtV.text = nameBuffer.toString()
+            holder.roadAddressName_txtV.text =addrBuffer.toString()
         }
 
 
