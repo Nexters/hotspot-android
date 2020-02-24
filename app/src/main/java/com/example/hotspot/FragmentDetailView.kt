@@ -1,5 +1,6 @@
 package com.example.hotspot
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -251,10 +252,18 @@ class FragmentDetailView : Fragment() {
         }
 
         detail_insta_img.setOnClickListener {
-            d("FragmentDetailView", "instaTag : ${instaTag}")
-            var intent_insta = Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://www.instagram.com/explore/tags/"+instaTag.toString()+"/"))
-            startActivity(intent_insta)
+            try {
+                var instatagArr: List<String> = instaTag.split(" ")
+                var intent_insta = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.instagram.com/explore/tags/" + instatagArr.get(0) + "/")
+                )
+                startActivity(intent_insta)
+            }catch(e : ActivityNotFoundException){
+
+                var intent_market = Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=com.instagram.android"))
+                startActivity(intent_market)
+            }
         }
 
         detail_share_img.setOnClickListener {
@@ -323,7 +332,7 @@ class FragmentDetailView : Fragment() {
                 var intent_search_road = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://route/public?dlat="+latitude+"&dlng="+longitude+"&dname="+strEncodedUrl+"&appname=com.example.hotspot"))
                 startActivity(intent_search_road)
             } else { //
-                val url = "market://details?id="+"com.naver.maps:map"
+                val url = "market://details?id="+"com.nhn.android.nmap"
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 startActivity(intent)
             }

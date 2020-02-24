@@ -1,6 +1,7 @@
 package com.example.hotspot
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -530,41 +531,78 @@ class FragmentMap: Fragment()
         btn_insta = activity!!.findViewById(R.id.btn_insta)
 
         btn_insta.setOnClickListener {
-            var instatagArr : List<String> = instaTag.split(" ")
-            var intent_insta = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/explore/tags/"+instatagArr.get(0)+"/"))
-            startActivity(intent_insta)
+            try {
+                var instatagArr: List<String> = instaTag.split(" ")
+                var intent_insta = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.instagram.com/explore/tags/" + instatagArr.get(0) + "/")
+                )
+                startActivity(intent_insta)
+            }catch(e : ActivityNotFoundException){
+
+                var intent_market = Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=com.instagram.android"))
+                startActivity(intent_market)
+            }
         }
         activity!!.findViewById<ImageView>(R.id.btn_search_road).setOnClickListener{
-            var strEncodedUrl = URLEncoder.encode(instaTag)
-            var intent_search_road = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://route/public?dlat="+searched_latitude+"&dlng="+searched_longitude+"&dname="+strEncodedUrl+"&appname=com.example.hotspot"))
-            startActivity(intent_search_road)
+            try {
+                var strEncodedUrl = URLEncoder.encode(instaTag)
+                var intent_search_road = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("nmap://route/public?dlat=" + searched_latitude + "&dlng=" + searched_longitude + "&dname=" + strEncodedUrl + "&appname=com.example.hotspot")
+                )
+                startActivity(intent_search_road)
+            }catch(e : ActivityNotFoundException){
+
+                var intent_market = Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=com.nhn.android.nmap"))
+                startActivity(intent_market)
+            }
         }
 
         activity!!.findViewById<ImageView>(R.id.btn_share).setOnClickListener{
 
-            var params : LocationTemplate
-            params = LocationTemplate.newBuilder(searched_roadAddress,ContentObject.newBuilder(searched_placeName,
-                "https://", LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
-                    .setMobileWebUrl("https://developers.kakao.com").build())
-                .setDescrption(searched_roadAddress).build()).addButton(ButtonObject("Spotter",LinkObject.newBuilder()
-                .setWebUrl("https://developers.kakao.com")
-                .setMobileWebUrl("https://developers.kakao.com")
-                .setAndroidExecutionParams("hi").build()))
-                .setAddressTitle(searched_placeName).build()
+            try {
+                var params: LocationTemplate
+                params = LocationTemplate.newBuilder(
+                    searched_roadAddress, ContentObject.newBuilder(
+                        searched_placeName,
+                        "https://",
+                        LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
+                            .setMobileWebUrl("https://developers.kakao.com").build()
+                    )
+                        .setDescrption(searched_roadAddress).build()
+                ).addButton(
+                    ButtonObject(
+                        "Spotter", LinkObject.newBuilder()
+                            .setWebUrl("https://developers.kakao.com")
+                            .setMobileWebUrl("https://developers.kakao.com")
+                            .setAndroidExecutionParams("hi").build()
+                    )
+                )
+                    .setAddressTitle(searched_placeName).build()
 
-            var serverCallbackArgs = HashMap<String,String>()
+                var serverCallbackArgs = HashMap<String, String>()
 
-            serverCallbackArgs.put("user_id", "${placeList.get(0).userId}")
-            serverCallbackArgs.put("product_id", "${2}")
-            KakaoLinkService.getInstance().sendDefault(activity!!,params,serverCallbackArgs,object : ResponseCallback<KakaoLinkResponse>(){
-                override fun onFailure(errorResult: ErrorResult?) {
-                    Toast.makeText(activity!!,"카카오 링크 공유 실패!",Toast.LENGTH_LONG)
-                }
+                serverCallbackArgs.put("user_id", "${placeList.get(0).userId}")
+                serverCallbackArgs.put("product_id", "${2}")
+                KakaoLinkService.getInstance().sendDefault(
+                    activity!!,
+                    params,
+                    serverCallbackArgs,
+                    object : ResponseCallback<KakaoLinkResponse>() {
+                        override fun onFailure(errorResult: ErrorResult?) {
+                            Toast.makeText(activity!!, "카카오 링크 공유 실패!", Toast.LENGTH_LONG)
+                        }
 
-                override fun onSuccess(result: KakaoLinkResponse?) {
-                    // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
-                }
-            })
+                        override fun onSuccess(result: KakaoLinkResponse?) {
+                            // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
+                        }
+                    })
+            }catch(e : ActivityNotFoundException){
+
+                var intent_market = Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=com.kakao.talk"))
+                startActivity(intent_market)
+            }
         }
         img_curr_pos.setOnClickListener{
             val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(curr_latitude, curr_longitude),10.0) //해당 위치로 카메라 시점 이동(위치 넘겨받기)
