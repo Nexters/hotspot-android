@@ -650,6 +650,7 @@ class FragmentRegister : BaseFragment() {
             txt_place_name.isClickable = false
             txt_visited.isClickable = false
             stickerBt.isClickable = false
+            reg_category_txt.isClickable = false
             ratingbar1.isClickable = false
             ratingbar2.isClickable = false
             ratingbar3.isClickable = false
@@ -701,6 +702,7 @@ class FragmentRegister : BaseFragment() {
                     ratingbar1.isClickable = true
                     ratingbar2.isClickable = true
                     ratingbar3.isClickable = true
+                    reg_category_txt.isClickable = true
                     edtTxt_memo.isClickable = true
                     edtTxt_memo.isFocusable = true
                     edtTxt_memo.isFocusableInTouchMode = true
@@ -720,6 +722,7 @@ class FragmentRegister : BaseFragment() {
                     ratingbar2.isClickable = true
                     ratingbar3.isClickable = true
                     edtTxt_memo.isClickable = true
+                    reg_category_txt.isClickable = true
                     edtTxt_memo.isFocusable = true
                     edtTxt_memo.isFocusableInTouchMode = true
                 }
@@ -942,6 +945,7 @@ class FragmentRegister : BaseFragment() {
         ratingbar3.isClickable = false
         ratingbar2.isClickable = false
         stickerBt.isClickable = false
+        reg_category_txt.isClickable = false
         txt_place_name.isClickable = false
         edtTxt_memo.visibility = View.INVISIBLE
         stickerBt.isClickable = false
@@ -960,6 +964,7 @@ class FragmentRegister : BaseFragment() {
             ratingbar1.isClickable = true
             ratingbar3.isClickable = true
             ratingbar2.isClickable = true
+            reg_category_txt.isClickable = true
             stickerBt.isClickable = true
             edtTxt_memo.visibility = View.VISIBLE
             txt_place_name.isClickable = true

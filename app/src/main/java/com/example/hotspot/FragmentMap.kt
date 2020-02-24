@@ -233,15 +233,16 @@ class FragmentMap: Fragment()
                     }
                     activity!!.findViewById<TextView>(R.id.txt_spotinfo_placename).text = placeName
                     activity!!.findViewById<TextView>(R.id.txt_spotinfo_address).text = roadAdress
-
+                    
+                    var ratingView1 =
+                        activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating1)
+                    var ratingView2 =
+                        activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating2)
+                    var ratingView3 =
+                        activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating3)
                     if (myPlace.visited) {
                         var rating = myPlace.rating
-                        var ratingView1 =
-                            activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating1)
-                        var ratingView2 =
-                            activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating2)
-                        var ratingView3 =
-                            activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating3)
+
                         when (rating) {
                             1 -> {
                                 ratingView1.visibility = View.VISIBLE
@@ -259,6 +260,11 @@ class FragmentMap: Fragment()
                                 ratingView3.visibility = View.VISIBLE
                             }
                         }
+                    }
+                    else{
+                        ratingView1.visibility = View.INVISIBLE
+                        ratingView2.visibility = View.INVISIBLE
+                        ratingView3.visibility = View.INVISIBLE
                     }
 
                     instaTag = placeName
