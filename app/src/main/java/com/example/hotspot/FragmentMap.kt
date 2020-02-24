@@ -233,7 +233,7 @@ class FragmentMap: Fragment()
                     }
                     activity!!.findViewById<TextView>(R.id.txt_spotinfo_placename).text = placeName
                     activity!!.findViewById<TextView>(R.id.txt_spotinfo_address).text = roadAdress
-                    
+
                     var ratingView1 =
                         activity!!.findViewById<ImageView>(R.id.img_spotinfo_rating1)
                     var ratingView2 =

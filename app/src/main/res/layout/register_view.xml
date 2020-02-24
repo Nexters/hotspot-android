@@ -245,11 +245,13 @@
         app:layout_constraintStart_toStartOf="@id/stickerBt"
         app:layout_constraintEnd_toEndOf="@id/edtTxt_memo"
         android:scrollbars="horizontal"
+        android:overScrollMode="never"
+        android:fadeScrollbars="true"
         />
     <com.example.hotspot.views.HideEffectLeftView
         android:id="@+id/hide_eff_left"
         android:layout_width="40dp"
-        android:layout_height="26sp"
+        android:layout_height="36sp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@id/rcycl_sticker_view"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -258,7 +260,7 @@
     <com.example.hotspot.views.HideEffectRightView
         android:id="@+id/hide_eff_right"
         android:layout_width="40dp"
-        android:layout_height="26sp"
+        android:layout_height="36sp"
         android:visibility="invisible"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintEnd_toEndOf="@id/rcycl_sticker_view"
