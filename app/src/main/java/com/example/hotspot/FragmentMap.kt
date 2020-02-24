@@ -528,8 +528,10 @@ class FragmentMap: Fragment()
 
         }
         btn_insta = activity!!.findViewById(R.id.btn_insta)
+
         btn_insta.setOnClickListener {
-            var intent_insta = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/explore/tags/"+instaTag+"/"))
+            var instatagArr : List<String> = instaTag.split(" ")
+            var intent_insta = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/explore/tags/"+instatagArr.get(0)+"/"))
             startActivity(intent_insta)
         }
         activity!!.findViewById<ImageView>(R.id.btn_search_road).setOnClickListener{
