@@ -90,9 +90,7 @@ class FragmentRegister : BaseFragment() {
         }
 
         edtTxt_memo.doOnTextChanged { text, start, count, after ->
-            if(count > 50){
-                //50자 넘어갔다고 알림창 ?ㅊ
-            }
+
             if(text.isNullOrEmpty()){
                 img_uncheck2.setImageResource(R.drawable.ic_img_uncheck)
             }
@@ -103,8 +101,8 @@ class FragmentRegister : BaseFragment() {
 
         reg_category_txt.setOnClickListener {
 
-            var stateStickerBt : Boolean // stickerBt이 활성화된 상태라면 true
-            var statevisited_layout : Boolean
+            val stateStickerBt : Boolean // stickerBt이 활성화된 상태라면 true
+            val statevisited_layout : Boolean
             txt_place_name.isClickable = false
             txt_address.visibility = View.INVISIBLE
 
@@ -333,6 +331,7 @@ class FragmentRegister : BaseFragment() {
 
         d("TAG", "setLayout() isAdd : ${isAdd}, search_OK : $search_OK")
         if(!isAdd) {//수정 이기때문에 장소에 대한 정보 뿌리기
+            btn_regist.background = resources.getDrawable(R.drawable.button_ripple_effect)
             txt_please_spot_add.visibility = View.INVISIBLE
             myPlace = arguments!!.getSerializable("myPlace") as MyPlace
             requestCode = arguments!!.getSerializable("RequestCode") as Int
@@ -479,6 +478,7 @@ class FragmentRegister : BaseFragment() {
             }
         }
         else if(search_OK) {
+            btn_regist.background = resources.getDrawable(R.drawable.button_ripple_effect)
             txt_please_spot_add.visibility = View.INVISIBLE
             edtTxt_memo.isFocusableInTouchMode = true
             edtTxt_memo.isFocusable = true
@@ -751,6 +751,7 @@ class FragmentRegister : BaseFragment() {
                 override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
                     if (response.isSuccessful) {
                         d("TAG", "장소 업데이트 성공")
+                        Log.d("TAG","Register View  ImgList Size : "+ myPlace.images!!.size.toString())
                         if(requestCode == 20){
                             var intent = Intent()
                             intent.putExtra("NewSpotInfo", myPlace)
@@ -765,7 +766,7 @@ class FragmentRegister : BaseFragment() {
                         }
                     } else {
                         d("TAG", "Regist onResPonse : " + response.toString())
-                        Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                        Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG).show()
                         ani.stop()
                         btn_regist.isClickable = true
                         ani.stop()
@@ -785,7 +786,7 @@ class FragmentRegister : BaseFragment() {
 
                 override fun onFailure(call: Call<SpotListVO>, t: Throwable) {
                     d("TAG", "RegisterActivity onFailure() ")
-                    Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG)
+                    Toast.makeText(activity!!, "장소 업데이트 실패! 네트워크를 체크해 주세요.", Toast.LENGTH_LONG).show()
                     ani.stop()
                     btn_regist.isClickable = true
                     ani.stop()
@@ -953,7 +954,7 @@ class FragmentRegister : BaseFragment() {
             fragmentManager!!.beginTransaction()
                 .remove(this)
                 .commit()
-            var intent = Intent()
+            val intent = Intent()
             activity!!.setResult(9,intent)
             activity!!.finish()
         }

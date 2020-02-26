@@ -62,29 +62,27 @@
         android:id="@+id/txt_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:fontFamily="@font/spoqabold"
         android:text="주소 "
         android:textColor="#3a3d45"
         android:textSize="12sp"
         android:visibility="gone"
-        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="@id/txt_place_name"
-        app:layout_constraintTop_toBottomOf="@+id/txt_place_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_place_name"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/txt_please_spot_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:fontFamily="@font/spoqaregular"
         android:text="장소를 먼저 추가해 주세요"
         android:textColor="#ff4040"
         android:textSize="14sp"
         android:visibility="visible"
-        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="@id/txt_place_name"
-        app:layout_constraintTop_toBottomOf="@+id/txt_place_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_place_name"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 
 
@@ -271,7 +269,7 @@
         android:id="@+id/btn_regist"
         android:layout_width="235dp"
         android:layout_height="56dp"
-        android:background="@drawable/button_ripple_effect"
+        android:background="@drawable/regist_btn_before"
         android:fontFamily="@font/spoqabold"
         android:text="등록하기 "
         android:layout_marginBottom="20dp"

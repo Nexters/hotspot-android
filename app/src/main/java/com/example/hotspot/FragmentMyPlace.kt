@@ -95,6 +95,7 @@ class FragmentMyPlace : Fragment() {
             recyclerviewInit(currentList, 0)
             itemTouchHelper = ItemTouchHelper(ItemSwipeHelper())
             itemTouchHelper.attachToRecyclerView(myplace_recyclerview)
+
         }
 
 
@@ -118,6 +119,7 @@ class FragmentMyPlace : Fragment() {
             intent.putExtra("IsAdd",isAdd)
             startActivityForResult(intent,10)
         }
+
     }
 
     fun recyclerviewInit(list: MutableList<MyPlace>, state: Int) {
@@ -253,6 +255,7 @@ class FragmentMyPlace : Fragment() {
                         currentList.removeAt(position)
                         //어뎁터에 알리기
                         myplace_recyclerview.adapter!!.notifyItemRemoved(position)
+                        myplace_recyclerview.adapter!!.notifyDataSetChanged()
                         //hpCount reset
                         activity!!.findViewById<TextView>(R.id.hpCount).text =
                             currentList.size.toString()

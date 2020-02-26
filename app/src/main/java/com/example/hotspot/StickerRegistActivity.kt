@@ -52,6 +52,7 @@ class StickerRegistActivity : AppCompatActivity() {
     private var savedOpen = "00"
     private var savedClosed = "00"
     private var dragViewHeight = 0.toFloat()
+    private var uploadcount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -260,6 +261,7 @@ class StickerRegistActivity : AppCompatActivity() {
             }
             intent = Intent()
             intent.putExtra("StickerData", stickerData)
+            Log.d("TAG","StickerRegist View  ImgList Size : "+stickerData.cloudinaryIdList!!.size.toString())
             setResult(1,intent)
             finish()
 
@@ -485,6 +487,7 @@ class StickerRegistActivity : AppCompatActivity() {
                                 txt_sticker_regist.text = "완료"
                             }
                             else{
+                                uploadcount = 0
                                 stickerData.photoUriList!!.clear()
                                 stickerData.cloudinaryUrlList!!.clear()
                                 stickerData.cloudinaryIdList!!.clear()
@@ -515,13 +518,16 @@ class StickerRegistActivity : AppCompatActivity() {
                                                 Log.d("Cloudinary", "error : ${error.toString()}")
                                                 Toast.makeText(this@StickerRegistActivity,"이미지 업로드에 실패했습니다. 네트워크 확인 바랍니다."
                                                     ,Toast.LENGTH_LONG).show()
+                                                uploadcount++
                                                 uploadisSuccess = false
-                                                if(i==(it.size-1)){
+                                                if(uploadcount==(it.size)){
                                                     txt_sticker_regist.isClickable = true
                                                     sticker_finish_btn.visibility = View.VISIBLE
+                                                    Log.d("TAG","마지막거 실패  완료로 바꿀꺼야 ")
                                                     txt_sticker_regist.text = "완료"
                                                     gallery_img.isClickable = true
                                                     uploadisSuccess = true
+                                                    uploadcount = 0
                                                 }
 
                                             }
@@ -556,11 +562,13 @@ class StickerRegistActivity : AppCompatActivity() {
                                                     stickerData.cloudinaryUrlList!!.add(resultData.get("secure_url").toString())
                                                     savedCloudinaryIdList.add(resultData.get("public_id").toString())
                                                     savedCloudinaryUrlList.add(resultData.get("secure_url").toString())
+                                                    uploadcount++
                                                 }
-                                                if(i==(it.size-1)){
+                                                if(uploadcount==(it.size)){
                                                     if(uploadisSuccess) {
                                                         txt_sticker_regist.isClickable = true
                                                         sticker_finish_btn.visibility = View.VISIBLE
+                                                        Log.d("TAG","마지막꺼 성공  완료로 바꿀꺼야 ")
                                                         txt_sticker_regist.text = "완료"
                                                         gallery_img.isClickable = true
                                                         gallery_img.setColorFilter(
@@ -569,6 +577,7 @@ class StickerRegistActivity : AppCompatActivity() {
                                                             )
                                                         )
                                                         photo_fin_view.visibility = View.VISIBLE
+                                                        uploadcount = 0
                                                     }
                                                     else uploadisSuccess = true
                                                 }

@@ -63,6 +63,7 @@ class FragmentDetailView : Fragment() {
     private var latitude = 0.0
     private var longitude = 0.0
     private var rating = 1
+    private lateinit var myPlace : MyPlace
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,7 +77,7 @@ class FragmentDetailView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val myPlace = arguments!!.getSerializable("myPlace") as MyPlace
+        myPlace = arguments!!.getSerializable("myPlace") as MyPlace
         imageSize = myPlace.images!!.size
         position = arguments!!.getSerializable("Position") as Int
         requestCode = arguments!!.getSerializable("RequestCode") as Int
@@ -150,6 +151,10 @@ class FragmentDetailView : Fragment() {
         }else if(rating == 2) {
             detail_rating_img1.visibility = View.VISIBLE
             detail_rating_img2.visibility = View.VISIBLE
+        }else if((rating == 0) || (rating == null)){
+            detail_rating_img1.visibility = View.INVISIBLE
+            detail_rating_img2.visibility = View.INVISIBLE
+            detail_rating_img3.visibility = View.INVISIBLE
         }else {
             detail_rating_img1.visibility = View.VISIBLE
             detail_rating_img2.visibility = View.VISIBLE
@@ -346,6 +351,7 @@ class FragmentDetailView : Fragment() {
         detail_quit_ok_txt.setOnClickListener {
 
             //서버에 알리기
+            detail_quit_ok_txt.isClickable = false
             val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
             apiService.deletPlace("Bearer " + "${accesstoken}",
                 "${myPlace.id}").enqueue(object : Callback<ResponseBody> {
@@ -372,6 +378,7 @@ class FragmentDetailView : Fragment() {
                         d("Delete Error",response.errorBody().toString())
                         d("Delete Error",response.message())
                         Toast.makeText(activity!!, "실패!!", Toast.LENGTH_LONG).show()
+                        detail_quit_ok_txt.isClickable = true
                     }
 
                 }
@@ -380,6 +387,7 @@ class FragmentDetailView : Fragment() {
                     Toast.makeText(activity!!,"삭제 실패 ! 네트워크 확인 바랍니다 !!", Toast.LENGTH_LONG).show()
                     Log.d("Delete Error", t.message.toString())
                     Log.d("Delete Error",t.cause.toString())
+                    detail_quit_ok_txt.isClickable = true
                 }
             })
 
@@ -549,8 +557,9 @@ class FragmentDetailView : Fragment() {
             resCode = 98
             if(data != null){
                 newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
+                myPlace = newPlace
                 //UI 업데이트!!!!!!!!!!!
-
+                updateUi(newPlace)
 
                 isEditSpot = true
             }
@@ -561,7 +570,8 @@ class FragmentDetailView : Fragment() {
             if(data != null){
                 newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
                 //UI 업데이트!!!!!!!!!!!
-
+                myPlace = newPlace
+                updateUi(newPlace)
 
                 isEditSpot = true
             }
@@ -583,4 +593,203 @@ class FragmentDetailView : Fragment() {
     fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
     }
+    private fun updateUi(myPlace : MyPlace){
+        detail_placeName_txt.text = myPlace.place.placeName
+        detail_roadAddressName_txt.text = myPlace.place.roadAddressName
+        detail_memo_txt.text = myPlace.memo
+        imageSize = myPlace.images!!.size
+        val categoryName = myPlace.place.categoryName
+        val isVisited = myPlace.visited
+        val bestmenu = myPlace.bestMenu
+        val hours = myPlace.businessHours
+        val parking = myPlace.parkingAvailable
+        val allDay = myPlace.allDayAvailable
+        val powerPlug = myPlace.powerPlugAvailable
+        rating = myPlace.rating
+        if(categoryName != null) {
+            when(categoryName) {
+                "맛집"->{
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout1)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_food)
+                }
+                "카페"->{
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout2)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_cafe)
+                }
+                "술집" ->{
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout3)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_drink)
+                }
+                "문화" ->{
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout4)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_culture)
+                }
+                "기타" ->{
+                    detail_top.setBackgroundResource(R.drawable.detail_top_layout5)
+                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_etc)
+                }
+            }
+        }
+        if(!isVisited){
+            detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
+            notVisitImg.visibility = View.VISIBLE
+        }
+        else{
+            notVisitImg.visibility = View.GONE
+        }
+        if(rating == 1) {
+            detail_rating_img1.visibility = View.VISIBLE
+        }else if(rating == 2) {
+            detail_rating_img1.visibility = View.VISIBLE
+            detail_rating_img2.visibility = View.VISIBLE
+        }else if((rating == 0) || (rating == null)){
+            detail_rating_img1.visibility = View.INVISIBLE
+            detail_rating_img2.visibility = View.INVISIBLE
+            detail_rating_img3.visibility = View.INVISIBLE
+        }else {
+            detail_rating_img1.visibility = View.VISIBLE
+            detail_rating_img2.visibility = View.VISIBLE
+            detail_rating_img3.visibility = View.VISIBLE
+        }
+
+        if(bestmenu != null) {
+            detail_menu_txt2.visibility = View.VISIBLE
+
+
+            for(i in 0..myPlace.bestMenu!!.size-1){
+                if(i == 0){
+                    detail_menu_txt2.text = myPlace.bestMenu!![0]
+                }
+                else {
+                    detail_menu_txt3.visibility = View.VISIBLE
+                    detail_menu_txt3.text = myPlace.bestMenu!![1]
+                }
+            }
+        }
+        else{
+            detail_menu_txt2.text = "등록해주세요"
+            detail_menu_txt3.visibility = View.GONE
+        }
+
+        if(hours!!.open != null && hours.close != null) {
+            detail_time_txt2.visibility = View.VISIBLE
+            val st = StringBuffer()
+            var open = myPlace.businessHours!!.open.toString()
+            var close = myPlace.businessHours!!.close.toString()
+            if(open.length == 1){
+                st.append("0")
+            }
+            st.append(open)
+            st.append(":00 - ")
+
+            if(close.length == 1){
+                st.append("0")
+            }
+            st.append(close)
+            st.append(":00")
+            detail_time_txt2.text = st.toString()
+        }
+        else{
+            detail_time_txt2.text = "등록해주세요"
+        }
+
+        if(parking != null ||
+            allDay != null ||
+            powerPlug != null) {
+
+            var st = StringBuffer()
+            if (parking != null) {
+                st.append("주차가능 / ")
+            }
+            if (allDay != null) {
+                st.append("콘센트 O / ")
+            }
+            if (powerPlug != null) {
+                st.append("24시 / ")
+            }
+            val len = st.length
+            st.delete(len - 2, len - 1)
+            detail_additional_txt2.text = st.toString()
+        }
+        else{
+            detail_additional_txt2.text = "등록해주세요"
+        }
+
+        urlList = arrayListOf()
+        imgList = mutableListOf()
+        Log.d("TAG","detailView ImgList Size : "+imgList.size.toString())
+        for(i in 0..imageSize-1){
+            if(myPlace.images!!.get(i).url != null) {
+                urlList.add(myPlace.images!!.get(i).url)
+
+                d("TAG", "urlList[i] : ${urlList[i]}")
+            }
+        }
+        ////////////////////////////////////////////////////////////////////////////////////
+        // image가 존재하면 Gone 해제
+        if(imageSize != 0) {
+            detail_cardview.visibility = View.VISIBLE
+            dotsContainer.visibility = View.VISIBLE
+
+            val mAdapter = ImageAdapter(activity!!, urlList)
+            viewPager.adapter = mAdapter
+            dotscount = mAdapter.count
+
+            dotImageView1.setImageResource(R.drawable.indicator_dot_on)
+            dotImageView2.setImageResource(R.drawable.indicator_dot_off)
+            dotImageView3.setImageResource(R.drawable.indicator_dot_off)
+            dotImageView4.setImageResource(R.drawable.indicator_dot_off)
+            dotImageView5.setImageResource(R.drawable.indicator_dot_off)
+            when (dotscount) {
+                1 -> {
+                    dotImageView1.visibility = View.VISIBLE
+                    dotImageView2.visibility = View.GONE
+                    dotImageView3.visibility = View.GONE
+                    dotImageView4.visibility = View.GONE
+                    dotImageView5.visibility = View.GONE
+                }
+                2 -> {
+                    dotImageView1.visibility = View.VISIBLE
+                    dotImageView2.visibility = View.VISIBLE
+                    dotImageView3.visibility = View.GONE
+                    dotImageView4.visibility = View.GONE
+                    dotImageView5.visibility = View.GONE
+                }
+                3 -> {
+                    dotImageView1.visibility = View.VISIBLE
+                    dotImageView2.visibility = View.VISIBLE
+                    dotImageView3.visibility = View.VISIBLE
+                    dotImageView4.visibility = View.GONE
+                    dotImageView5.visibility = View.GONE
+                }
+                4 -> {
+                    dotImageView1.visibility = View.VISIBLE
+                    dotImageView2.visibility = View.VISIBLE
+                    dotImageView3.visibility = View.VISIBLE
+                    dotImageView4.visibility = View.VISIBLE
+                    dotImageView5.visibility = View.GONE
+                }
+                5 -> {
+                    dotImageView1.visibility = View.VISIBLE
+                    dotImageView2.visibility = View.VISIBLE
+                    dotImageView3.visibility = View.VISIBLE
+                    dotImageView4.visibility = View.VISIBLE
+                    dotImageView5.visibility = View.VISIBLE
+                }
+            }
+        }
+        else{
+            detail_cardview.visibility = View.GONE
+            dotsContainer.visibility = View.GONE
+            dotImageView1.visibility = View.GONE
+            dotImageView2.visibility = View.GONE
+            dotImageView3.visibility = View.GONE
+            dotImageView4.visibility = View.GONE
+            dotImageView5.visibility = View.GONE
+        }
+        viewPager.adapter!!.notifyDataSetChanged()
+
+
+    }
+
 }
