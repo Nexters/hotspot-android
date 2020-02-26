@@ -25,7 +25,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/group_2"
         android:layout_marginBottom="27dp"
-        android:visibility="gone"
+        android:visibility="visible"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.6"
+        app:layout_constraintDimensionRatio="3:5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

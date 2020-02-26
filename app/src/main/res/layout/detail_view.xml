@@ -9,6 +9,7 @@
     android:background="#101010">
 
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/detail_top"
         android:layout_width="match_parent"

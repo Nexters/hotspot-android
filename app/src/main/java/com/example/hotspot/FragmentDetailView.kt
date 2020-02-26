@@ -371,8 +371,7 @@ class FragmentDetailView : Fragment() {
                         intent.putExtra("myPlace", myPlace as Serializable)
                         intent.putExtra("position", position)
                         intent.putExtra("RequestCode", requestCode as Serializable)
-                        activity!!.setResult(requestCode, intent)
-                        activity!!.finish()
+                        startActivityForResult(intent, requestCode)
                     }
                     else{
                         d("Delete Error",response.errorBody().toString())
