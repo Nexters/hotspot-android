@@ -21,14 +21,14 @@
 
     <ImageView
         android:id="@+id/mylistEmptyimg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/group_2"
         android:layout_marginBottom="27dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.6"
-        app:layout_constraintDimensionRatio="3:5"
+        app:layout_constraintDimensionRatio="7:10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

@@ -14,8 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
@@ -28,7 +30,8 @@ import com.kakao.message.template.LocationTemplate
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
 import com.squareup.otto.Subscribe
-import kotlinx.android.synthetic.main.detail_view.*
+import kotlinx.android.synthetic.main.detail_view1.*
+import kotlinx.android.synthetic.main.mylist_view.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -64,13 +67,14 @@ class FragmentDetailView : Fragment() {
     private var longitude = 0.0
     private var rating = 1
     private lateinit var myPlace : MyPlace
+    private val list : ArrayList<String> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.detail_view, container, false)
+        val v = inflater.inflate(R.layout.detail_view1, container, false)
         return v
     }
 
@@ -109,10 +113,6 @@ class FragmentDetailView : Fragment() {
         val allDay = myPlace.allDayAvailable
         val powerPlug = myPlace.powerPlugAvailable
 
-        detail_menu_txt1.text = "베스트 메뉴"
-        detail_additional_txt1.text = "부가정보"
-        detail_time_txt1.text = "영업시간"
-
         d("FragmentdetailView", "categoryName: ${categoryName}")
         if(categoryName != null) {
             when(categoryName) {
@@ -140,79 +140,114 @@ class FragmentDetailView : Fragment() {
         }
 
         if(!isVisited){
-            detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
-            notVisitImg.visibility = View.VISIBLE
+            notVisitTxt.visibility = View.VISIBLE
+        } else {
+            notVisitTxt.visibility = View.GONE
         }
 
         // rating 이미지
         d("FragmentdetailView", "rating: ${rating}")
         if(rating == 1) {
-            detail_rating_img1.visibility = View.VISIBLE
+            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
         }else if(rating == 2) {
-            detail_rating_img1.visibility = View.VISIBLE
-            detail_rating_img2.visibility = View.VISIBLE
+            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
         }else if((rating == 0) || (rating == null)){
-            detail_rating_img1.visibility = View.INVISIBLE
-            detail_rating_img2.visibility = View.INVISIBLE
-            detail_rating_img3.visibility = View.INVISIBLE
+            detail_rating_img1.setImageResource(R.drawable.ic_img_start_gray)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_start_gray)
+            detail_rating_img3.setImageResource(R.drawable.ic_img_start_gray)
         }else {
-            detail_rating_img1.visibility = View.VISIBLE
-            detail_rating_img2.visibility = View.VISIBLE
-            detail_rating_img3.visibility = View.VISIBLE
+            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img3.setImageResource(R.drawable.ic_img_star_gray2)
         }
 
         if(bestmenu != null) {
-            detail_menu_txt2.visibility = View.VISIBLE
-
+            var buffer = StringBuffer("")
 
             for(i in 0..myPlace.bestMenu!!.size-1){
                 if(i == 0){
-                    detail_menu_txt2.text = myPlace.bestMenu!![0]
+                    buffer.append(myPlace.bestMenu!![0])
+                    detail_menu_txt.text = buffer.toString()
                 }
                 else {
-                    detail_menu_txt3.visibility = View.VISIBLE
-                    detail_menu_txt3.text = myPlace.bestMenu!![1]
+                    buffer.append(", ")
+                    buffer.append(myPlace.bestMenu!![1])
+                    detail_menu_txt.text = buffer.toString()
                 }
             }
         }
 
+        // 추가 정보
+        if(allDay!= null && allDay) {
+            list.add("24시 영업")
+        }
+        if(powerPlug != null && powerPlug) {
+            list.add("콘센트 있음")
+        }
+        if(parking != null && parking) {
+            list.add("주차장 있음")
+        }
         if(hours!!.open != null && hours!!.close != null) {
-            detail_time_txt2.visibility = View.VISIBLE
-            val st = StringBuffer()
+            var hoursBuffer = StringBuffer("")
+
             var open = myPlace.businessHours!!.open.toString()
             var close = myPlace.businessHours!!.close.toString()
-            if(open.length == 1){
-                st.append("0")
-            }
-            st.append(open)
-            st.append(":00 - ")
 
-            if(close.length == 1){
-                st.append("0")
-            }
-            st.append(close)
-            st.append(":00")
-            detail_time_txt2.text = st.toString()
+            hoursBuffer.append(open+"AM - ")
+            hoursBuffer.append(close+"PM")
+            list.add(hoursBuffer.toString())
         }
 
-        if(parking != null ||
-            allDay != null ||
-            powerPlug != null) {
+        d("TAG", "list : ${list}")
 
-            var st = StringBuffer()
-            if (parking != null) {
-                st.append("주차가능 / ")
-            }
-            if (allDay != null) {
-                st.append("콘센트 O / ")
-            }
-            if (powerPlug != null) {
-                st.append("24시 / ")
-            }
-            val len = st.length
-            st.delete(len - 2, len - 1)
-            detail_additional_txt2.text = st.toString()
-        }
+        val deco = Stk_Rcylr_Item_Deco()
+        detail_recycler1.layoutManager = LinearLayoutManager(
+            activity!!,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+
+        detail_recycler1.addItemDecoration(deco)
+        detail_recycler1.adapter = StickerRcylrAdapter(list)
+
+//        if(hours!!.open != null && hours!!.close != null) {
+//            detail_time_txt.visibility = View.VISIBLE
+//            val st = StringBuffer()
+//            var open = myPlace.businessHours!!.open.toString()
+//            var close = myPlace.businessHours!!.close.toString()
+//            if(open.length == 1){
+//                st.append("0")
+//            }
+//            st.append(open)
+//            st.append(":00 - ")
+//
+//            if(close.length == 1){
+//                st.append("0")
+//            }
+//            st.append(close)
+//            st.append(":00")
+//            detail_time_txt.text = st.toString()
+//        }
+//
+//        if(parking != null ||
+//            allDay != null ||
+//            powerPlug != null) {
+//
+//            var st = StringBuffer()
+//            if (parking != null) {
+//                st.append("주차가능 / ")
+//            }
+//            if (allDay != null) {
+//                st.append("콘센트 O / ")
+//            }
+//            if (powerPlug != null) {
+//                st.append("24시 / ")
+//            }
+//            val len = st.length
+//            st.delete(len - 2, len - 1)
+//            detail_additional_txt2.text = st.toString()
+//        }
 
         urlList = arrayListOf()
         imgList = mutableListOf()
@@ -222,6 +257,22 @@ class FragmentDetailView : Fragment() {
 
                 d("TAG", "urlList[i] : ${urlList[i]}")
             }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // image가 존재하면 Gone 해제
+        if(imageSize != 0) {
+            detail_recycler2.visibility = View.VISIBLE
+            detail_recycler2.setHasFixedSize(true)
+            detail_recycler2.layoutManager = LinearLayoutManager(
+                activity!!,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            detail_recycler2.adapter = ImageRecyclerAdapter(activity!!, urlList)
+
+        }else {
+            detail_recycler2.visibility = View.VISIBLE
         }
 
         detail_esc_btn.setOnClickListener {
@@ -367,11 +418,12 @@ class FragmentDetailView : Fragment() {
 
 
                         requestCode = 95
-                        val intent = Intent(activity, MainActivity::class.java)
+                        val intent = Intent()
                         intent.putExtra("myPlace", myPlace as Serializable)
                         intent.putExtra("position", position)
                         intent.putExtra("RequestCode", requestCode as Serializable)
-                        startActivityForResult(intent, requestCode)
+                        activity!!.setResult(requestCode)
+                        activity!!.finish()
                     }
                     else{
                         d("Delete Error",response.errorBody().toString())
@@ -395,155 +447,59 @@ class FragmentDetailView : Fragment() {
             detail_popup_layout.visibility = View.GONE
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////
-        // image가 존재하면 Gone 해제
-        if(imageSize != 0) {
-            detail_cardview.visibility = View.VISIBLE
-            dotsContainer.visibility = View.VISIBLE
-
-            val mAdapter = ImageAdapter(activity!!, urlList)
-            viewPager.adapter = mAdapter
-            dotscount = mAdapter.count
-
-            dotImageView1.setImageResource(R.drawable.indicator_dot_on)
-            when (dotscount) {
-                1 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                }
-                2 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                }
-                3 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                    dotImageView3.visibility = View.VISIBLE
-                }
-                4 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                    dotImageView3.visibility = View.VISIBLE
-                    dotImageView4.visibility = View.VISIBLE
-                }
-                5 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                    dotImageView3.visibility = View.VISIBLE
-                    dotImageView4.visibility = View.VISIBLE
-                    dotImageView5.visibility = View.VISIBLE
-                }
-            }
-        }
-
-        // ViewPager 동작
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-
-            }
-
-            override fun onPageSelected(position: Int) {
-
-                d("TAG", "viewPager Position : ${position}")
-                when (position) {
-                    0 -> {
-                        dotImageView1.setImageResource(R.drawable.indicator_dot_on)
-                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
-
-                    }
-                    1 -> {
-                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView2.setImageResource(R.drawable.indicator_dot_on)
-                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
-                    }
-                    2 -> {
-                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView3.setImageResource(R.drawable.indicator_dot_on)
-                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
-                    }
-                    3 -> {
-                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView4.setImageResource(R.drawable.indicator_dot_on)
-                        dotImageView5.setImageResource(R.drawable.indicator_dot_off)
-                    }
-                    4 -> {
-                        dotImageView1.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView2.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView3.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView4.setImageResource(R.drawable.indicator_dot_off)
-                        dotImageView5.setImageResource(R.drawable.indicator_dot_on)
-                    }
-                }
-            }
-        })
     }
+
 
     ////////////////////////////////////////////////////////////////////////
     // ViewPager 미완
-    inner class ImageAdapter : PagerAdapter {
-        private var mContext : Context
-        private var mUrlList : ArrayList<String>
-
-        constructor(context: Context, urllist: ArrayList<String>){
-            mContext = context
-            mUrlList = urllist
-        }
-
-        override fun isViewFromObject(view: View, obj: Any): Boolean {
-            return view == obj
-        }
-
-        override fun getCount(): Int {
-            return mUrlList.size
-        }
-
-        override fun instantiateItem(container: ViewGroup, position: Int): ImageView {
-
-            val urlBuffer = StringBuffer(mUrlList[position])
-
-            d("FragmentDetailView", "urlBuffer[4] : ${urlBuffer[4]}")
-
-            if(urlBuffer[4] != 's'){
-                urlBuffer.insert( 4,'s')
-            }
-
-            var bm: Bitmap? = null
-            val imageView = ImageView(mContext)
-            val url = urlBuffer.toString()
-
-            d("FragmentDetailView", "url : $url")
-            d("TAG", "setImage")
-
-            Glide.with(activity!!)
-                .load(url)
-                .into(imageView)
-            d("TAG", "bm : $bm")
-
-            container.addView(imageView, 0)
-
-            return imageView
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-            container.removeView(obj as View)
-        }
-    }
+//    inner class ImageAdapter : PagerAdapter {
+//        private var mContext : Context
+//        private var mUrlList : ArrayList<String>
+//
+//        constructor(context: Context, urllist: ArrayList<String>){
+//            mContext = context
+//            mUrlList = urllist
+//        }
+//
+//        override fun isViewFromObject(view: View, obj: Any): Boolean {
+//            return view == obj
+//        }
+//
+//        override fun getCount(): Int {
+//            return mUrlList.size
+//        }
+//
+//        override fun instantiateItem(container: ViewGroup, position: Int): ImageView {
+//
+//            val urlBuffer = StringBuffer(mUrlList[position])
+//
+//            d("FragmentDetailView", "urlBuffer[4] : ${urlBuffer[4]}")
+//
+//            if(urlBuffer[4] != 's'){
+//                urlBuffer.insert( 4,'s')
+//            }
+//
+//            var bm: Bitmap? = null
+//            val imageView = ImageView(mContext)
+//            val url = urlBuffer.toString()
+//
+//            d("FragmentDetailView", "url : $url")
+//            d("TAG", "setImage")
+//
+//            Glide.with(activity!!)
+//                .load(url)
+//                .into(imageView)
+//            d("TAG", "bm : $bm")
+//
+//            container.addView(imageView, 0)
+//
+//            return imageView
+//        }
+//
+//        override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
+//            container.removeView(obj as View)
+//        }
+//    }
 
     @Subscribe
     fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
@@ -589,10 +545,12 @@ class FragmentDetailView : Fragment() {
             .client(client)
             .build()
     }
+
     fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
     }
-    private fun updateUi(myPlace : MyPlace){
+
+    private fun updateUi(myPlace : MyPlace) {
         detail_placeName_txt.text = myPlace.place.placeName
         detail_roadAddressName_txt.text = myPlace.place.roadAddressName
         detail_memo_txt.text = myPlace.memo
@@ -605,120 +563,119 @@ class FragmentDetailView : Fragment() {
         val allDay = myPlace.allDayAvailable
         val powerPlug = myPlace.powerPlugAvailable
         rating = myPlace.rating
-        if(categoryName != null) {
-            when(categoryName) {
-                "맛집"->{
+
+
+        if (categoryName != null) {
+            when (categoryName) {
+                "맛집" -> {
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout1)
                     detail_category_img.setImageResource(R.drawable.ic_mypl_icon_food)
                 }
-                "카페"->{
+                "카페" -> {
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout2)
                     detail_category_img.setImageResource(R.drawable.ic_mypl_icon_cafe)
                 }
-                "술집" ->{
+                "술집" -> {
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout3)
                     detail_category_img.setImageResource(R.drawable.ic_mypl_icon_drink)
                 }
-                "문화" ->{
+                "문화" -> {
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout4)
                     detail_category_img.setImageResource(R.drawable.ic_mypl_icon_culture)
                 }
-                "기타" ->{
+                "기타" -> {
                     detail_top.setBackgroundResource(R.drawable.detail_top_layout5)
                     detail_category_img.setImageResource(R.drawable.ic_mypl_icon_etc)
                 }
             }
         }
-        if(!isVisited){
-            detail_top.setBackgroundResource(R.drawable.detail_top_layout6)
-            notVisitImg.visibility = View.VISIBLE
-        }
-        else{
-            notVisitImg.visibility = View.GONE
-        }
-        if(rating == 1) {
-            detail_rating_img1.visibility = View.VISIBLE
-        }else if(rating == 2) {
-            detail_rating_img1.visibility = View.VISIBLE
-            detail_rating_img2.visibility = View.VISIBLE
-        }else if((rating == 0) || (rating == null)){
-            detail_rating_img1.visibility = View.INVISIBLE
-            detail_rating_img2.visibility = View.INVISIBLE
-            detail_rating_img3.visibility = View.INVISIBLE
-        }else {
-            detail_rating_img1.visibility = View.VISIBLE
-            detail_rating_img2.visibility = View.VISIBLE
-            detail_rating_img3.visibility = View.VISIBLE
+
+        if (!isVisited) {
+            notVisitTxt.visibility = View.VISIBLE
+        } else {
+            notVisitTxt.visibility = View.GONE
         }
 
-        if(bestmenu != null) {
-            detail_menu_txt2.visibility = View.VISIBLE
+        d("FragmentdetailView", "rating: ${rating}")
+        if (rating == 1) {
+            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
+        } else if (rating == 2) {
+            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
+        } else if ((rating == 0) || (rating == null)) {
+            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img3.setImageResource(R.drawable.ic_img_star_gray2)
+        } else {
+            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img3.setImageResource(R.drawable.ic_img_star_gray2)
+        }
 
+        if (bestmenu != null) {
+            var buffer = StringBuffer("")
 
-            for(i in 0..myPlace.bestMenu!!.size-1){
-                if(i == 0){
-                    detail_menu_txt2.text = myPlace.bestMenu!![0]
+            for (i in 0..myPlace.bestMenu!!.size - 1) {
+                if (i == 0) {
+                    buffer.append(myPlace.bestMenu!![0])
+                    detail_menu_txt.text = buffer.toString()
+                } else {
+                    buffer.append(", ")
+                    buffer.append(myPlace.bestMenu!![1])
+                    detail_menu_txt.text = buffer.toString()
                 }
-                else {
-                    detail_menu_txt3.visibility = View.VISIBLE
-                    detail_menu_txt3.text = myPlace.bestMenu!![1]
-                }
             }
-        }
-        else{
-            detail_menu_txt2.text = "등록해주세요"
-            detail_menu_txt3.visibility = View.GONE
         }
 
-        if(hours!!.open != null && hours.close != null) {
-            detail_time_txt2.visibility = View.VISIBLE
-            val st = StringBuffer()
-            var open = myPlace.businessHours!!.open.toString()
-            var close = myPlace.businessHours!!.close.toString()
-            if(open.length == 1){
-                st.append("0")
-            }
-            st.append(open)
-            st.append(":00 - ")
-
-            if(close.length == 1){
-                st.append("0")
-            }
-            st.append(close)
-            st.append(":00")
-            detail_time_txt2.text = st.toString()
-        }
-        else{
-            detail_time_txt2.text = "등록해주세요"
-        }
-
-        if(parking != null ||
-            allDay != null ||
-            powerPlug != null) {
-
-            var st = StringBuffer()
-            if (parking != null) {
-                st.append("주차가능 / ")
-            }
-            if (allDay != null) {
-                st.append("콘센트 O / ")
-            }
-            if (powerPlug != null) {
-                st.append("24시 / ")
-            }
-            val len = st.length
-            st.delete(len - 2, len - 1)
-            detail_additional_txt2.text = st.toString()
-        }
-        else{
-            detail_additional_txt2.text = "등록해주세요"
-        }
+//        if(hours!!.open != null && hours.close != null) {
+//            detail_time_txt2.visibility = View.VISIBLE
+//            val st = StringBuffer()
+//            var open = myPlace.businessHours!!.open.toString()
+//            var close = myPlace.businessHours!!.close.toString()
+//            if(open.length == 1){
+//                st.append("0")
+//            }
+//            st.append(open)
+//            st.append(":00 - ")
+//
+//            if(close.length == 1){
+//                st.append("0")
+//            }
+//            st.append(close)
+//            st.append(":00")
+//            detail_time_txt2.text = st.toString()
+//        }
+//        else{
+//            detail_time_txt2.text = "등록해주세요"
+//        }
+//
+//        if(parking != null ||
+//            allDay != null ||
+//            powerPlug != null) {
+//
+//            var st = StringBuffer()
+//            if (parking != null) {
+//                st.append("주차가능 / ")
+//            }
+//            if (allDay != null) {
+//                st.append("콘센트 O / ")
+//            }
+//            if (powerPlug != null) {
+//                st.append("24시 / ")
+//            }
+//            val len = st.length
+//            st.delete(len - 2, len - 1)
+//            detail_additional_txt2.text = st.toString()
+//        }
+//        else{
+//            detail_additional_txt2.text = "등록해주세요"
+//        }
 
         urlList = arrayListOf()
         imgList = mutableListOf()
-        Log.d("TAG","detailView ImgList Size : "+imgList.size.toString())
-        for(i in 0..imageSize-1){
-            if(myPlace.images!!.get(i).url != null) {
+        Log.d("TAG", "detailView ImgList Size : " + imgList.size.toString())
+        for (i in 0..imageSize - 1) {
+            if (myPlace.images!!.get(i).url != null) {
                 urlList.add(myPlace.images!!.get(i).url)
 
                 d("TAG", "urlList[i] : ${urlList[i]}")
@@ -727,68 +684,18 @@ class FragmentDetailView : Fragment() {
         ////////////////////////////////////////////////////////////////////////////////////
         // image가 존재하면 Gone 해제
         if(imageSize != 0) {
-            detail_cardview.visibility = View.VISIBLE
-            dotsContainer.visibility = View.VISIBLE
+            detail_recycler2.visibility = View.VISIBLE
+            detail_recycler2.setHasFixedSize(true)
+            detail_recycler2.layoutManager = LinearLayoutManager(
+                activity!!,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            detail_recycler2.adapter = ImageRecyclerAdapter(activity!!, urlList)
 
-            val mAdapter = ImageAdapter(activity!!, urlList)
-            viewPager.adapter = mAdapter
-            dotscount = mAdapter.count
-
-            dotImageView1.setImageResource(R.drawable.indicator_dot_on)
-            dotImageView2.setImageResource(R.drawable.indicator_dot_off)
-            dotImageView3.setImageResource(R.drawable.indicator_dot_off)
-            dotImageView4.setImageResource(R.drawable.indicator_dot_off)
-            dotImageView5.setImageResource(R.drawable.indicator_dot_off)
-            when (dotscount) {
-                1 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.GONE
-                    dotImageView3.visibility = View.GONE
-                    dotImageView4.visibility = View.GONE
-                    dotImageView5.visibility = View.GONE
-                }
-                2 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                    dotImageView3.visibility = View.GONE
-                    dotImageView4.visibility = View.GONE
-                    dotImageView5.visibility = View.GONE
-                }
-                3 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                    dotImageView3.visibility = View.VISIBLE
-                    dotImageView4.visibility = View.GONE
-                    dotImageView5.visibility = View.GONE
-                }
-                4 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                    dotImageView3.visibility = View.VISIBLE
-                    dotImageView4.visibility = View.VISIBLE
-                    dotImageView5.visibility = View.GONE
-                }
-                5 -> {
-                    dotImageView1.visibility = View.VISIBLE
-                    dotImageView2.visibility = View.VISIBLE
-                    dotImageView3.visibility = View.VISIBLE
-                    dotImageView4.visibility = View.VISIBLE
-                    dotImageView5.visibility = View.VISIBLE
-                }
-            }
+        }else {
+            detail_recycler2.visibility = View.VISIBLE
         }
-        else{
-            detail_cardview.visibility = View.GONE
-            dotsContainer.visibility = View.GONE
-            dotImageView1.visibility = View.GONE
-            dotImageView2.visibility = View.GONE
-            dotImageView3.visibility = View.GONE
-            dotImageView4.visibility = View.GONE
-            dotImageView5.visibility = View.GONE
-        }
-        viewPager.adapter!!.notifyDataSetChanged()
-
-
     }
 
 }
