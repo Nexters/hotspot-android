@@ -24,6 +24,12 @@ import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.hotspot.views.BestMenuFinView
 import com.example.hotspot.views.ConsSentView
 import com.example.hotspot.views.PhotoFinView
@@ -316,12 +322,77 @@ class FragmentMap: Fragment()
             marker.captionText = placeList[i].place.placeName
             markerList.add(marker)
         }
+        setStickerPosition()
         //Map 위의 버튼들 세팅
         setButton(p0)
+        if(isSpotAdd) {
+            markerList.get(0).performClick()
+            //gif 실행
+            startSpotGif(placeList.get(0).place.categoryName)
+        }
 
 
 
+    }
+    private fun startSpotGif(category: String) {
+        val listener = object : RequestListener<GifDrawable> {
+            override fun onLoadFailed(
+                e: GlideException?, model: Any,
+                target: Target<GifDrawable>,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
 
+            override fun onResourceReady(
+                resource: GifDrawable,
+                model: Any,
+                target: Target<GifDrawable>,
+                dataSource: DataSource,
+                isFirstResource: Boolean
+            ): Boolean {
+                resource.setLoopCount(1)
+                return false
+            }
+        }
+        when (category) {
+            "맛집" -> {
+                Glide.with(this)
+                    .asGif()
+                    .load(R.raw.food_gif)
+                    .listener(listener)
+                    .into(activity!!.findViewById(R.id.main_category_sticker_view))
+            }
+            "카페" -> {
+                Glide.with(this)
+                    .asGif()
+                    .load(R.raw.cafe_gif)
+                    .listener(listener)
+                    .into(activity!!.findViewById(R.id.main_category_sticker_view))
+            }
+            "술집" -> {
+                Glide.with(this)
+                    .asGif()
+                    .load(R.raw.drink_gif)
+                    .listener(listener)
+                    .into(activity!!.findViewById(R.id.main_category_sticker_view))
+            }
+            "문화" -> {
+                Glide.with(this)
+                    .asGif()
+                    .load(R.raw.culture_gif)
+                    .listener(listener)
+                    .into(activity!!.findViewById(R.id.main_category_sticker_view))
+            }
+            "기타" -> {
+                Glide.with(this)
+                    .asGif()
+                    .load(R.raw.etc_gif)
+                    .listener(listener)
+                    .into(activity!!.findViewById(R.id.main_category_sticker_view))
+            }
+
+        }
     }
 
 

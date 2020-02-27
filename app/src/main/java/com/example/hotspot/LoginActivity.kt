@@ -1,6 +1,5 @@
 package com.example.hotspot
 
-
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
@@ -54,6 +53,7 @@ class LoginActivity: AppCompatActivity(){
 
         //카카오 로그인 버튼 클릭
         btnKakaoLogin.setOnClickListener {
+            btnKakaoLogin.isClickable = false
             Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, this)
         }
 
@@ -134,6 +134,7 @@ class LoginActivity: AppCompatActivity(){
                     override fun onFailure(call: Call<AccessToken>, t: Throwable) {
                         d("TAG", "onFailure() : ")
                         t.printStackTrace()
+                        btnKakaoLogin.isClickable = true
                     }
                 })
 

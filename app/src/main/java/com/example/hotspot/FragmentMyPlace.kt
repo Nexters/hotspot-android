@@ -22,9 +22,11 @@ import kotlinx.android.synthetic.main.mylist_view.*
 import java.io.Serializable
 import androidx.recyclerview.widget.RecyclerView
 import androidx.annotation.NonNull
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_sticker_regist.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -43,6 +45,7 @@ class FragmentMyPlace : Fragment() {
     private lateinit var currentList : ArrayList<MyPlace>   //현재 화면에 보여지고 있는 리스트
     lateinit var cardStyleList : ArrayList<Drawable>
     private lateinit var itemTouchHelper : ItemTouchHelper
+    private lateinit var itemSwipeHelper: ItemSwipeHelper
     private var vibrateOK = true
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
@@ -80,11 +83,11 @@ class FragmentMyPlace : Fragment() {
 
 
         currentList = arrayListOf()
-        for(i in (0..myPlaceSize-1)){
+        for(i in (0..(placeList.size-1))){
             currentList.add(placeList.get(i))
         }
 
-        if(myPlaceSize == 0) {
+        if(placeList.size == 0) {
             mylistEmptyimg.visibility = View.VISIBLE
         }
 
@@ -93,7 +96,8 @@ class FragmentMyPlace : Fragment() {
             myplace_recyclerview.setHasFixedSize(true)
             myplace_recyclerview.layoutManager = LinearLayoutManager(context)
             recyclerviewInit(currentList, 0)
-            itemTouchHelper = ItemTouchHelper(ItemSwipeHelper())
+            itemSwipeHelper = ItemSwipeHelper()
+            itemTouchHelper = ItemTouchHelper(itemSwipeHelper)
             itemTouchHelper.attachToRecyclerView(myplace_recyclerview)
 
         }
@@ -133,7 +137,7 @@ class FragmentMyPlace : Fragment() {
 
         if(state == 0) {
             currentList.clear()
-            for(i in (0..myPlaceSize-1)){
+            for(i in (0..(placeList.size-1))){
                 currentList.add(placeList.get(i))
             }
             activity!!.findViewById<ImageView>(R.id.myplace_isvisited).setImageResource(R.drawable.img_main_all_xxxhdpi)
@@ -230,7 +234,20 @@ class FragmentMyPlace : Fragment() {
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
             val targetId = currentList.get(position).id
+            setButtonClickable(false)
 
+
+
+            showDeletePopup(targetId,position)
+
+        }
+    }
+    private fun showDeletePopup(targetId : String , position : Int){
+        activity!!.findViewById<ConstraintLayout>(R.id.main_delete_popup_layout).visibility = View.VISIBLE
+        activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).setOnClickListener{
+            activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).isClickable = false
+            activity!!.findViewById<TextView>(R.id.main_delete_quit_no_txt).isClickable = false
+            activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).text = "삭제중.."
             //서버에 알리기
             val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
             apiService.deletPlace(
@@ -244,7 +261,7 @@ class FragmentMyPlace : Fragment() {
                     if (response.isSuccessful) {
                         //placeLIst에서도 삭제  id값으로 매핑 ?  >> 메인의 mplaceList에서도 삭제 됨!!
 
-                        val maxIndex = myPlaceSize - 1
+                        val maxIndex = placeList.size - 1
                         for (i in 0..maxIndex) {
                             if (targetId == placeList.get(i).id) {
                                 placeList.removeAt(i)
@@ -259,11 +276,21 @@ class FragmentMyPlace : Fragment() {
                         //hpCount reset
                         activity!!.findViewById<TextView>(R.id.hpCount).text =
                             currentList.size.toString()
+                        setButtonClickable(true)
+                        activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).isClickable = true
+                        activity!!.findViewById<TextView>(R.id.main_delete_quit_no_txt).isClickable = true
+                        activity!!.findViewById<ConstraintLayout>(R.id.main_delete_popup_layout).visibility = View.GONE
+                        activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).text = "삭 제"
                         d("Delete", response.message())
                         d("Delete", response.body().toString())
                     } else {
                         d("Delete Error", response.errorBody().toString())
                         d("Delete Error", response.message())
+                        setButtonClickable(true)
+                        activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).isClickable = true
+                        activity!!.findViewById<TextView>(R.id.main_delete_quit_no_txt).isClickable = true
+                        activity!!.findViewById<ConstraintLayout>(R.id.main_delete_popup_layout).visibility = View.GONE
+                        activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).text = "삭 제"
                     }
 
                 }
@@ -271,12 +298,41 @@ class FragmentMyPlace : Fragment() {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     Toast.makeText(context!!, "삭제 실패 ! 네트워크 확인 바랍니다 !!", Toast.LENGTH_LONG)
                         .show()
+                    setButtonClickable(true)
                     Log.d("Delete Error", t.message.toString())
                     Log.d("Delete Error", t.cause.toString())
+                    activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).isClickable = true
+                    activity!!.findViewById<TextView>(R.id.main_delete_quit_no_txt).isClickable = true
+                    activity!!.findViewById<ConstraintLayout>(R.id.main_delete_popup_layout).visibility = View.GONE
+                    activity!!.findViewById<TextView>(R.id.main_delete_quit_ok_txt).text = "삭 제"
                 }
             })
-
         }
+        activity!!.findViewById<TextView>(R.id.main_delete_quit_no_txt).setOnClickListener{
+
+            setButtonClickable(true)
+            activity!!.findViewById<ConstraintLayout>(R.id.main_delete_popup_layout).visibility = View.GONE
+        }
+    }
+
+    private fun setButtonClickable(bool : Boolean){
+        activity!!.findViewById<ImageView>(R.id.findBt).isClickable = bool
+        activity!!.findViewById<ImageView>(R.id.mapBt).isClickable = bool
+        activity!!.findViewById<TextView>(R.id.category_item1_txt2).isClickable = bool
+        activity!!.findViewById<TextView>(R.id.category_item2_txt2).isClickable = bool
+        activity!!.findViewById<TextView>(R.id.category_item3_txt2).isClickable = bool
+        activity!!.findViewById<TextView>(R.id.category_item4_txt2).isClickable = bool
+        activity!!.findViewById<TextView>(R.id.category_item5_txt2).isClickable = bool
+        activity!!.findViewById<TextView>(R.id.category_item6_txt2).isClickable = bool
+        myplace_isvisited.isClickable = bool
+        myplace_add_btn.isClickable = bool
+
+        itemSwipeHelper.isSwipeOk = bool
+        itemTouchHelper = ItemTouchHelper(itemSwipeHelper)
+        itemTouchHelper.attachToRecyclerView(myplace_recyclerview)
+
+        (myplace_recyclerview.adapter as MyPlaceRecyclerAdapter).setClickable(bool)
+        myplace_recyclerview.adapter!!.notifyDataSetChanged()
     }
 
 }
