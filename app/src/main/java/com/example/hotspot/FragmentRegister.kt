@@ -201,6 +201,10 @@ class FragmentRegister : BaseFragment() {
                 intent.putExtra("PlaceName", place.placeName)
                 intent.putExtra("Longitude", place.x.toDouble())
                 intent.putExtra("Latitude", place.y.toDouble())
+                if(stickerData == null){
+                    stickerData = StickerData()
+                }
+                intent.putExtra("StickerData",stickerData)
                 activity!!.startActivityForResult(intent, 1)
             }
             else{
@@ -735,6 +739,7 @@ class FragmentRegister : BaseFragment() {
             txt_place_name.isClickable = false
             txt_visited.isClickable = false
             stickerBt.isClickable = false
+            reg_category_txt.isClickable = false
             ratingbar1.isClickable = false
             ratingbar2.isClickable = false
             ratingbar3.isClickable = false
@@ -775,6 +780,7 @@ class FragmentRegister : BaseFragment() {
                         txt_place_name.isClickable = true
                         txt_visited.isClickable = true
                         stickerBt.isClickable = true
+                        reg_category_txt.isClickable = true
                         ratingbar1.isClickable = true
                         ratingbar2.isClickable = true
                         ratingbar3.isClickable = true
@@ -795,6 +801,7 @@ class FragmentRegister : BaseFragment() {
                     txt_place_name.isClickable = true
                     txt_visited.isClickable = true
                     stickerBt.isClickable = true
+                    reg_category_txt.isClickable = true
                     ratingbar1.isClickable = true
                     ratingbar2.isClickable = true
                     ratingbar3.isClickable = true

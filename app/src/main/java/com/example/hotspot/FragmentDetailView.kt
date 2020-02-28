@@ -54,7 +54,7 @@ class FragmentDetailView : Fragment() {
     private var isEditSpot = false
     private lateinit var newPlace: MyPlace
     private var dotscount = 0
-    private lateinit var instaTag : StringBuffer
+    private lateinit var instaTag : String
     private var requestCode = 0
     private var resCode = 0
     private lateinit var urlList: ArrayList<String>
@@ -85,17 +85,17 @@ class FragmentDetailView : Fragment() {
         imageSize = myPlace.images!!.size
         position = arguments!!.getSerializable("Position") as Int
         requestCode = arguments!!.getSerializable("RequestCode") as Int
-        instaTag = StringBuffer(myPlace.place.placeName)
+        instaTag = myPlace.place.placeName
         latitude = myPlace.place.y.toDouble()
         longitude = myPlace.place.x.toDouble()
         rating = myPlace.rating
         d("TAG", "FragmentDetailView : ${myPlace}")
-
+/*
         for(i in 0..instaTag.length-2) {
             if(instaTag[i] == ' '){
                 instaTag.deleteCharAt(i)
             }
-        }
+        }*/
         d("TAG", "FragmentDetailView : ${myPlace}")
 
         //Retrofit init

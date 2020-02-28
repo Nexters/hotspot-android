@@ -85,6 +85,7 @@ class StickerRegistActivity : AppCompatActivity() {
 
         val placeName = intent.getStringExtra("PlaceName")
         val cateGory = intent.getStringExtra("Category")
+        stickerData = intent.getSerializableExtra("StickerData") as StickerData
         when(cateGory){
             "카페" -> {
                 img_sticker_category_view.setImageResource(R.drawable.ic_img_icon_cafe)
@@ -203,21 +204,82 @@ class StickerRegistActivity : AppCompatActivity() {
 
         consent_fin_view.x = mainlayout.width*0.1f
         consent_fin_view.y = mainlayout.height*0.45f
+        if(stickerData.powerPlugAvailable){
+            consent_fin_view.visibility = View.VISIBLE
+            consent_img.setColorFilter(resources.getColor(R.color.transparency))
+        }
 
         park_fin_view.x = mainlayout.width*0.35f
         park_fin_view.y = mainlayout.height*0.62f
+        if(stickerData.parkingAvailable){
+            park_fin_view.visibility = View.VISIBLE
+            park_img.setColorFilter(resources.getColor(R.color.transparency))
+        }
 
         h24_fin_view.x = mainlayout.width*0.65f
         h24_fin_view.y = mainlayout.height*0.3f
+        if(stickerData.allDayAvailable){
+            h24_fin_view.visibility = View.VISIBLE
+            work_24_img.setColorFilter(resources.getColor(R.color.transparency))
+        }
 
         best_fin_view.x = mainlayout.width*0.6f
         best_fin_view.y = mainlayout.height*0.5f
+        if(!stickerData.bestMenu.isNullOrEmpty()){
+            for(i in 0..(stickerData.bestMenu.size-1)){
+                if(i==0){
+                    best_fin_view.findViewById<TextView>(R.id.up1).text = stickerData.bestMenu[0]
+                }
+                if(i==1){
+                    best_fin_view.findViewById<TextView>(R.id.up2).text = stickerData.bestMenu[1]
+                }
+            }
+            best_fin_view.visibility = View.VISIBLE
+            best_menu_img.setColorFilter(resources.getColor(R.color.transparency))
+        }
 
         work_time_fin_view.x = mainlayout.width*0.03f
         work_time_fin_view.y = mainlayout.height*0.27f
+        if(!stickerData.open.isNullOrEmpty()||stickerData.open != ""){
+            savedOpen = stickerData.open
+            savedClosed = stickerData.close
+            if(stickerData.open.toInt()<=12) {
+                work_time_fin_view.findViewById<TextView>(R.id.work_fin_open_txt).text =
+                    stickerData.open + "AM"
+            }
+            else{
+                work_time_fin_view.findViewById<TextView>(R.id.work_fin_open_txt).text =
+                    (stickerData.open.toInt() -12).toString() + "PM"
+            }
+            if(stickerData.close.toInt()<=12) {
+                work_time_fin_view.findViewById<TextView>(R.id.work_fin_closed_txt).text =
+                    stickerData.close + "AM"
+            }
+            else{
+                work_time_fin_view.findViewById<TextView>(R.id.work_fin_closed_txt).text =
+                    (stickerData.close.toInt() -12).toString() + "PM"
+            }
+            work_time_fin_view.visibility = View.VISIBLE
+            open_time_img.setColorFilter(resources.getColor(R.color.transparency))
+        }
 
         photo_fin_view.x = mainlayout.width*0.1f
         photo_fin_view.y = mainlayout.height*0.62f
+        if(!stickerData.cloudinaryUrlList.isNullOrEmpty()){
+            for(i in 0..(stickerData.cloudinaryUrlList!!.size-1)){
+                savedCloudinaryIdList.add(stickerData.cloudinaryIdList!!.get(i))
+                savedCloudinaryUrlList.add(stickerData.cloudinaryUrlList!!.get(i))
+            }
+            sticker_finish_btn.visibility = View.VISIBLE
+            gallery_img.setColorFilter(
+                resources.getColor(
+                    R.color.transparency
+                )
+            )
+            photo_fin_view.findViewById<TextView>(R.id.photo_count_txt).text = stickerData.cloudinaryIdList!!.size.toString()
+            photo_fin_view.visibility = View.VISIBLE
+        }
+
 
         h24_fin_view.setOnTouchListener(StickerTouchListener())
         park_fin_view.setOnTouchListener(StickerTouchListener())
@@ -492,6 +554,8 @@ class StickerRegistActivity : AppCompatActivity() {
                                 stickerData.cloudinaryUrlList!!.clear()
                                 stickerData.cloudinaryIdList!!.clear()
                                 savedPhotoUrlList.clear()
+                                savedCloudinaryUrlList.clear()
+                                savedCloudinaryIdList.clear()
                                 for(i in 0..it.size-1){
                                     stickerData.photoUriList!!.add(it.get(i).toString())
                                     savedPhotoUrlList.add(it.get(i).toString())

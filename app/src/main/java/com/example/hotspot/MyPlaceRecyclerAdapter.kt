@@ -163,10 +163,13 @@ class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,
             when (rating) {
                 1-> {
                     holder.rating_img1.isVisible = true
+                    holder.rating_img2.isVisible = false
+                    holder.rating_img3.isVisible = false
                 }
                 2 -> {
                     holder.rating_img1.isVisible = true
                     holder.rating_img2.isVisible = true
+                    holder.rating_img3.isVisible = false
                 }
                 3 -> {
                     holder.rating_img1.isVisible = true
@@ -174,6 +177,11 @@ class MyPlaceRecyclerAdapter (private var list:ArrayList<MyPlace>,
                     holder.rating_img3.isVisible = true
                 }
             }
+        }
+        else{
+            holder.rating_img1.isVisible = false
+            holder.rating_img2.isVisible = false
+            holder.rating_img3.isVisible = false
         }
         //길이가 10 이상이면 뒤에 ... 추가
         if(nameBuffer.length > 9) {

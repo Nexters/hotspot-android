@@ -934,7 +934,7 @@ class FragmentMap: Fragment()
         activity!!.findViewById<PhotoFinView>(R.id.main_photo_view).y = layout_transparency.height*0.62f
 
         activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).x = layout_transparency.width*0.5f
-        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).y = layout_transparency.height*0.42f
+        activity!!.findViewById<BestMenuFinView>(R.id.main_best_view).y = layout_transparency.height*0.45f
 
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).x = layout_transparency.width*0.03f
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).y = layout_transparency.height*0.21f
