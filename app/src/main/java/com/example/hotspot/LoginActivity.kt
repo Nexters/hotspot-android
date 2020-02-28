@@ -5,8 +5,10 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
+import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.auth.AuthType
@@ -26,6 +28,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.Serializable
 
 
 class LoginActivity: AppCompatActivity(){
@@ -53,7 +56,6 @@ class LoginActivity: AppCompatActivity(){
 
         //카카오 로그인 버튼 클릭
         btnKakaoLogin.setOnClickListener {
-            btnKakaoLogin.isClickable = false
             Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, this)
         }
 
@@ -134,7 +136,6 @@ class LoginActivity: AppCompatActivity(){
                     override fun onFailure(call: Call<AccessToken>, t: Throwable) {
                         d("TAG", "onFailure() : ")
                         t.printStackTrace()
-                        btnKakaoLogin.isClickable = true
                     }
                 })
 
@@ -147,6 +148,8 @@ class LoginActivity: AppCompatActivity(){
 
     protected fun redirectSignupActivity() {
         val intent = Intent(this, MainActivity::class.java)
+        val isnewUser = true
+        intent.putExtra("IsNewUser",isnewUser as Serializable)
         startActivity(intent)
         login_lottie_view.cancelAnimation()
         finish()

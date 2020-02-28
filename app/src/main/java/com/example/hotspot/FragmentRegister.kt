@@ -16,6 +16,7 @@ import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -36,6 +37,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import java.io.Serializable
 
 
 class FragmentRegister : BaseFragment() {
@@ -55,6 +57,7 @@ class FragmentRegister : BaseFragment() {
     var search_OK = false
     private var requestCode = 0
     private var stickerData: StickerData? = null
+    private var IsNewUser = false
 
 
     override fun onCreateView(
@@ -79,6 +82,10 @@ class FragmentRegister : BaseFragment() {
                 .addToBackStack(null)
                 .replace(R.id.register_activity, FragmentSearch())
                 .commit()
+        }
+        rgist_onboarding_layout.setOnClickListener{
+            rgist_onboarding_layout.visibility = View.GONE
+            IsNewUser = false
         }
 
         setLayout()
@@ -318,6 +325,13 @@ class FragmentRegister : BaseFragment() {
         //isAdd : true 등록, false 수정
         isAdd = arguments!!.getBoolean("isAdd", true)
         search_OK = arguments!!.getBoolean("search_OK", false)
+        if(!search_OK&&isAdd){
+            IsNewUser = arguments!!.getBoolean("IsNewUser",false)
+        }
+        if(isAdd&&!search_OK&&IsNewUser){
+            rgist_onboarding_layout.visibility = View.VISIBLE
+            IsNewUser = false
+        }
         rcycl_sticker_view.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -482,6 +496,7 @@ class FragmentRegister : BaseFragment() {
             }
         }
         else if(search_OK) {
+
             btn_regist.background = resources.getDrawable(R.drawable.button_ripple_effect)
             txt_please_spot_add.visibility = View.INVISIBLE
             edtTxt_memo.isFocusableInTouchMode = true

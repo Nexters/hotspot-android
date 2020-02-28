@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity()  {
     private lateinit var updatedSpot : MyPlace
     private var update_position = 0
     private var isSpotAdd = false
+    private var isNewUser = false
+    private var showOnboarding = false // 온보딩을 보여줬는가?
 //    val mainScope = MainScope()
 
     val categoryList = listOf("ALL", "맛집", "카페", "술집", "문화", "기타") // Category List
@@ -61,14 +63,16 @@ class MainActivity : AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        isNewUser = intent.getSerializableExtra("IsNewUser") as Boolean
         locationSource =
             FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
 
         setRetrofitInit()
         setApiServiceInit()
 //        getMyPlaceApi()
-
+        main_onboarding_layout.setOnClickListener{
+            main_onboarding_layout.visibility = View.GONE
+        }
 
         category_item1_txt2.setOnClickListener {
             stateCategory = "전체"
@@ -379,6 +383,7 @@ class MainActivity : AppCompatActivity()  {
             val fr_myPlace = FragmentMyPlace()
             bundle.putSerializable("PlaceList", myPlaceList as Serializable)
             bundle.putSerializable("CateGory",stateCategory as Serializable)
+            bundle.putSerializable("IsNewUser",isNewUser as Serializable)
             fr_myPlace.arguments = bundle
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_map, fr_myPlace)
@@ -399,6 +404,8 @@ class MainActivity : AppCompatActivity()  {
 
         bundle.putSerializable("PlaceList",myPlaceList as Serializable)
         bundle.putSerializable("IsSpotAdd", isSpotAdd as Serializable)
+        bundle.putSerializable("IsNewUser",isNewUser as Serializable)
+
         this.isSpotAdd = false
         mapFragment.arguments = bundle
 
@@ -431,12 +438,14 @@ class MainActivity : AppCompatActivity()  {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == 9) { // 장소 등록 안함 맵 > 등록
+            isNewUser = false
             BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
         }
         if(resultCode == 10){// 장소등록 성공 맵 > 등록
             //애니메이션 띄우고
             //장소 새로 받기?
             isSpotAdd = true
+            isNewUser = false
             getMyPlaceApi()
         }
         if(resultCode == 95) {// 디테일뷰 > 장소 삭제
@@ -505,6 +514,18 @@ class MainActivity : AppCompatActivity()  {
             }
         }
         return null
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(isNewUser){
+            if(!showOnboarding) {
+                main_onboarding_layout.visibility = View.VISIBLE
+                showOnboarding = true //이제 온보딩 보여줬음
+            }
+        }
+
+
     }
 
 

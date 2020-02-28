@@ -91,6 +91,7 @@ class FragmentMap: Fragment()
     private var searched_roadAddress = ""
     private var searched_placeName = ""
     private var isSpotAdd = false
+    private var isNewUser = false
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -109,7 +110,7 @@ class FragmentMap: Fragment()
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        isNewUser = arguments!!.getSerializable("IsNewUser") as Boolean
         locationSource = FusedLocationSource(activity!!, LOCATION_PERMISSION_REQUEST_CODE)
 
         spotinfoLayout = activity!!.findViewById(R.id.spotinfolayout)
@@ -938,69 +939,6 @@ class FragmentMap: Fragment()
 
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).x = layout_transparency.width*0.03f
         activity!!.findViewById<WorkTimeFinView>(R.id.main_worktime_view).y = layout_transparency.height*0.21f
-/*
-        activity!!.findViewById<ConsSentView>(R.id.main_24h_view).setOnTouchListener(object : View.OnTouchListener{
-            var fromX: Float = 0.toFloat()
-            var fromY: Float = 0.toFloat()
-            var parentW = 0.toFloat()
-            var parentH = 0.toFloat()
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if(v != null && event != null) {
-                    val parentWidth = (v.parent as ViewGroup).width    // 부모 View 의 Width
-                    val parentHeight = (v.parent as ViewGroup).height    // 부모 View 의 Height
-                    parentH = parentHeight.toFloat()
-                    parentW = parentWidth.toFloat()
-
-
-
-                    val action = event.action
-                    when(action){
-                        MotionEvent.ACTION_DOWN ->{
-                            fromX = event.x
-                            fromY = event.y
-
-                        }
-                        MotionEvent.ACTION_MOVE ->{
-
-                            v.x = v.x + event.x - v.width/2
-                            v.y = v.y + event.y - v.height/2
-
-                            if(isranged((v.x+v.width*0.5).toFloat(),(v.y+v.height*0.5).toFloat())) {
-                                var ani =
-                                    AnimationUtils.loadAnimation(activity!!, R.anim.trash_anim)
-                                v.startAnimation(ani)
-                            }
-
-                        }
-                        MotionEvent.ACTION_UP -> {
-
-                            if(v.x<0){
-                                v.x = 0.toFloat()
-                            }
-                            else if((v.x + v.width)> parentWidth){
-                                v.x = parentWidth.toFloat() - v.width
-                            }
-                            if(v.y <0){
-                                v.y = 0.toFloat()
-                            }
-                            else if((v.y+v.height)>parentHeight){
-                                v.y = parentHeight.toFloat() -v.height
-                            }
-
-                        }
-                    }
-                }
-
-                return true
-
-            }
-            private fun isranged(x : Float, y : Float) : Boolean{
-                if((x>(parentW*0.5 - 100.toFloat()))&&(x<(parentW*0.5 + 100.toFloat())&&(y>parentH*0.9))){
-                    return true
-                }
-                else return false
-            }
-        })*/
 
 
     }
@@ -1013,6 +951,8 @@ class FragmentMap: Fragment()
         map_btn_add.setOnClickListener {
             val intent = Intent(activity, RegisterActivity::class.java)
             val isAdd = true
+
+            intent.putExtra("IsNewUser",isNewUser as Serializable)
             intent.putExtra("IsAdd",isAdd)
             //10번은 맵 > 장소등록
             startActivityForResult(intent,10)
@@ -1027,7 +967,7 @@ class FragmentMap: Fragment()
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == 9){//장소등록에서 취소 햇을 때
-            //do nothing
+            isNewUser = false
         }
         if(resultCode == 10){//장소 등록했으니 맵에서 띄우고 애니메이션
             //myplacelist에 추가
@@ -1035,6 +975,7 @@ class FragmentMap: Fragment()
             //위치로 카메라 업데이트 후
             //애니메이션
             //스티커 보여주기
+            isNewUser = false
 
         }
 

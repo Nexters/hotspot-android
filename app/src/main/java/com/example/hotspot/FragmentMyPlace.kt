@@ -50,7 +50,7 @@ class FragmentMyPlace : Fragment() {
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
     private var myPlaceSize = 0
-
+    private var IsNewUser = false
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -79,6 +79,7 @@ class FragmentMyPlace : Fragment() {
 
         placeList = arguments!!.getSerializable("PlaceList") as MutableList<MyPlace>
         stateCategory = arguments!!.getSerializable("CateGory") as String
+        IsNewUser = arguments!!.getSerializable("IsNewUser") as Boolean
         myPlaceSize = placeList.size
 
 
@@ -120,6 +121,7 @@ class FragmentMyPlace : Fragment() {
         myplace_add_btn.setOnClickListener {
             val intent = Intent(activity, RegisterActivity::class.java)
             val isAdd = true
+            intent.putExtra("IsNewUser",IsNewUser)
             intent.putExtra("IsAdd",isAdd)
             startActivityForResult(intent,10)
         }
@@ -194,7 +196,7 @@ class FragmentMyPlace : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-
+        IsNewUser = false
     }
     fun setRetrofitInit(){
         //interceptor 선언
