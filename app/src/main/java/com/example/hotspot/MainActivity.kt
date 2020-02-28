@@ -294,25 +294,10 @@ class MainActivity : AppCompatActivity()  {
         }
 
         findBt.setOnClickListener {
-            if(myPlaceSize == 0){
-                val intent = Intent(this, MyPlaceIsEmpty::class.java)
-                startActivityForResult(intent, 6)
-            }
-            else {
-                val intent = Intent(this, MySearchActivity::class.java)
-                intent.putExtra("myPlace", mMyPlaceList as Serializable)
-                startActivityForResult(intent, 5)
-            }
+            val intent = Intent(this, MySearchActivity::class.java)
+            intent.putExtra("myPlace", mMyPlaceList as Serializable)
+            startActivityForResult(intent, 5)
         }
-
-//            //category Recyclerview init
-//            category_recyclerview.setHasFixedSize(true)
-//            category_recyclerview.layoutManager = LinearLayoutManager(
-//                applicationContext,
-//                LinearLayoutManager.HORIZONTAL,
-//                false
-//            )
-//            category_recyclerview.adapter = CategoryRecyclerAdapter(categoryList, mMyPlaceList)
 
         getMyPlaceApi()
 
@@ -414,9 +399,6 @@ class MainActivity : AppCompatActivity()  {
             .replace(R.id.fragment_map, mapFragment)//mapFragment로 교체
             .commitAllowingStateLoss()//  onSaveInstanceState 이후에 이런 액션(본인의 경우 다른 플래그먼트 호출)을 할수 없어 추가
 
-
-
-
     }
 
     fun setRetrofitInit(){
@@ -438,16 +420,42 @@ class MainActivity : AppCompatActivity()  {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == 9) { // 장소 등록 안함 맵 > 등록
-            isNewUser = false
             BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
         }
         if(resultCode == 10){// 장소등록 성공 맵 > 등록
             //애니메이션 띄우고
             //장소 새로 받기?
             isSpotAdd = true
-            isNewUser = false
             getMyPlaceApi()
         }
+
+        if(resultCode == 1) {// 마이서치 > 디테일 업데이트 성공
+            if(data != null ) {
+                update_position = data.getIntExtra("Position",0)
+                updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
+
+                mMyPlaceList.set(update_position, updatedSpot)
+                spotinfolayout.visibility = View.INVISIBLE
+                layout_trans_main.visibility = View.INVISIBLE
+                getMap(mMyPlaceList, false)
+            }
+            else {
+                Toast.makeText(applicationContext, "데이터 인텐트 실패", Toast.LENGTH_SHORT)
+            }
+        }
+        if(resultCode == 2) {// 마이서치 > 삭제 성공
+            if(data != null ) {
+                d("TAG main", "resultCode : ${resultCode}")
+                mMyPlaceList = data.getSerializableExtra("myPlace") as ArrayList<MyPlace>
+                myPlaceSize = mMyPlaceList.size
+                hpCount.text = myPlaceSize.toString()
+                getMap(mMyPlaceList, false)
+            }
+            else {
+                Toast.makeText(applicationContext, "데이터 인텐트 실패", Toast.LENGTH_SHORT)
+            }
+        }
+
         if(resultCode == 95) {// 디테일뷰 > 장소 삭제
             val position = data!!.getIntExtra("position", 0)
             mMyPlaceList.removeAt(position)
@@ -455,6 +463,15 @@ class MainActivity : AppCompatActivity()  {
             hpCount.text = myPlaceSize.toString()
             getMyPlace(mMyPlaceList, stateCategory)
         }
+
+        if(resultCode == 94) {// 디테일뷰 > 장소 삭제
+            val position = data!!.getIntExtra("position", 0)
+            mMyPlaceList.removeAt(position)
+            myPlaceSize = mMyPlaceList.size
+            hpCount.text = myPlaceSize.toString()
+            getMap(mMyPlaceList, false)
+        }
+
         if(resultCode == 98){ // 마이플레이스 > 디테일 업데이트 성공
             //getMyplace 요청
             if(data != null) {

@@ -315,7 +315,11 @@ class FragmentMap: Fragment()
                         intent.putExtra("RequestCode", 21)
                         startActivityForResult(intent, 21)
 
-
+                        spotinfoLayout.visibility = View.GONE
+                        layout_transparency.visibility = View.INVISIBLE
+                        img_curr_pos.visibility = View.VISIBLE
+                        img_main_isvisited.visibility = View.VISIBLE
+                        activity!!.findViewById<ImageView>(R.id.map_btn_add).visibility = View.VISIBLE
                     }
                 }
                 true

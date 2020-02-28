@@ -52,9 +52,10 @@ class FragmentDetailView : Fragment() {
 
     private var position = 0
     private var isEditSpot = false
+    private var mySearch = false
     private lateinit var newPlace: MyPlace
     private var dotscount = 0
-    private lateinit var instaTag : String
+    private lateinit var instaTag : StringBuffer
     private var requestCode = 0
     private var resCode = 0
     private lateinit var urlList: ArrayList<String>
@@ -85,18 +86,13 @@ class FragmentDetailView : Fragment() {
         imageSize = myPlace.images!!.size
         position = arguments!!.getSerializable("Position") as Int
         requestCode = arguments!!.getSerializable("RequestCode") as Int
-        instaTag = myPlace.place.placeName
+        mySearch = arguments!!.getBoolean("mySearch")
+        instaTag = StringBuffer(myPlace.place.placeName)
         latitude = myPlace.place.y.toDouble()
         longitude = myPlace.place.x.toDouble()
         rating = myPlace.rating
         d("TAG", "FragmentDetailView : ${myPlace}")
-/*
-        for(i in 0..instaTag.length-2) {
-            if(instaTag[i] == ' '){
-                instaTag.deleteCharAt(i)
-            }
-        }*/
-        d("TAG", "FragmentDetailView : ${myPlace}")
+        d("TAG FragmentDetailView", "mySearch : ${mySearch}")
 
         //Retrofit init
         setRetrofitInit()
@@ -114,27 +110,22 @@ class FragmentDetailView : Fragment() {
         val powerPlug = myPlace.powerPlugAvailable
 
         d("FragmentdetailView", "categoryName: ${categoryName}")
-        if(categoryName != null) {
-            when(categoryName) {
-                "맛집"->{
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout1)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_food)
+        if (categoryName != null) {
+            when (categoryName) {
+                "맛집" -> {
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_food)
                 }
-                "카페"->{
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout2)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_cafe)
+                "카페" -> {
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_cafe)
                 }
-                "술집" ->{
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout3)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_drink)
+                "술집" -> {
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_drink)
                 }
-                "문화" ->{
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout4)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_culture)
+                "문화" -> {
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_culture)
                 }
-                "기타" ->{
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout5)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_etc)
+                "기타" -> {
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_etc)
                 }
             }
         }
@@ -144,6 +135,7 @@ class FragmentDetailView : Fragment() {
         } else {
             notVisitTxt.visibility = View.GONE
         }
+
 
         // rating 이미지
         d("FragmentdetailView", "rating: ${rating}")
@@ -210,45 +202,6 @@ class FragmentDetailView : Fragment() {
 
         detail_recycler1.addItemDecoration(deco)
         detail_recycler1.adapter = StickerRcylrAdapter(list)
-
-//        if(hours!!.open != null && hours!!.close != null) {
-//            detail_time_txt.visibility = View.VISIBLE
-//            val st = StringBuffer()
-//            var open = myPlace.businessHours!!.open.toString()
-//            var close = myPlace.businessHours!!.close.toString()
-//            if(open.length == 1){
-//                st.append("0")
-//            }
-//            st.append(open)
-//            st.append(":00 - ")
-//
-//            if(close.length == 1){
-//                st.append("0")
-//            }
-//            st.append(close)
-//            st.append(":00")
-//            detail_time_txt.text = st.toString()
-//        }
-//
-//        if(parking != null ||
-//            allDay != null ||
-//            powerPlug != null) {
-//
-//            var st = StringBuffer()
-//            if (parking != null) {
-//                st.append("주차가능 / ")
-//            }
-//            if (allDay != null) {
-//                st.append("콘센트 O / ")
-//            }
-//            if (powerPlug != null) {
-//                st.append("24시 / ")
-//            }
-//            val len = st.length
-//            st.delete(len - 2, len - 1)
-//            detail_additional_txt2.text = st.toString()
-//        }
-
         urlList = arrayListOf()
         imgList = mutableListOf()
         for(i in 0..imageSize-1){
@@ -259,7 +212,6 @@ class FragmentDetailView : Fragment() {
             }
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////
         // image가 존재하면 Gone 해제
         if(imageSize != 0) {
             detail_recycler2.visibility = View.VISIBLE
@@ -280,20 +232,28 @@ class FragmentDetailView : Fragment() {
                 fragmentManager!!.beginTransaction()
                     .remove(this)
                     .commit()
-                var intent2 = Intent()
-                intent2.putExtra("NewSpotInfo",newPlace)
-                intent2.putExtra("Position",position)
-                activity!!.setResult(resCode,intent2)
+                if(mySearch)
+                    resCode = 85
+
+                var intent = Intent()
+                intent.putExtra("NewSpotInfo", myPlace)
+                intent.putExtra("Position", position)
+                intent.putExtra("mySearch", true)
+                d("TAG", "resCode : ${resCode}")
+                activity!!.setResult(resCode,intent)
                 activity!!.finish()
+                d("TAG", "@@@@@@@@@@@@@@@@@@@@@@@@")
+
             }
             else {
                 fragmentManager!!.beginTransaction()
                     .remove(this)
                     .commit()
+
+                d("TAG", "#########################")
                 activity!!.finish()
             }
         }
-
         //viewPager
 //        val adapter = ImageAdapter(activity!!, urlList)
 //        viewPager.adapter = adapter
@@ -416,13 +376,18 @@ class FragmentDetailView : Fragment() {
                         d("Delete", response.body().toString())
                         Toast.makeText(activity!!, "장소가 삭제되었습니다.", Toast.LENGTH_LONG).show()
 
-
-                        requestCode = 95
                         val intent = Intent()
+
+                        if(requestCode == 21) {
+                            requestCode = 94
+                        }else {
+                            requestCode = 95
+                        }
+
                         intent.putExtra("myPlace", myPlace as Serializable)
                         intent.putExtra("position", position)
                         intent.putExtra("RequestCode", requestCode as Serializable)
-                        activity!!.setResult(requestCode)
+                        activity!!.setResult(requestCode, intent)
                         activity!!.finish()
                     }
                     else{
@@ -436,8 +401,8 @@ class FragmentDetailView : Fragment() {
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     Toast.makeText(activity!!,"삭제 실패 ! 네트워크 확인 바랍니다 !!", Toast.LENGTH_LONG).show()
-                    Log.d("Delete Error", t.message.toString())
-                    Log.d("Delete Error",t.cause.toString())
+                    d("Delete Error", t.message.toString())
+                    d("Delete Error",t.cause.toString())
                     detail_quit_ok_txt.isClickable = true
                 }
             })
@@ -448,58 +413,6 @@ class FragmentDetailView : Fragment() {
         }
 
     }
-
-
-    ////////////////////////////////////////////////////////////////////////
-    // ViewPager 미완
-//    inner class ImageAdapter : PagerAdapter {
-//        private var mContext : Context
-//        private var mUrlList : ArrayList<String>
-//
-//        constructor(context: Context, urllist: ArrayList<String>){
-//            mContext = context
-//            mUrlList = urllist
-//        }
-//
-//        override fun isViewFromObject(view: View, obj: Any): Boolean {
-//            return view == obj
-//        }
-//
-//        override fun getCount(): Int {
-//            return mUrlList.size
-//        }
-//
-//        override fun instantiateItem(container: ViewGroup, position: Int): ImageView {
-//
-//            val urlBuffer = StringBuffer(mUrlList[position])
-//
-//            d("FragmentDetailView", "urlBuffer[4] : ${urlBuffer[4]}")
-//
-//            if(urlBuffer[4] != 's'){
-//                urlBuffer.insert( 4,'s')
-//            }
-//
-//            var bm: Bitmap? = null
-//            val imageView = ImageView(mContext)
-//            val url = urlBuffer.toString()
-//
-//            d("FragmentDetailView", "url : $url")
-//            d("TAG", "setImage")
-//
-//            Glide.with(activity!!)
-//                .load(url)
-//                .into(imageView)
-//            d("TAG", "bm : $bm")
-//
-//            container.addView(imageView, 0)
-//
-//            return imageView
-//        }
-//
-//        override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-//            container.removeView(obj as View)
-//        }
-//    }
 
     @Subscribe
     fun onActivityResultEvent(activityResultEvent: ActivityResultEvent){
@@ -524,6 +437,19 @@ class FragmentDetailView : Fragment() {
             resCode = 97
             if(data != null){
                 newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
+                //UI 업데이트!!!!!!!!!!!
+                myPlace = newPlace
+                updateUi(newPlace)
+
+                isEditSpot = true
+            }
+        }
+        else if(resultCode == 89){
+            resCode = 88
+            if(data != null){
+                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
+                mySearch = data.getBooleanExtra("mySearch", false)
+                d("TAG DetailView", "mySearch : $mySearch")
                 //UI 업데이트!!!!!!!!!!!
                 myPlace = newPlace
                 updateUi(newPlace)
@@ -568,24 +494,19 @@ class FragmentDetailView : Fragment() {
         if (categoryName != null) {
             when (categoryName) {
                 "맛집" -> {
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout1)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_food)
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_food)
                 }
                 "카페" -> {
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout2)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_cafe)
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_cafe)
                 }
                 "술집" -> {
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout3)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_drink)
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_drink)
                 }
                 "문화" -> {
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout4)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_culture)
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_culture)
                 }
                 "기타" -> {
-                    detail_top.setBackgroundResource(R.drawable.detail_top_layout5)
-                    detail_category_img.setImageResource(R.drawable.ic_mypl_icon_etc)
+                    detail_category_img.setImageResource(R.drawable.ic_img_icon_etc)
                 }
             }
         }
@@ -597,16 +518,16 @@ class FragmentDetailView : Fragment() {
         }
 
         d("FragmentdetailView", "rating: ${rating}")
-        if (rating == 1) {
+        if(rating == 1) {
             detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
-        } else if (rating == 2) {
-            detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
-            detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
-        } else if ((rating == 0) || (rating == null)) {
+        }else if(rating == 2) {
             detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
             detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
-            detail_rating_img3.setImageResource(R.drawable.ic_img_star_gray2)
-        } else {
+        }else if((rating == 0) || (rating == null)){
+            detail_rating_img1.setImageResource(R.drawable.ic_img_start_gray)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_start_gray)
+            detail_rating_img3.setImageResource(R.drawable.ic_img_start_gray)
+        }else {
             detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
             detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
             detail_rating_img3.setImageResource(R.drawable.ic_img_star_gray2)
@@ -627,53 +548,42 @@ class FragmentDetailView : Fragment() {
             }
         }
 
-//        if(hours!!.open != null && hours.close != null) {
-//            detail_time_txt2.visibility = View.VISIBLE
-//            val st = StringBuffer()
-//            var open = myPlace.businessHours!!.open.toString()
-//            var close = myPlace.businessHours!!.close.toString()
-//            if(open.length == 1){
-//                st.append("0")
-//            }
-//            st.append(open)
-//            st.append(":00 - ")
-//
-//            if(close.length == 1){
-//                st.append("0")
-//            }
-//            st.append(close)
-//            st.append(":00")
-//            detail_time_txt2.text = st.toString()
-//        }
-//        else{
-//            detail_time_txt2.text = "등록해주세요"
-//        }
-//
-//        if(parking != null ||
-//            allDay != null ||
-//            powerPlug != null) {
-//
-//            var st = StringBuffer()
-//            if (parking != null) {
-//                st.append("주차가능 / ")
-//            }
-//            if (allDay != null) {
-//                st.append("콘센트 O / ")
-//            }
-//            if (powerPlug != null) {
-//                st.append("24시 / ")
-//            }
-//            val len = st.length
-//            st.delete(len - 2, len - 1)
-//            detail_additional_txt2.text = st.toString()
-//        }
-//        else{
-//            detail_additional_txt2.text = "등록해주세요"
-//        }
+        // 추가 정보
+        if(allDay!= null && allDay) {
+            list.add("24시 영업")
+        }
+        if(powerPlug != null && powerPlug) {
+            list.add("콘센트 있음")
+        }
+        if(parking != null && parking) {
+            list.add("주차장 있음")
+        }
+        if(hours!!.open != null && hours!!.close != null) {
+            var hoursBuffer = StringBuffer("")
+
+            var open = myPlace.businessHours!!.open.toString()
+            var close = myPlace.businessHours!!.close.toString()
+
+            hoursBuffer.append(open+"AM - ")
+            hoursBuffer.append(close+"PM")
+            list.add(hoursBuffer.toString())
+        }
+
+        d("TAG", "list : ${list}")
+
+        val deco = Stk_Rcylr_Item_Deco()
+        detail_recycler1.layoutManager = LinearLayoutManager(
+            activity!!,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+
+        detail_recycler1.addItemDecoration(deco)
+        detail_recycler1.adapter = StickerRcylrAdapter(list)
 
         urlList = arrayListOf()
         imgList = mutableListOf()
-        Log.d("TAG", "detailView ImgList Size : " + imgList.size.toString())
+        d("TAG", "detailView ImgList Size : " + imgList.size.toString())
         for (i in 0..imageSize - 1) {
             if (myPlace.images!!.get(i).url != null) {
                 urlList.add(myPlace.images!!.get(i).url)
@@ -681,7 +591,7 @@ class FragmentDetailView : Fragment() {
                 d("TAG", "urlList[i] : ${urlList[i]}")
             }
         }
-        ////////////////////////////////////////////////////////////////////////////////////
+
         // image가 존재하면 Gone 해제
         if(imageSize != 0) {
             detail_recycler2.visibility = View.VISIBLE

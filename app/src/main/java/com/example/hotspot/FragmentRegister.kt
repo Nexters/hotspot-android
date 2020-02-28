@@ -687,9 +687,19 @@ class FragmentRegister : BaseFragment() {
                 override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
                     if (response.isSuccessful) {
                         d("TAG", "RegisterActivity onResponse() ")
+                        d("TAG", "mySearch : $mySearch")
+
                         var intent = Intent()
                         intent.putExtra("NewSpotInfo", spotList)
-                        activity!!.setResult(10, intent)
+
+                        if(mySearch) {
+                            d("TAG", "mySearch")
+                            mySearch = false
+                            activity!!.setResult(11, intent)
+                        }else {
+                            d("TAG", "Add myPlace")
+                            activity!!.setResult(10, intent)
+                        }
                         activity!!.finish()
                     } else {
                         if(response.code() == 403 ){
@@ -771,7 +781,7 @@ class FragmentRegister : BaseFragment() {
                 override fun onResponse(call: Call<SpotListVO>, response: Response<SpotListVO>) {
                     if (response.isSuccessful) {
                         d("TAG", "장소 업데이트 성공")
-                        Log.d("TAG","Register View  ImgList Size : "+ myPlace.images!!.size.toString())
+                        d("TAG","Register View  ImgList Size : "+ myPlace.images!!.size.toString())
                         if(requestCode == 20){
                             var intent = Intent()
                             intent.putExtra("NewSpotInfo", myPlace)
@@ -782,6 +792,13 @@ class FragmentRegister : BaseFragment() {
                             var intent = Intent()
                             intent.putExtra("NewSpotInfo", myPlace)
                             activity!!.setResult(100, intent)
+                            activity!!.finish()
+                        }
+                        else if(requestCode == 22){
+                            var intent = Intent()
+                            intent.putExtra("NewSpotInfo", myPlace)
+                            intent.putExtra("mySearch", true)
+                            activity!!.setResult(89, intent)
                             activity!!.finish()
                         }
                     } else {

@@ -165,7 +165,33 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_top_layout"/>
+        app:layout_constraintTop_toBottomOf="@+id/search_top_layout">
+
+        <ImageView
+            android:id="@+id/empty_imgview"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:background="@drawable/img_mylist_empty"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/empty_imgbtn"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/myplace_empty_addbtn"
+            android:fontFamily="@font/spoqabold"
+            android:text="장소 등록하기"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/empty_imgview"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_recyclerview"
