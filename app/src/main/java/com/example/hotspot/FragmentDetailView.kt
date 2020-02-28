@@ -30,7 +30,7 @@ import com.kakao.message.template.LocationTemplate
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
 import com.squareup.otto.Subscribe
-import kotlinx.android.synthetic.main.detail_view1.*
+import kotlinx.android.synthetic.main.detail_view.*
 import kotlinx.android.synthetic.main.mylist_view.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -75,7 +75,7 @@ class FragmentDetailView : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.detail_view1, container, false)
+        val v = inflater.inflate(R.layout.detail_view, container, false)
         return v
     }
 
