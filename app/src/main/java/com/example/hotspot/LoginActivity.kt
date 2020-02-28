@@ -33,6 +33,7 @@ import java.io.Serializable
 
 class LoginActivity: AppCompatActivity(){
     private var callback: SessionCallback = SessionCallback()
+    private var intentOnlyOne = false
 
     //token 변수 전역으로 선언
     var token : String = ""
@@ -56,6 +57,7 @@ class LoginActivity: AppCompatActivity(){
 
         //카카오 로그인 버튼 클릭
         btnKakaoLogin.setOnClickListener {
+
             Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, this)
         }
 
@@ -71,7 +73,6 @@ class LoginActivity: AppCompatActivity(){
             d("DEBUG","session get current session")
             return
         }
-
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -127,9 +128,10 @@ class LoginActivity: AppCompatActivity(){
                             // SharedPreference 사용해서 앱 내부에 토큰 저장
                             GlobalApplication.prefs.savePreferences(prefrenceInfo.access_token)
                             d("TAG", "pref.getPreferences : ${GlobalApplication.prefs.getPreferences()}")
-
-                            redirectSignupActivity()
-
+                            if(!intentOnlyOne) {
+                                intentOnlyOne = true
+                                redirectSignupActivity()
+                            }
                         }
                     }
 

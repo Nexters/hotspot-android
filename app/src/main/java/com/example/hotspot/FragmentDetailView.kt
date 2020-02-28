@@ -32,6 +32,7 @@ import com.kakao.network.callback.ResponseCallback
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.detail_view.*
 import kotlinx.android.synthetic.main.mylist_view.*
+import kotlinx.android.synthetic.main.register_view.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -69,6 +70,7 @@ class FragmentDetailView : Fragment() {
     private var rating = 1
     private lateinit var myPlace : MyPlace
     private val list : ArrayList<String> = arrayListOf()
+    private var isRcylrdecoAdd = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -199,8 +201,12 @@ class FragmentDetailView : Fragment() {
             LinearLayoutManager.HORIZONTAL,
             false
         )
-
+        if(isRcylrdecoAdd) {
+            detail_recycler1.removeItemDecorationAt(0)
+            isRcylrdecoAdd = false
+        }
         detail_recycler1.addItemDecoration(deco)
+        isRcylrdecoAdd = true
         detail_recycler1.adapter = StickerRcylrAdapter(list)
         urlList = arrayListOf()
         imgList = mutableListOf()
@@ -374,7 +380,6 @@ class FragmentDetailView : Fragment() {
                         d("Delete", "onSuccess()")
                         d("Delete", response.message())
                         d("Delete", response.body().toString())
-                        Toast.makeText(activity!!, "장소가 삭제되었습니다.", Toast.LENGTH_LONG).show()
 
                         val intent = Intent()
 
@@ -549,6 +554,7 @@ class FragmentDetailView : Fragment() {
         }
 
         // 추가 정보
+        list.clear()
         if(allDay!= null && allDay) {
             list.add("24시 영업")
         }
@@ -578,7 +584,12 @@ class FragmentDetailView : Fragment() {
             false
         )
 
+        if(isRcylrdecoAdd) {
+            detail_recycler1.removeItemDecorationAt(0)
+            isRcylrdecoAdd = false
+        }
         detail_recycler1.addItemDecoration(deco)
+        isRcylrdecoAdd = true
         detail_recycler1.adapter = StickerRcylrAdapter(list)
 
         urlList = arrayListOf()

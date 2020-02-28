@@ -420,11 +420,13 @@ class MainActivity : AppCompatActivity()  {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == 9) { // 장소 등록 안함 맵 > 등록
+            isNewUser = false
             BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
         }
         if(resultCode == 10){// 장소등록 성공 맵 > 등록
             //애니메이션 띄우고
             //장소 새로 받기?
+            isNewUser = false
             isSpotAdd = true
             getMyPlaceApi()
         }

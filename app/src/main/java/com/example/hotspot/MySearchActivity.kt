@@ -236,4 +236,8 @@ class MySearchActivity : AppCompatActivity() {
     fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
     }
+
+    override fun onBackPressed() {
+        search_esc_imgbtn.performClick()
+    }
 }

@@ -430,6 +430,8 @@ class FragmentMap: Fragment()
             bestMenuView.visibility = View.INVISIBLE
         }
         else{
+            bestMenuView.findViewById<TextView>(R.id.up1).text = ""
+            bestMenuView.findViewById<TextView>(R.id.up2).text = ""
             bestMenuView.findViewById<TextView>(R.id.up1).text = myPlace.bestMenu!![0]
             if(myPlace.bestMenu!!.size == 2) {
                 bestMenuView.findViewById<TextView>(R.id.up2).text = myPlace.bestMenu!![1]
