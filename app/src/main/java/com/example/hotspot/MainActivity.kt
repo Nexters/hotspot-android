@@ -435,13 +435,14 @@ class MainActivity : AppCompatActivity()  {
 
         if(resultCode == 1) {// 마이서치 > 디테일 업데이트 성공
             if(data != null ) {
-                update_position = data.getIntExtra("Position",0)
-                updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
+//                update_position = data.getIntExtra("Position",0)
+                mMyPlaceList = data.getSerializableExtra("NewSpotInfo")as ArrayList<MyPlace>
+                myPlaceSize = mMyPlaceList.size
                 categoryframe.visibility = View.VISIBLE
                 categoryframe2.visibility = View.INVISIBLE
-                mMyPlaceList.set(update_position, updatedSpot)
                 spotinfolayout.visibility = View.INVISIBLE
                 layout_trans_main.visibility = View.INVISIBLE
+                hpCount.text = myPlaceSize.toString()
                 getMap(mMyPlaceList, false)
             }
             else {

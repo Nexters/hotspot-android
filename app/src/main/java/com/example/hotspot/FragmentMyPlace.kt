@@ -51,6 +51,7 @@ class FragmentMyPlace : Fragment() {
     lateinit var apiService : APIService
     private var myPlaceSize = 0
     private var IsNewUser = false
+    private var categoryState = 0
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -111,11 +112,11 @@ class FragmentMyPlace : Fragment() {
                 isvisitedState++
 
             if(isvisitedState == 0)
-                changeCategory(0, placeList as ArrayList<MyPlace>)
+                changeCategory(isvisitedState, placeList as ArrayList<MyPlace>)
             else if(isvisitedState == 1)
-                changeCategory(1, placeList as ArrayList<MyPlace>)
+                changeCategory(isvisitedState, placeList as ArrayList<MyPlace>)
             else if(isvisitedState == 2)
-                changeCategory(2, placeList as ArrayList<MyPlace>)
+                changeCategory(isvisitedState, placeList as ArrayList<MyPlace>)
         }
 
         myplace_add_btn.setOnClickListener {
@@ -197,6 +198,35 @@ class FragmentMyPlace : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         IsNewUser = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
+        apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
+            Callback<GetSpotList> {
+            override fun onResponse(
+                call: Call<GetSpotList>,
+                response: Response<GetSpotList>
+            ) {
+                d("TAG MySearch", "onResponse")
+                if(response.isSuccessful) {
+                    d("TAG MySearch","response Body : ${response.body()}")
+                    placeList = response.body()!!.myPlaces as MutableList<MyPlace>
+                    myPlaceSize = placeList.size
+
+
+                    d("TAG onActivityResult", "placeList : $placeList")
+                    changeCategory(isvisitedState, placeList as ArrayList<MyPlace>)
+                }
+            }
+
+            override fun onFailure(call: Call<GetSpotList>, t: Throwable) {
+                d("TAG MySearch", "onFailure")
+
+            }
+        })
     }
     fun setRetrofitInit(){
         //interceptor 선언

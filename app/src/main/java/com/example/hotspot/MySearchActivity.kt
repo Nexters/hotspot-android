@@ -37,6 +37,9 @@ class MySearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        setRetrofitInit()
+        setApiServiceInit()
+
         myPlace = intent.getSerializableExtra("myPlace") as ArrayList<MyPlace> // myPlace data
         myPlaceSize = myPlace.size // myPlace SIZE
 
@@ -51,17 +54,17 @@ class MySearchActivity : AppCompatActivity() {
 
             var intent = Intent()
 
-            if(isUpdate){
-                isUpdate = false
-                intent.putExtra("Position", position)
-                intent.putExtra("NewSpotInfo", newPlace)
-                this.setResult(1, intent)
-            }
-            if(isDelete) {
-                isDelete = false
-                intent.putExtra("myPlace", myPlace)
-                this.setResult(2, intent)
-            }
+//        if(isUpdate) {
+            isUpdate = false
+//            intent.putExtra("Position", position)
+            intent.putExtra("NewSpotInfo", myPlace)
+            this.setResult(1, intent)
+//        }
+//        if(isDelete) {
+//            isDelete = false
+//            intent.putExtra("myPlace", myPlace)
+//            this.setResult(2, intent)
+//        }
             this.finish()
         }
 
@@ -75,15 +78,20 @@ class MySearchActivity : AppCompatActivity() {
             ) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 d("onTextChanged()", "char : ${charSequence}")
-                recyclerAdapter!!.getFilter().filter(charSequence)
+                if(charSequence.length > 1 && myPlaceSize > 0) {
+                    recyclerAdapter!!.getFilter().filter(charSequence)
 
-                if(recyclerAdapter!!.itemCount != 0) {
-                    mysearch_empty_layout.visibility = View.VISIBLE
-                    search_recyclerview.visibility = View.GONE
-                }
-                else {
-                    mysearch_empty_layout.visibility = View.GONE
-                    search_recyclerview.visibility = View.VISIBLE
+
+                    if (recyclerAdapter!!.itemCount != 0) {
+                        mysearch_empty_layout.visibility = View.VISIBLE
+                        search_recyclerview.visibility = View.GONE
+                    } else {
+                        mysearch_empty_layout.visibility = View.GONE
+                        search_recyclerview.visibility = View.VISIBLE
+                        if (charSequence == "") {
+                            resetData()
+                        }
+                    }
                 }
             }
             override fun afterTextChanged(editable: Editable) {}
@@ -92,6 +100,7 @@ class MySearchActivity : AppCompatActivity() {
         //delete Btn
         search_delete_imgbtn.setOnClickListener {
             search_edtTxt.setText("")
+            resetData()
         }
 
         myplace_empty_imgbtn.setOnClickListener {
@@ -109,72 +118,48 @@ class MySearchActivity : AppCompatActivity() {
         d("TAG onActivityResult", "&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         if(resultCode == 95) {// 디테일뷰 > 장소 삭제
             if(data != null ) {
-                position = data.getIntExtra("position", 0)
-                myPlace.removeAt(position)
-                myPlaceSize = myPlace.size
-                place = myPlace
-                isDelete = true
-                d("TAG onActivityResult", "position : $position")
-                recyclerViewInit()
+//                position = data.getIntExtra("position", 0)
+//                myPlace.removeAt(position)
+//                myPlaceSize = myPlace.size
+//                place = myPlace
+//                isDelete = true
+//                d("TAG onActivityResult", "position : $position")
+//                recyclerViewInit()
+                resetData()
             }
         }
 
         if(resultCode == 85) {
             if(data != null ) {
-                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
-                position = data.getIntExtra("Position", 0)
-                myPlaceSize = myPlace.size
-
-                myPlace[position] = newPlace
-
-                d("TAG onActivityResult", "myPlace : $newPlace / myPlaceSize : ${myPlaceSize}")
-                isUpdate = true
-                recyclerViewInit()
+//                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
+//                position = data.getIntExtra("Position", 0)
+//                myPlaceSize = myPlace.size
+//
+//                myPlace[position] = newPlace
+//
+//                d("TAG onActivityResult", "myPlace : $newPlace / myPlaceSize : ${myPlaceSize}")
+//                isUpdate = true
+//                recyclerViewInit()
+                resetData()
             }
         }
 
         else if(resultCode == 11){
 
             if(data != null){
-                setRetrofitInit()
-                setApiServiceInit()
-
-                val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
-                apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
-                    Callback<GetSpotList> {
-                    override fun onResponse(
-                        call: Call<GetSpotList>,
-                        response: Response<GetSpotList>
-                    ) {
-                        d("TAG MySearch", "onResponse")
-                        if(response.isSuccessful) {
-                            d("TAG MySearch","response Body : ${response.body()}")
-                            myPlace = response.body()!!.myPlaces as ArrayList<MyPlace>
-                            myPlaceSize = myPlace.size
-                            place = myPlace
-
-
-                            d("TAG onActivityResult", "myPlace : $myPlace")
-
-                            recyclerViewInit()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<GetSpotList>, t: Throwable) {
-                        d("TAG MySearch", "onFailure")
-
-                    }
-                })
+                resetData()
             }
         }
     }
 
     fun recyclerViewInit () {
+        d("TAG", "myPlaceSize : $myPlaceSize")
         if(myPlaceSize == 0) {
-            emptylayout.visibility = View.VISIBLE
+            mysearch_empty_layout.visibility = View.VISIBLE
             search_recyclerview.visibility = View.GONE
         }else {
-            emptylayout.visibility = View.GONE
+            d("TAG", "aaaaaaaaaaaaaaaaaaaaa")
+            mysearch_empty_layout.visibility = View.GONE
             search_recyclerview.visibility = View.VISIBLE
 
             search_recyclerview.setHasFixedSize(true)
@@ -198,24 +183,54 @@ class MySearchActivity : AppCompatActivity() {
             .client(client)
             .build()
     }
+
     fun setApiServiceInit(){
         apiService = mRetrofit.create(APIService::class.java)
+    }
+
+    fun resetData() {
+        val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
+        apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
+            Callback<GetSpotList> {
+            override fun onResponse(
+                call: Call<GetSpotList>,
+                response: Response<GetSpotList>
+            ) {
+                d("TAG MySearch", "onResponse")
+                if(response.isSuccessful) {
+                    d("TAG MySearch","response Body : ${response.body()}")
+                    myPlace = response.body()!!.myPlaces as ArrayList<MyPlace>
+                    myPlaceSize = myPlace.size
+                    place = myPlace
+
+
+                    d("TAG onActivityResult", "myPlace : $myPlace")
+
+                    recyclerViewInit()
+                }
+            }
+
+            override fun onFailure(call: Call<GetSpotList>, t: Throwable) {
+                d("TAG MySearch", "onFailure")
+
+            }
+        })
     }
 
     override fun onBackPressed() {
         var intent = Intent()
 
-        if(isUpdate) {
+//        if(isUpdate) {
             isUpdate = false
-            intent.putExtra("Position", position)
-            intent.putExtra("NewSpotInfo", newPlace)
+//            intent.putExtra("Position", position)
+            intent.putExtra("NewSpotInfo", myPlace)
             this.setResult(1, intent)
-        }
-        if(isDelete) {
-            isDelete = false
-            intent.putExtra("myPlace", myPlace)
-            this.setResult(2, intent)
-        }
+//        }
+//        if(isDelete) {
+//            isDelete = false
+//            intent.putExtra("myPlace", myPlace)
+//            this.setResult(2, intent)
+//        }
         this.finish()
     }
 }
