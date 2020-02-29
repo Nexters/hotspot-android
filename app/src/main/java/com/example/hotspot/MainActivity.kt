@@ -426,6 +426,8 @@ class MainActivity : AppCompatActivity()  {
         if(resultCode == 10){// 장소등록 성공 맵 > 등록
             //애니메이션 띄우고
             //장소 새로 받기?
+            categoryframe.visibility = View.VISIBLE
+            categoryframe2.visibility = View.INVISIBLE
             isNewUser = false
             isSpotAdd = true
             getMyPlaceApi()
@@ -435,7 +437,8 @@ class MainActivity : AppCompatActivity()  {
             if(data != null ) {
                 update_position = data.getIntExtra("Position",0)
                 updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
-
+                categoryframe.visibility = View.VISIBLE
+                categoryframe2.visibility = View.INVISIBLE
                 mMyPlaceList.set(update_position, updatedSpot)
                 spotinfolayout.visibility = View.INVISIBLE
                 layout_trans_main.visibility = View.INVISIBLE
@@ -448,6 +451,8 @@ class MainActivity : AppCompatActivity()  {
         if(resultCode == 2) {// 마이서치 > 삭제 성공
             if(data != null ) {
                 d("TAG main", "resultCode : ${resultCode}")
+                categoryframe.visibility = View.VISIBLE
+                categoryframe2.visibility = View.INVISIBLE
                 mMyPlaceList = data.getSerializableExtra("myPlace") as ArrayList<MyPlace>
                 myPlaceSize = mMyPlaceList.size
                 hpCount.text = myPlaceSize.toString()
@@ -480,6 +485,19 @@ class MainActivity : AppCompatActivity()  {
                 updatedSpot = data.getSerializableExtra("NewSpotInfo")as MyPlace
                 update_position = data.getIntExtra("Position",0)
                 //BusProvider.getInstance().post(ActivityResultEvent(requestCode, resultCode, data))
+                //상단 ui도 수정
+                stateCategory = "전체"
+                category_item1_txt2.setTextColor(Color.parseColor("#FFFFFF"))
+                category_item2_txt2.setTextColor(Color.parseColor("#393D46"))
+                category_item3_txt2.setTextColor(Color.parseColor("#393D46"))
+                category_item4_txt2.setTextColor(Color.parseColor("#393D46"))
+                category_item5_txt2.setTextColor(Color.parseColor("#393D46"))
+                category_item6_txt2.setTextColor(Color.parseColor("#393D46"))
+                d("TAG 전체", "$mMyPlaceList")
+                title_category_imgview.setImageResource(R.drawable.img_category_title_all)
+                myPlaceSize = mMyPlaceList.size
+                hpCount.text = myPlaceSize.toString()
+                //업데이트 반영
                 mMyPlaceList.set(update_position,updatedSpot)
                 getMyPlace(mMyPlaceList,stateCategory)
             }

@@ -542,9 +542,12 @@ class FragmentDetailView : Fragment() {
         d("FragmentdetailView", "rating: ${rating}")
         if(rating == 1) {
             detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img2.setImageResource(R.drawable.ic_img_start_gray)
+            detail_rating_img3.setImageResource(R.drawable.ic_img_start_gray)
         }else if(rating == 2) {
             detail_rating_img1.setImageResource(R.drawable.ic_img_star_gray2)
             detail_rating_img2.setImageResource(R.drawable.ic_img_star_gray2)
+            detail_rating_img3.setImageResource(R.drawable.ic_img_start_gray)
         }else if((rating == 0) || (rating == null)){
             detail_rating_img1.setImageResource(R.drawable.ic_img_start_gray)
             detail_rating_img2.setImageResource(R.drawable.ic_img_start_gray)
@@ -653,7 +656,9 @@ class FragmentDetailView : Fragment() {
             detail_recycler2.adapter = ImageRecyclerAdapter(activity!!, urlList)
 
         }else {
+            detail_recycler2.adapter = ImageRecyclerAdapter(activity!!, urlList)
             detail_recycler2.visibility = View.VISIBLE
+
         }
     }
 
