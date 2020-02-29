@@ -55,7 +55,6 @@ class FragmentDetailView : Fragment() {
     private var isEditSpot = false
     private var mySearch = false
     private lateinit var newPlace: MyPlace
-    private var dotscount = 0
     private lateinit var instaTag : StringBuffer
     private var requestCode = 0
     private var resCode = 0
@@ -358,22 +357,19 @@ class FragmentDetailView : Fragment() {
         }
 
         detail_findroad_img.setOnClickListener {
-            var flag = false
             try {
-                var packageManager: PackageManager = activity!!.packageManager
-                packageManager.getPackageInfo("com.naver.maps:map", PackageManager.GET_ACTIVITIES)
-                flag = true
-            } catch (e: PackageManager.NameNotFoundException) {
-                e.printStackTrace()
-            }
-            if(flag) {
                 var strEncodedUrl = URLEncoder.encode(instaTag.toString())
-                var intent_search_road = Intent(Intent.ACTION_VIEW, Uri.parse("nmap://route/public?dlat="+latitude+"&dlng="+longitude+"&dname="+strEncodedUrl+"&appname=com.example.hotspot"))
+                var searched_latitude = myPlace.place.y
+                var searched_longitude = myPlace.place.x
+                var intent_search_road = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("nmap://route/public?dlat=" + searched_latitude + "&dlng=" + searched_longitude + "&dname=" + strEncodedUrl + "&appname=com.example.hotspot")
+                )
                 startActivity(intent_search_road)
-            } else { //
-                val url = "market://details?id="+"com.nhn.android.nmap"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                startActivity(intent)
+            }catch(e : ActivityNotFoundException){
+
+                var intent_market = Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=com.nhn.android.nmap"))
+                startActivity(intent_market)
             }
         }
 

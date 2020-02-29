@@ -29,6 +29,7 @@ class MySearchActivity : AppCompatActivity() {
     private var recyclerAdapter: MySearchRecyclerAdapter? = null
     private var position = 0
     private var isUpdate = false
+    private var isDelete = false
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
 
@@ -51,10 +52,13 @@ class MySearchActivity : AppCompatActivity() {
             var intent = Intent()
 
             if(isUpdate){
+                isUpdate = false
                 intent.putExtra("Position", position)
                 intent.putExtra("NewSpotInfo", newPlace)
                 this.setResult(1, intent)
-            }else {
+            }
+            if(isDelete) {
+                isDelete = false
                 intent.putExtra("myPlace", myPlace)
                 this.setResult(2, intent)
             }
@@ -109,6 +113,7 @@ class MySearchActivity : AppCompatActivity() {
                 myPlace.removeAt(position)
                 myPlaceSize = myPlace.size
                 place = myPlace
+                isDelete = true
                 d("TAG onActivityResult", "position : $position")
                 recyclerViewInit()
             }
@@ -198,6 +203,19 @@ class MySearchActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        search_esc_imgbtn.performClick()
+        var intent = Intent()
+
+        if(isUpdate) {
+            isUpdate = false
+            intent.putExtra("Position", position)
+            intent.putExtra("NewSpotInfo", newPlace)
+            this.setResult(1, intent)
+        }
+        if(isDelete) {
+            isDelete = false
+            intent.putExtra("myPlace", myPlace)
+            this.setResult(2, intent)
+        }
+        this.finish()
     }
 }
