@@ -173,7 +173,7 @@ class FragmentDetailView : Fragment() {
         }
 
         // 추가 정보
-        if(allDay!= null && allDay) {
+        if(allDay!= null && allDay ) {
             list.add("24시 영업")
         }
         if(powerPlug != null && powerPlug) {
@@ -184,14 +184,31 @@ class FragmentDetailView : Fragment() {
         }
         if(hours!!.open != null && hours!!.close != null) {
             var hoursBuffer = StringBuffer("")
+            var open_tmp = hours.open!!.toInt()
+            var close_tmp = hours.close!!.toInt()
 
-            var open = myPlace.businessHours!!.open.toString()
-            var close = myPlace.businessHours!!.close.toString()
+            //open time 설정
+            if(12 < open_tmp && open_tmp < 24){
+                open_tmp -= 12
+                hoursBuffer.append(open_tmp.toString() +" PM")
+            }else {
+                hoursBuffer.append(open_tmp.toString()+" AM")
+            }
 
-            hoursBuffer.append(open+"AM - ")
-            hoursBuffer.append(close+"PM")
+            hoursBuffer.append(" - ")
+
+            //close time 설정
+            if(12 < close_tmp && close_tmp < 24){
+                close_tmp -= 12
+                hoursBuffer.append(close_tmp.toString()+" PM")
+            }else {
+                hoursBuffer.append(close_tmp.toString() +" AM")
+            }
+
             list.add(hoursBuffer.toString())
         }
+        d("TAG", "hours : ${hours}")
+        d("TAG", "hours_open : ${hours!!.open}, hours_close: ${hours!!.close}")
 
         d("TAG", "list : ${list}")
 
@@ -538,7 +555,9 @@ class FragmentDetailView : Fragment() {
             detail_rating_img3.setImageResource(R.drawable.ic_img_star_gray2)
         }
 
-        if (bestmenu != null) {
+        detail_menu_txt.text = "메뉴를 등록해주세요."
+
+        if (bestmenu != null ) {
             var buffer = StringBuffer("")
 
             for (i in 0..myPlace.bestMenu!!.size - 1) {
@@ -564,18 +583,37 @@ class FragmentDetailView : Fragment() {
         if(parking != null && parking) {
             list.add("주차장 있음")
         }
+
+
         if(hours!!.open != null && hours!!.close != null) {
             var hoursBuffer = StringBuffer("")
+            var open_tmp = hours.open!!.toInt()
+            var close_tmp = hours.close!!.toInt()
 
-            var open = myPlace.businessHours!!.open.toString()
-            var close = myPlace.businessHours!!.close.toString()
+            //open time 설정
+            if(12 < open_tmp && open_tmp < 24){
+                open_tmp -= 12
+                hoursBuffer.append(open_tmp.toString() +" PM")
+            }else {
+                hoursBuffer.append(open_tmp.toString()+" AM")
+            }
 
-            hoursBuffer.append(open+"AM - ")
-            hoursBuffer.append(close+"PM")
+            hoursBuffer.append(" - ")
+
+            //close time 설정
+            if(12 < close_tmp && close_tmp < 24 ){
+                close_tmp -= 12
+                hoursBuffer.append(close_tmp.toString()+" PM")
+            }else {
+                hoursBuffer.append(close_tmp.toString() +" AM")
+            }
+
             list.add(hoursBuffer.toString())
         }
+        d("TAG update", "hours : ${hours}")
+        d("TAG update", "hours_open : ${hours!!.open}, hours_close: ${hours!!.close}")
 
-        d("TAG", "list : ${list}")
+        d("TAG Update", "list : ${list}")
 
         val deco = Stk_Rcylr_Item_Deco()
         detail_recycler1.layoutManager = LinearLayoutManager(

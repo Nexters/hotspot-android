@@ -1,6 +1,7 @@
 package com.example.hotspot
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,11 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.mysearch_list.view.*
+import java.io.Serializable
 
 class MySearchRecyclerAdapter(var mActivity: MySearchActivity,
-                            var mData: ArrayList<MyPlace>,
-                              var myPlace: ArrayList<MyPlace>) :
+                            var mDataList: ArrayList<MyPlace>,
+                              var myPlaceList: ArrayList<MyPlace>) :
     RecyclerView.Adapter<MySearchRecyclerAdapter.myViewHolder>(),
     Filterable {
     internal var mfilter: NewFilter
@@ -35,13 +37,13 @@ class MySearchRecyclerAdapter(var mActivity: MySearchActivity,
     }
 
     override fun onBindViewHolder(holder: myViewHolder, position: Int) {
-        val placeName_text = mData.get(position).place.placeName
-        val roadAddressName_text = mData.get(position).place.placeName
+        val placeName_text = mDataList.get(position).place.placeName
+        val roadAddressName_text = mDataList.get(position).place.placeName
 //            val category_name = mData.get(position).place.categoryName
 
         holder.placeName_TxtV.text = placeName_text
         holder.roadAddressName_TxtV.text = roadAddressName_text
-        var categoryName: String = mData.get(position).place.categoryName
+        var categoryName: String = mDataList.get(position).place.categoryName
 //            var categoryName: String? = ""
 
 
@@ -76,36 +78,53 @@ class MySearchRecyclerAdapter(var mActivity: MySearchActivity,
     }
 
     override fun getItemCount(): Int {
-        return mData.size
+        return mDataList.size
     }
 
     inner class myViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val placeName_TxtV = itemView.mysearch_placeName_txtView
         val roadAddressName_TxtV = itemView.mysearch_roadAddressName_txtView
         val category_Img = itemView.mysearch_category_img
+
+        init {
+            itemView.setOnClickListener {
+                Log.d("TAG", "No.${position} DetailView : ")
+
+                val myPlace1 = myPlaceList.get(position)
+
+                val intent = Intent(mActivity, DetailActivity::class.java)
+
+                val resCode = 22
+                intent.putExtra("mySearch", true)
+                intent.putExtra("myPlace", myPlace1 as Serializable)
+                intent.putExtra("Position", position)
+                intent.putExtra("RequestCode", resCode)
+                mActivity.startActivityForResult(intent, resCode)
+            }
+        }
     }
 
     inner class NewFilter(var mAdapter: MySearchRecyclerAdapter) : Filter() {
         override fun performFiltering(charSequence: CharSequence): FilterResults {
-            mData!!.clear()
+            mDataList!!.clear()
             val results = FilterResults()
             if (charSequence.length == 0) {
-                mData.addAll(myPlace)
+                mDataList.addAll(myPlaceList)
 //                    for(i in myPlace) {
 //                        place!!.add(i.place.placeName)
 //                    }
             } else {
                 val filterPattern = charSequence.toString().toLowerCase().trim { it <= ' ' }
-                for (myPlace in myPlace) {
+                for (myPlace in myPlaceList) {
                     if (myPlace.place.placeName.toLowerCase().startsWith(filterPattern)) {
                         Log.d("TAG", "myPlaceName : ${myPlace.place.placeName}")
 //                            place!!.add(myPlace.place.placeName)
-                        mData.add(myPlace)
+                        mDataList.add(myPlace)
                     }
                 }
             }
-            results.values = mData
-            results.count = mData!!.size
+            results.values = mDataList
+            results.count = mDataList!!.size
             Log.d("TAG", "results.values = ${results.values}")
             Log.d("TAG", "results.count = ${results.count}")
 
@@ -117,6 +136,7 @@ class MySearchRecyclerAdapter(var mActivity: MySearchActivity,
                 searchActivity.mysearch_empty_layout.visibility = View.VISIBLE
                 searchActivity.search_recyclerview.visibility = View.GONE
             }
+
             return results
         }
 

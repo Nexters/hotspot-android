@@ -103,33 +103,7 @@ class MySearchActivity : AppCompatActivity() {
             search_edtTxt.setText("")
         }
 
-        search_recyclerview.addOnItemTouchListener(
-            FragmentSearch.RecyclerTouchListener(
-                this,
-                search_recyclerview,
-                object : FragmentSearch.ClickListener {
-                    override fun onClick(view: View?, position: Int) {
-                        d("TAG", "No.${position} DetailView : ")
-
-                        val myPlace1 = myPlace.get(position)
-
-                        val intent = Intent(applicationContext, DetailActivity::class.java)
-
-                        val resCode = 22
-                        intent.putExtra("mySearch", true)
-                        intent.putExtra("myPlace", myPlace1 as Serializable)
-                        intent.putExtra("Position", position)
-                        intent.putExtra("RequestCode", resCode)
-                        startActivityForResult(intent, resCode)
-                    }
-
-                    override fun onLongClick(view: View?, position: Int) {
-
-                    }
-                })
-        )
-
-        empty_imgbtn.setOnClickListener {
+        myplace_empty_imgbtn.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             val isAdd = true
             mySearch = true
