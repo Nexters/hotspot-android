@@ -1,25 +1,14 @@
 package com.example.hotspot
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log.d
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.myplace_item.view.*
-import kotlinx.android.synthetic.main.search_list.view.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -27,7 +16,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.Serializable
 import kotlin.collections.ArrayList
 
 var mySearch:Boolean = false
@@ -40,7 +28,6 @@ class MySearchActivity : AppCompatActivity() {
     lateinit var place : ArrayList<MyPlace>
     private var recyclerAdapter: MySearchRecyclerAdapter? = null
     private var position = 0
-
     private var isUpdate = false
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
@@ -123,7 +110,6 @@ class MySearchActivity : AppCompatActivity() {
                 myPlaceSize = myPlace.size
                 place = myPlace
                 d("TAG onActivityResult", "position : $position")
-//                isDelete = true
                 recyclerViewInit()
             }
         }

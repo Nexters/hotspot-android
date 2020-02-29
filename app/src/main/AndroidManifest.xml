@@ -56,8 +56,6 @@
             />
         <activity android:name=".DetailActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MyPlaceIsEmpty"
-            android:screenOrientation="portrait"/>
         <activity android:name=".MySearchActivity"
             android:screenOrientation="portrait"/>
 
