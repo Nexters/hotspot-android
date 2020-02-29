@@ -181,7 +181,6 @@
         app:layout_constraintTop_toBottomOf="@+id/notVisitTxt"/>
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -190,6 +189,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -476,16 +476,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
-            <Space
-                android:id="@+id/detail_popup_space1"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintHeight_default="percent"
-                app:layout_constraintHeight_percent="0.58"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
 
             <TextView
                 android:id="@+id/detail_quit_txt1"
@@ -502,12 +492,13 @@
 
             <TextView
                 android:id="@+id/detail_quit_ok_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
                 android:fontFamily="@font/spoqaregular"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/detail_popup_space1"
                 app:layout_constraintBottom_toTopOf="@id/detail_quit_no_txt"
                 android:textSize="15dp"
                 android:textColor="#ff2828"
@@ -515,13 +506,13 @@
 
             <TextView
                 android:id="@+id/detail_quit_no_txt"
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
                 android:fontFamily="@font/spoqaregular"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="23dp"
+                android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/detail_quit_ok_txt"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:textSize="15dp"
                 android:textColor="@color/colorWhite"

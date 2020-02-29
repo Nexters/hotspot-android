@@ -276,9 +276,6 @@ class FragmentDetailView : Fragment() {
                 activity!!.finish()
             }
         }
-        //viewPager
-//        val adapter = ImageAdapter(activity!!, urlList)
-//        viewPager.adapter = adapter
 
         detail_edit_btn.setOnClickListener {
 
@@ -377,8 +374,18 @@ class FragmentDetailView : Fragment() {
         // 삭제 API 추가!
         detail_delete_btn.setOnClickListener {
             detail_popup_layout.visibility = View.VISIBLE
+            detail_findroad_img.isClickable = false
+            detail_share_img.isClickable = false
+            detail_insta_img.isClickable = false
+            detail_edit_btn.isClickable = false
+            detail_delete_btn.isClickable = false
         }
         detail_quit_ok_txt.setOnClickListener {
+            detail_findroad_img.isClickable = true
+            detail_share_img.isClickable = true
+            detail_insta_img.isClickable = true
+            detail_edit_btn.isClickable = true
+            detail_delete_btn.isClickable = true
 
             //서버에 알리기
             detail_quit_ok_txt.isClickable = false
@@ -428,8 +435,12 @@ class FragmentDetailView : Fragment() {
         }
         detail_quit_no_txt.setOnClickListener {
             detail_popup_layout.visibility = View.GONE
+            detail_findroad_img.isClickable = true
+            detail_share_img.isClickable = true
+            detail_insta_img.isClickable = true
+            detail_edit_btn.isClickable = true
+            detail_delete_btn.isClickable = true
         }
-
     }
 
     @Subscribe
