@@ -3,6 +3,7 @@ package com.example.hotspot
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,10 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.mysearch_list.view.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.Serializable
 
 class MySearchRecyclerAdapter(var mActivity: MySearchActivity,
@@ -106,36 +111,28 @@ class MySearchRecyclerAdapter(var mActivity: MySearchActivity,
 
     inner class NewFilter(var mAdapter: MySearchRecyclerAdapter) : Filter() {
         override fun performFiltering(charSequence: CharSequence): FilterResults {
+
             mDataList!!.clear()
             val results = FilterResults()
+
             if (charSequence.length == 0) {
                 mDataList.addAll(myPlaceList)
-//                    for(i in myPlace) {
-//                        place!!.add(i.place.placeName)
-//                    }
             } else {
                 val filterPattern = charSequence.toString().toLowerCase().trim { it <= ' ' }
                 for (myPlace in myPlaceList) {
                     if (myPlace.place.placeName.toLowerCase().startsWith(filterPattern)) {
-                        Log.d("TAG", "myPlaceName : ${myPlace.place.placeName}")
-//                            place!!.add(myPlace.place.placeName)
+                        d("TAG", "myPlaceName : ${myPlace.place.placeName}")
                         mDataList.add(myPlace)
                     }
                 }
             }
             results.values = mDataList
             results.count = mDataList!!.size
-            Log.d("TAG", "results.values = ${results.values}")
-            Log.d("TAG", "results.count = ${results.count}")
+            d("TAG", "results.values = ${results.values}")
+            d("TAG", "results.count = ${results.count}")
 
-            if(results.count != 0) {
-                searchActivity.mysearch_empty_layout.visibility = View.GONE
-                searchActivity.search_recyclerview.visibility = View.VISIBLE
-            }
-            else {
-                searchActivity.mysearch_empty_layout.visibility = View.VISIBLE
-                searchActivity.search_recyclerview.visibility = View.GONE
-            }
+
+
 
             return results
         }

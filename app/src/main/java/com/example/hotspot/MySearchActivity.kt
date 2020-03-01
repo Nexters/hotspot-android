@@ -2,6 +2,9 @@ package com.example.hotspot
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log.d
@@ -9,6 +12,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -16,13 +21,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.collections.ArrayList
+import kotlin.concurrent.thread
+
 
 var mySearch:Boolean = false
 
 class MySearchActivity : AppCompatActivity() {
 
     private lateinit var myPlace: ArrayList<MyPlace>
+    private lateinit var myPlaceTmp : ArrayList<MyPlace>
     private lateinit var newPlace : MyPlace
     private var myPlaceSize = 0
     lateinit var place : ArrayList<MyPlace>
@@ -32,6 +39,8 @@ class MySearchActivity : AppCompatActivity() {
     private var isDelete = false
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
+
+    lateinit var mHandler: Handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +77,7 @@ class MySearchActivity : AppCompatActivity() {
             this.finish()
         }
 
+
         //editText event
         search_edtTxt!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
@@ -78,29 +88,44 @@ class MySearchActivity : AppCompatActivity() {
             ) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 d("onTextChanged()", "char : ${charSequence}")
-                if(charSequence.length > 1 && myPlaceSize > 0) {
+                d("TAG", "myPlaceSize : $myPlaceSize")
+                d("TAG", "place : $place")
+                d("TAG", "myPlace : $myPlace")
+
+
+                if(myPlaceSize != 0) {
                     recyclerAdapter!!.getFilter().filter(charSequence)
-
-
-                    if (recyclerAdapter!!.itemCount != 0) {
-                        mysearch_empty_layout.visibility = View.VISIBLE
-                        search_recyclerview.visibility = View.GONE
-                    } else {
-                        mysearch_empty_layout.visibility = View.GONE
-                        search_recyclerview.visibility = View.VISIBLE
-                        if (charSequence == "") {
-                            resetData()
+                    val d = d("TAG", "itemCount : ${recyclerAdapter!!.itemCount}")
+                    mHandler = object : Handler() {
+                        override fun handleMessage(msg: Message) {
+                            //ui
+                            if (recyclerAdapter!!.itemCount != 0) {
+                                d("TAG", "recyclerView OK")
+                                mysearch_empty_layout.visibility = View.GONE
+                                search_recyclerview.visibility = View.VISIBLE
+                                recyclerViewInit()
+                            } else {
+                                d("TAG", "empty OK")
+                                mysearch_empty_layout.visibility = View.VISIBLE
+                                search_recyclerview.visibility = View.GONE
+                            }
                         }
                     }
+
+                    thread(start = true) {
+                        mHandler.sendEmptyMessage(0)
+                    }
                 }
+
+
             }
-            override fun afterTextChanged(editable: Editable) {}
+            override fun afterTextChanged(editable: Editable) { }
         })
 
         //delete Btn
         search_delete_imgbtn.setOnClickListener {
             search_edtTxt.setText("")
-            resetData()
+//            resetData()
         }
 
         myplace_empty_imgbtn.setOnClickListener {
@@ -110,6 +135,10 @@ class MySearchActivity : AppCompatActivity() {
             intent.putExtra("IsAdd", isAdd)
             startActivityForResult(intent, 3)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -125,12 +154,15 @@ class MySearchActivity : AppCompatActivity() {
 //                isDelete = true
 //                d("TAG onActivityResult", "position : $position")
 //                recyclerViewInit()
+                if(search_edtTxt.text.length > 1)
+                    search_edtTxt.setText("")
                 resetData()
             }
         }
 
         if(resultCode == 85) {
             if(data != null ) {
+
 //                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
 //                position = data.getIntExtra("Position", 0)
 //                myPlaceSize = myPlace.size
@@ -140,6 +172,8 @@ class MySearchActivity : AppCompatActivity() {
 //                d("TAG onActivityResult", "myPlace : $newPlace / myPlaceSize : ${myPlaceSize}")
 //                isUpdate = true
 //                recyclerViewInit()
+                if(search_edtTxt.text.length > 1)
+                    search_edtTxt.setText("")
                 resetData()
             }
         }
@@ -147,9 +181,13 @@ class MySearchActivity : AppCompatActivity() {
         else if(resultCode == 11){
 
             if(data != null){
+                if(search_edtTxt.text.length > 1)
+                    search_edtTxt.setText("")
                 resetData()
             }
         }
+
+//        search_edtTxt.setText("")
     }
 
     fun recyclerViewInit () {
@@ -159,12 +197,14 @@ class MySearchActivity : AppCompatActivity() {
             search_recyclerview.visibility = View.GONE
         }else {
             d("TAG", "aaaaaaaaaaaaaaaaaaaaa")
+            d("TAG", "place : $place")
+            d("TAG", "myPlace : $myPlace")
+
             mysearch_empty_layout.visibility = View.GONE
             search_recyclerview.visibility = View.VISIBLE
 
             search_recyclerview.setHasFixedSize(true)
-            search_recyclerview.layoutManager =
-                LinearLayoutManager(this)
+            search_recyclerview.layoutManager = LinearLayoutManager(this)
             recyclerAdapter = MySearchRecyclerAdapter(this, place, myPlace)
             search_recyclerview.adapter = recyclerAdapter
         }
@@ -201,8 +241,9 @@ class MySearchActivity : AppCompatActivity() {
                     d("TAG MySearch","response Body : ${response.body()}")
                     myPlace = response.body()!!.myPlaces as ArrayList<MyPlace>
                     myPlaceSize = myPlace.size
-                    place = myPlace
 
+                    place = ArrayList()
+                    place.addAll(myPlace)
 
                     d("TAG onActivityResult", "myPlace : $myPlace")
 
