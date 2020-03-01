@@ -200,34 +200,6 @@ class FragmentMyPlace : Fragment() {
         IsNewUser = false
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        val accesstoken = GlobalApplication.prefs.getPreferences() // accesstoken
-        apiService.getMyPlaces("Bearer " + "${accesstoken}").enqueue(object :
-            Callback<GetSpotList> {
-            override fun onResponse(
-                call: Call<GetSpotList>,
-                response: Response<GetSpotList>
-            ) {
-                d("TAG MySearch", "onResponse")
-                if(response.isSuccessful) {
-                    d("TAG MySearch","response Body : ${response.body()}")
-                    placeList = response.body()!!.myPlaces as MutableList<MyPlace>
-                    myPlaceSize = placeList.size
-
-
-                    d("TAG onActivityResult", "placeList : $placeList")
-                    changeCategory(isvisitedState, placeList as ArrayList<MyPlace>)
-                }
-            }
-
-            override fun onFailure(call: Call<GetSpotList>, t: Throwable) {
-                d("TAG MySearch", "onFailure")
-
-            }
-        })
-    }
     fun setRetrofitInit(){
         //interceptor 선언
         val interceptor = HttpLoggingInterceptor()
