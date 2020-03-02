@@ -34,9 +34,6 @@ class MySearchActivity : AppCompatActivity() {
     private var myPlaceSize = 0
     lateinit var place : ArrayList<MyPlace>
     private var recyclerAdapter: MySearchRecyclerAdapter? = null
-    private var position = 0
-    private var isUpdate = false
-    private var isDelete = false
     private lateinit var mRetrofit: Retrofit
     lateinit var apiService : APIService
 
@@ -62,18 +59,8 @@ class MySearchActivity : AppCompatActivity() {
         search_esc_imgbtn.setOnClickListener {
 
             var intent = Intent()
-
-//        if(isUpdate) {
-            isUpdate = false
-//            intent.putExtra("Position", position)
             intent.putExtra("NewSpotInfo", myPlace)
             this.setResult(1, intent)
-//        }
-//        if(isDelete) {
-//            isDelete = false
-//            intent.putExtra("myPlace", myPlace)
-//            this.setResult(2, intent)
-//        }
             this.finish()
         }
 
@@ -125,7 +112,6 @@ class MySearchActivity : AppCompatActivity() {
         //delete Btn
         search_delete_imgbtn.setOnClickListener {
             search_edtTxt.setText("")
-//            resetData()
         }
 
         myplace_empty_imgbtn.setOnClickListener {
@@ -137,23 +123,12 @@ class MySearchActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         d("TAG onActivityResult", "&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         if(resultCode == 95) {// 디테일뷰 > 장소 삭제
             if(data != null ) {
-//                position = data.getIntExtra("position", 0)
-//                myPlace.removeAt(position)
-//                myPlaceSize = myPlace.size
-//                place = myPlace
-//                isDelete = true
-//                d("TAG onActivityResult", "position : $position")
-//                recyclerViewInit()
                 if(search_edtTxt.text.length > 1)
                     search_edtTxt.setText("")
                 resetData()
@@ -162,16 +137,6 @@ class MySearchActivity : AppCompatActivity() {
 
         if(resultCode == 85) {
             if(data != null ) {
-
-//                newPlace = data.getSerializableExtra("NewSpotInfo") as MyPlace
-//                position = data.getIntExtra("Position", 0)
-//                myPlaceSize = myPlace.size
-//
-//                myPlace[position] = newPlace
-//
-//                d("TAG onActivityResult", "myPlace : $newPlace / myPlaceSize : ${myPlaceSize}")
-//                isUpdate = true
-//                recyclerViewInit()
                 if(search_edtTxt.text.length > 1)
                     search_edtTxt.setText("")
                 resetData()
@@ -260,18 +225,8 @@ class MySearchActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         var intent = Intent()
-
-//        if(isUpdate) {
-            isUpdate = false
-//            intent.putExtra("Position", position)
-            intent.putExtra("NewSpotInfo", myPlace)
-            this.setResult(1, intent)
-//        }
-//        if(isDelete) {
-//            isDelete = false
-//            intent.putExtra("myPlace", myPlace)
-//            this.setResult(2, intent)
-//        }
+        intent.putExtra("NewSpotInfo", myPlace)
+        this.setResult(1, intent)
         this.finish()
     }
 }
