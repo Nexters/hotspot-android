@@ -658,7 +658,7 @@ class StickerRegistActivity : AppCompatActivity() {
                         .setCompleteButtonText("Upload")
                         .setEmptySelectionText("최대 5장까지 추가 가능합니다")
                         .setSelectMaxCount(5)
-                        .setPreviewMaxCount(25)//최근 사진 몇개까지 불러올거냐
+                        .setPreviewMaxCount(100)//최근 사진 몇개까지 불러올거냐
                         .setSpacing(5)
                         .create()
                     photoPicker.show(supportFragmentManager)

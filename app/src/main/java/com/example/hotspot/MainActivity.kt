@@ -428,6 +428,18 @@ class MainActivity : AppCompatActivity()  {
             //장소 새로 받기?
             categoryframe.visibility = View.VISIBLE
             categoryframe2.visibility = View.INVISIBLE
+            stateCategory = "전체"
+            category_item1_txt.setTextColor(Color.parseColor("#FFFFFF"))
+            category_item2_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item3_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item4_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item5_txt.setTextColor(Color.parseColor("#393D46"))
+            category_item6_txt.setTextColor(Color.parseColor("#393D46"))
+
+            d("TAG 전체", "$mMyPlaceList")
+            title_category_imgview.setImageResource(R.drawable.img_category_title_all)
+            myPlaceSize = mMyPlaceList.size
+            hpCount.text = myPlaceSize.toString()
 
 
             isNewUser = false
