@@ -8,7 +8,7 @@ buildscript {
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:4.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -22,7 +22,7 @@ allprojects {
         jcenter()
         // 네이버 지도 저장소
         maven {
-            url 'https://navercorp.bintray.com/maps'
+            url 'https://naver.jfrog.io/artifactory/maven/'
         }
         
     }
